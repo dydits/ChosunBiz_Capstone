@@ -2453,8 +2453,56 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <57> ##############################################
-
-
+wd = webdriver.Chrome(service=service, options=chrome_options)
+#url_57 = "https://www.txdot.gov/about/newsroom/statewide.html"
+wd.get(url_57)
+time.sleep(5)
+html = wd.page_source  
+def get_article_list_updated(html, filter_date):
+    soup = BeautifulSoup(html, 'html.parser')
+    articles_info = []
+    for item in soup.find_all('tr'):
+        title_tag = item.find('a')
+        if not title_tag:
+            continue
+        title = title_tag.get_text(strip=True)
+        link = ("https://www.txdot.gov" + title_tag['href'])
+        date_tags = item.find_all('td')
+        if len(date_tags) < 2:
+            continue
+        date_text = date_tags[1].get_text(strip=True)
+        try:
+            date_parsed = datetime.strptime(date_text, '%m/%d/%y').date()
+        except ValueError:
+            continue
+        if date_parsed == filter_date:
+            articles_info.append({'title': title, 'link': link, 'date': date_parsed})
+    return articles_info
+def get_article_content(article_url):
+    try:
+        wd.get(article_url)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        content_div = article_soup.find('div', class_='news-release-content')
+        content = ' '.join(p.get_text(strip=True) for p in content_div.find_all('p')) if content_div else "No Content"
+        return content
+    except Exception as e:
+        error_list.append({'Error Link': article_url, 'Error': str(e)})
+try:
+    articles_list = get_article_list_updated(html, today)
+    for article in articles_list:
+        content = get_article_content(article['link'])
+        if content:
+            articles.append({
+                'Title': article['title'],
+                'Link': article['link'],
+                'Content(RAW)': content
+            })
+except Exception as e:
+    error_list.append({
+     'Error Link': url_57, 
+     'Error': str(e)
+     })   
 ########################################### <58> ##############################################
 # 텍사스 교통부
 wd = webdriver.Chrome(service=service, options=chrome_options)
