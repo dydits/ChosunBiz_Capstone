@@ -1,0 +1,230 @@
+# 라이브러리 import
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+import time
+from bs4 import BeautifulSoup
+import pandas as pd
+from datetime import datetime, timedelta
+from dateutil import parser
+import re
+
+# Chrome 옵션 설정
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.105 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'  # 'none', 'eager', 'normal'
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+
+# Chrome 드라이버 설정
+service = Service()
+wd = webdriver.Chrome(service=service, options=chrome_options)
+
+# 날짜 설정
+def date_util(article_date):
+  try:
+    # Parse the date using dateutil.parser
+    article_date = parser.parse(article_date).date()
+  except ValueError:
+    # If parsing fails, handle the relative dates
+    article_date = article_date.lower()
+    time_keywords = ["hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
+    if any(keyword in article_date for keyword in time_keywords):
+      article_date = today
+    elif "days" in article_date or "day" in article_date:
+      # Find the number of days and subtract from today
+      number_of_days = int(''.join(filter(str.isdigit, article_date)))
+      article_date = today - timedelta(days=number_of_days)
+    else:
+      return None
+  return article_date
+
+# 에러 메시지 추가
+def Error_Message(message, add_error):
+    if message is not str() : message += '/'
+    message += add_error
+    return message
+
+articles = []
+error_list = []
+today = datetime.now().date()
+
+# 연방정부 + 방산업체들 + NASA
+url_1 = 'https://www.state.gov/press-releases/'
+url_2 = 'https://www.state.gov/department-press-briefings/'
+url_3 = 'https://home.treasury.gov/news/press-releases'
+url_4 = 'https://www.defense.gov'
+url_5 = 'https://www.army.mil/news'
+url_6 = 'https://www.navy.mil/Press-Office/'
+url_7 = 'https://www.af.mil/News/Category/22750/'
+url_8 = 'https://www.nsa.gov/Press-Room/Press-Releases-Statements/'
+url_9 = 'https://www.justice.gov/news'
+url_10 = 'https://www.fbi.gov/news/press-releases'
+url_11 = 'https://www.doi.gov/news'
+url_12 = 'https://www.usda.gov/media/press-releases'
+url_13 = 'https://www.ars.usda.gov/news-events/news-archive/'
+url_14 = 'https://www.fs.usda.gov/news/releases'
+url_15 = 'https://www.fas.usda.gov/newsroom/search'
+url_16 = 'https://www.commerce.gov/news'
+url_17 = 'https://www.dol.gov/newsroom/releases?agency=All&state=All&topic=All&year=all&page=0'
+url_18 = 'https://www.hhs.gov/about/news/index.html'
+url_19 = 'https://www.fda.gov/news-events/fda-newsroom/press-announcements'
+url_20 = 'https://www.fda.gov/news-events/speeches-fda-officials'
+url_21 = 'https://www.transportation.gov/newsroom/press-releases'
+url_22 = 'https://www.transportation.gov/newsroom/speeches'
+url_23 = 'https://www.energy.gov/newsroom'
+url_24 = 'https://www.ed.gov/news/press-releases'
+url_25 = 'https://www.ed.gov/news/speeches'
+url_26 = 'https://news.va.gov/news/'
+url_27 = 'https://www.dhs.gov/news-releases/press-releases'
+url_28 = 'https://www.dhs.gov/news-releases/speeches'
+url_29 = 'https://www.fema.gov/about/news-multimedia/press-releases'
+url_30 = 'https://www.secretservice.gov/newsroom'
+url_31 = 'https://www.epa.gov/newsreleases/search'
+url_32 = 'https://www.lockheedmartin.com/en-us/news.html'
+url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
+url_34 = 'https://www.rtx.com/news'
+url_35 = 'https://news.northropgrumman.com/news/releases'
+url_36 = 'https://www.gd.com/news/news-feed?page=0&types=Press Release'
+url_37 = 'https://www.baesystems.com/en/newsroom'
+url_38 = 'https://www.l3harris.com/ko-kr/newsroom/search?size=n_10_n&sort-field%5Bname%5D=Publish%20Date&sort-field%5Bvalue%5D=created_date&sort-field%5Bdirection%5D=desc&sort-direction='
+url_39 = 'https://investor.textron.com/news/news-releases/default.aspx'
+url_40 = 'https://www.nasa.gov/news/all-news/'
+
+# Georgia
+url_41 = 'https://sos.ga.gov/news/division/31?page=0'
+url_42 = 'https://gov.georgia.gov/press-releases'
+url_43 = 'https://dol.georgia.gov/latest-news'
+url_44 = 'https://www.georgia.org/press-releases'
+url_45 = 'https://www.gachamber.com/all-news/'
+
+# California
+url_46 = 'https://www.sos.ca.gov/administration/news-releases-and-advisories/2023-news-releases-and-advisories'
+url_47 = 'https://www.gov.ca.gov/newsroom/'
+url_48 = 'https://business.ca.gov/newsroom/'
+url_49 = 'https://business.ca.gov/calosba-latest-news/'
+url_50 = 'https://www.dir.ca.gov/dlse/DLSE_whatsnew.htm'
+url_51 = 'https://www.dir.ca.gov/dosh/DOSH_Archive.html'
+url_52 = 'https://www.dir.ca.gov/mediaroom.html'
+url_53 = 'https://news.caloes.ca.gov/'
+url_54 = 'https://advocacy.calchamber.com/california-works/calchamber-members-in-the-news/'
+
+# Texas
+url_55 = 'https://gov.texas.gov/'
+url_56 = 'https://www.texasattorneygeneral.gov/news'
+url_57 = 'https://www.txdot.gov/about/newsroom/statewide.html'
+url_58 = 'https://www.dps.texas.gov/'
+url_59 = 'https://www.twc.texas.gov/'
+url_60 = 'https://tpwd.texas.gov/'
+url_61 = 'https://comptroller.texas.gov/'
+url_62 = 'https://www.tdi.texas.gov/index.html'
+url_63 = 'https://www.txbiz.org/chamber-news'
+url_64 = 'https://www.txbiz.org/press-releases'
+
+# New York
+url_65 = 'https://www.governor.ny.gov/news'
+url_66 = 'https://www.ny.gov/'
+url_67 = 'https://www.dot.ny.gov/news/press-releases/2023'
+url_68 = 'https://ag.ny.gov/press-releases'
+url_69 = 'https://www.dfs.ny.gov/'
+url_70 = 'https://www.tax.ny.gov/'
+url_71 = 'https://chamber.nyc/news'
+url_72 = 'https://aging.ny.gov/'
+url_73 = 'https://www.nyserda.ny.gov/'
+
+# New Jersey
+url_74 = 'https://www.njchamber.com/press-releases'
+url_75 = 'https://www.nj.gov/health/news/'
+url_76 = 'https://www.nj.gov/mvc/news/news.htm'
+
+# North Carolina
+url_77 = 'https://sosnc.gov/news_events/press_releases'
+url_78 = 'https://www.commerce.nc.gov/news/press-releases'
+url_79 = 'https://www.commerce.nc.gov/news/feed'
+url_80 = 'https://www.ncdor.gov/news/press-releases'
+url_81 = 'https://www.iprcenter.gov/news'
+url_82 = 'https://edpnc.com/news-events/'
+url_83 = 'https://ncchamber.com/category/chamber-updates/'
+
+# 워싱턴 dc
+url_84 = 'https://dc.gov/newsroom'
+url_85 = 'https://dcchamber.org/posts/'
+url_86 = 'https://planning.dc.gov/newsroom'
+url_87 = 'https://dpw.dc.gov/newsroom'
+
+# Virginia
+url_88 = 'https://www.governor.virginia.gov/newsroom/news-releases/'
+url_89 = 'https://www.vedp.org/press-releases'
+url_90 = 'https://www.doli.virginia.gov/category/announcements/'
+url_91 = 'https://vachamber.com/news/'
+
+# Maryland
+url_92 = 'https://governor.maryland.gov/news/press/Pages/default.aspx?page=1'
+url_93 = 'https://news.maryland.gov/mde/category/press-release/'
+url_94 = 'https://commerce.maryland.gov/media/press-room'
+url_95 = 'https://www.dllr.state.md.us/whatsnews/'
+url_96 = 'https://www.mdchamber.org/news/'
+
+urls = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, url_11, url_12, url_13, url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21, url_22, url_23, url_24, url_25, url_26, url_27, url_28, url_29, url_30, url_31, url_32, url_33, url_34, url_35, url_36, url_37, url_38, url_39, url_40, url_41, url_42, url_44, url_45, url_46, url_47, url_48, url_49, url_50, url_51, url_52, url_53, url_54, url_55, url_56, url_57, url_58, url_59, url_60, url_61, url_62, url_63, url_64, url_65, url_67, url_68, url_71, url_74, url_75, url_76, url_78, url_80, url_81, url_82, url_83, url_84, url_86, url_87, url_88, url_89, url_90, url_91, url_92, url_93, url_94, url_95, url_96]
+
+#url_4 = 'https://www.defense.gov'
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_4)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+date_blocks, article_date = None, None
+try:
+  date_blocks = soup.find_all('time')
+  if not date_blocks: error_list.append({'Error Link': url_4, 'Error': "Date Blocks"})
+  else:
+    for block in date_blocks:
+      date_str = block['data-dateap']
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date == today:
+        article_link = block.find_parent().find_parent().find_parent().find_parent().find('a').find_next('a')['href']
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        wd = webdriver.Chrome(service=service, options=chrome_options)
+        wd.get(article_link)
+        time.sleep(5)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        title = article_soup.find('h1', class_='maintitle').text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        # 기사 본문을 찾습니다.
+        body = [] ; bodys = str()
+        # 조건에 맞는 요소를 찾는 함수
+        def custom_filter(tag):
+          # 'p' 태그는 클래스에 상관없이 모두 선택
+          if tag.name == 'p':
+            return True
+          # 'div' 태그는 'ast-glance' 클래스만 선택
+          if tag.name == 'div' and 'ast-glance' in tag.get('class', []):
+            return True
+          # 그 외의 경우는 선택하지 않음
+          return False
+        paragraphs = article_soup.find_all(custom_filter)
+        for p in paragraphs: body.append(p.get_text().strip())
+        for i in range(3,len(body)-2): bodys += str(body[i]).strip()
+        if not bodys: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': url_4,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(Raw)': bodys
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_4,
+      'Error': str(e)
+      })
