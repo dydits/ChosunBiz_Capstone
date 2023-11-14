@@ -1,9 +1,3 @@
-import os
-os.system('pip install --upgrade selenium')
-os.system('pip install --upgrade python-dateutil')
-os.system('pip install --upgrade beautifulsoup4')
-os.system('pip install --upgrade pandas')
-
 # 라이브러리 import
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
