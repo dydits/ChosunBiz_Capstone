@@ -31,7 +31,7 @@ def date_util(article_date):
   except ValueError:
     # If parsing fails, handle the relative dates
     article_date = article_date.lower()
-    time_keywords = ["hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
+    time_keywords = ["h", "hrs", "hr", "m", "s", "hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
     if any(keyword in article_date for keyword in time_keywords):
       article_date = today
     elif "days" in article_date or "day" in article_date:
@@ -3634,6 +3634,53 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <71> ##############################################
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_71)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+news_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  news_blocks = soup.find_all('div', class_='post-style2 wow fadeIn')
+  if not news_blocks: error_list.append({'Error Link': url_71, 'Error': "None News"})
+  else:
+    for block in news_blocks:
+      date_str = block.find('li').text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date == today:
+        article_link = block.find('a')['href']
+        if article_link[0] !='h' : article_link = 'https://chamber.nyc/' + article_link
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        wd = webdriver.Chrome(service=service, options=chrome_options)
+        wd.get(article_link)
+        time.sleep(5)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        title = article_soup.find('h1').text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        # 기사 본문을 찾습니다.
+        body = [] ; bodys = str()
+        paragraphs = article_soup.find('div',class_='date').find_next_siblings(['p','ul'])
+        for p in paragraphs: bodys += (p.get_text().strip())
+        if not bodys: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': url_71,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(Raw)': bodys
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_71,
+      'Error': str(e)
+      })
 ########################################### <74> ##############################################
 #url_74 = "https://www.njchamber.com/press-releases"
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -4911,3 +4958,9 @@ except Exception as e:
      'Error Link': url_96,
      'Error': str(e)
      })
+
+########################################### <Print> ##############################################
+if articles == []:
+      print("No news for today!")
+display(pd.DataFrame(articles))
+display(pd.DataFrame(error_list))
