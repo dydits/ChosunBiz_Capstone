@@ -586,8 +586,7 @@ try:
               article_body = article_soup.find('div', itemprop='articleBody')
               content = ''
               if article_body:
-                # 'articleBody' div 내에서 HTML을 그대로 유지하면서 모든 텍스트를 추출
-                content = ''.join(str(article_body).splitlines())
+                content = article_body.text
               else: error_message = Error_Message(error_message, "None Contents")
               if error_message is not str():
                   error_list.append({
