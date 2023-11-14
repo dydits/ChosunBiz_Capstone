@@ -4055,7 +4055,6 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
-today = datetime(2023, 11, 8).date()     #실험용 날짜
 try:
      news_items = soup.select(".entry-article")
      if not news_items:
