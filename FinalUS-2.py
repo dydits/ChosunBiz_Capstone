@@ -124,7 +124,7 @@ url_58 = 'https://www.dps.texas.gov/news'
 url_59 = 'https://www.twc.texas.gov/news'
 url_60 = 'https://tpwd.texas.gov/newsmedia/releases/'
 url_61 = 'https://comptroller.texas.gov/about/media-center/news//'
-url_62 = 'https://www.tdi.texas.gov/index.html'
+url_62 = 'https://www.tdi.texas.gov/news/index.html'
 url_63 = 'https://www.txbiz.org/chamber-news'
 url_64 = 'https://www.txbiz.org/press-releases'
 
@@ -4665,8 +4665,8 @@ try :
             article_html = wd.page_source
             article_soup = BeautifulSoup(article_html, 'html.parser')
             content_div = article_soup.find('div', class_="mdg-pressRelease-content")
-            text_content = content_div.get_text(separator=' ', strip=True)
-            if not text_content: error_message = Error_Message(error_message, "None Contents")
+            content = content_div.get_text(separator=' ', strip=True)
+            if not content: error_message = Error_Message(error_message, "None Contents")
             if error_message is not str():
                 error_list.append({
                 'Error Link': url_92,
