@@ -114,7 +114,7 @@ url_53 = 'https://news.caloes.ca.gov/'
 url_54 = 'https://advocacy.calchamber.com/california-works/calchamber-members-in-the-news/'
 
 # Texas
-url_55 = 'https://gov.texas.gov/'
+url_55 = 'https://gov.texas.gov/news'
 url_56 = 'https://www.texasattorneygeneral.gov/news'
 url_57 = 'https://www.txdot.gov/about/newsroom/statewide.html'
 url_58 = 'https://www.dps.texas.gov/'
