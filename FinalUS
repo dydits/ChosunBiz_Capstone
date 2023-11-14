@@ -174,7 +174,186 @@ urls = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, u
         url_41, url_42, url_44, url_45, url_46, url_47, url_48, url_49, url_50, url_51, url_52, url_53, url_54, url_55, url_56, url_57, url_58, url_59, url_60,
         url_61, url_62, url_63, url_64, url_65, url_67, url_68, url_71, url_74, url_75, url_76, url_78, url_80,
         url_81, url_82, url_83, url_84, url_86, url_87, url_88, url_89, url_90, url_91, url_92, url_93, url_94, url_95, url_96]
-
+########################################### <1> ##############################################
+# url_1 = 'https://www.state.gov/press-releases/'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_1)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템을 처리합니다.
+    news_items = soup.find_all('li', class_='collection-result')
+    for item in news_items:
+        error_message = ''
+        title = item.find('a', class_='collection-result__link').text.strip()
+        link = item.find('a', class_='collection-result__link')['href']
+        if not title:
+            error_message = Error_Message(error_message, "None Title")
+        if not link:
+            error_message = Error_Message(error_message, "None Link")
+        if error_message == '':
+            wd.get(link)  # 기사 링크로 이동
+            time.sleep(5)
+            article_html = wd.page_source
+            news_soup = BeautifulSoup(article_html, 'html.parser')
+            date_tag = news_soup.find('p', class_='article-meta__publish-date')
+            if date_tag:
+                date_string = date_tag.text.strip()
+                news_date = date_util(date_string)
+                if news_date == today:
+                    paragraphs = news_soup.find_all('p')
+                    content_list = [p.text for p in paragraphs if p]
+                    content = '\n'.join(content_list)
+                    if error_message is not str():
+                        error_list.append({
+                            'Error Link': url_1,
+                            'Error': error_message
+                        })
+                    else:
+                        articles.append({
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': content
+                        })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_1,
+        'Error': str(e)
+    })
+########################################### <2> ##############################################
+# url_2 = 'https://www.state.gov/department-press-briefings/'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_2)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템을 처리합니다.
+    news_items = soup.find_all('li', class_='collection-result')
+    for item in news_items:
+        error_message = ''
+        title = item.find('a', class_='collection-result__link').text.strip()
+        link = item.find('a', class_='collection-result__link')['href']
+        if not title:
+            error_message = Error_Message(error_message, "None Title")
+        if not link:
+            error_message = Error_Message(error_message, "None Link")
+        if error_message == '':
+            wd.get(link)  # 기사 링크로 이동
+            time.sleep(5)
+            article_html = wd.page_source
+            news_soup = BeautifulSoup(article_html, 'html.parser')
+            date_tag = news_soup.find('p', class_='article-meta__publish-date')
+            if date_tag:
+                date_string = date_tag.text.strip()
+                news_date = datetime.strptime(date_string, '%B %d, %Y').date()
+                if news_date == today:
+                    paragraphs = news_soup.find_all('p')
+                    content_list = [p.text for p in paragraphs if p]
+                    content = '\n'.join(content_list)
+                    if error_message is not str():
+                        error_list.append({
+                            'Error Link': url_2,
+                            'Error': error_message
+                        })
+                    else:
+                        articles.append({
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': content
+                        })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_2,
+        'Error': str(e)
+    })
+########################################### <3> ##############################################
+# url_3 = 'https://home.treasury.gov/news/press-releases'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_3)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.find_all('h3', class_='featured-stories__headline')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_3,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            error_message = ''
+            link_tag = item.find('a')
+            if not link_tag:
+                error_message = Error_Message(error_message, "None Link")
+            else:
+                title = link_tag.text.strip()
+                if not title:
+                    error_message = Error_Message(error_message, "None Title")
+                link = "https://home.treasury.gov" + link_tag['href']
+                if not link:
+                    error_message = Error_Message(error_message, "None Link")
+                date_tag = link_tag.find_parent().find_parent().find('time', class_='datetime')
+                if not date_tag:
+                    error_message = Error_Message(error_message, "None Date")
+                else:
+                    date_str = parser.parse(date_tag.text.strip()).date()
+                    wd.get(link)  # 기사 링크로 이동
+                    time.sleep(5)
+                    article_html = wd.page_source
+                    news_soup = BeautifulSoup(article_html, 'html.parser')
+                    if date_str == today:
+                        content_tag = news_soup.find('div', class_='clearfix text-formatted field field--name-field-news-body field--type-text-long field--label-hidden field__item')
+                        if content_tag:
+                            content = content_tag.get_text(strip=True)
+                        if error_message is not str():
+                            error_list.append({
+                                'Error Link': url_3,
+                                'Error': error_message
+                            })
+                        else:
+                            articles.append({
+                                'Title': title,
+                                'Link': link,
+                                'Content(RAW)': content
+                            })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_3,
+        'Error': str(e)
+    })
 ########################################### <4> ##############################################
 #url_4 = 'https://www.defense.gov'
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -234,6 +413,69 @@ except Exception as e:
       'Error Link': url_4,
       'Error': str(e)
       })
+########################################### <5> ##############################################
+# url_5 = 'https://www.army.mil/news'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_5)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 가져오기
+    news_items = soup.find_all('div', class_='news-item')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_5,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            link_tag = item.find('a')
+            if link_tag:
+                title_tag = item.find('p', class_='title').find('a')
+                title = title_tag.get_text().strip()
+                if not title: error_message = Error_Message(error_message, "None Title")
+                # 링크 구성
+                article_link = link_tag['href']
+                link = f"https://www.army.mil{article_link}" if not article_link.startswith('http') else article_link
+                if not link: error_message = Error_Message(error_message, "None Link")
+                # 해당 기사 페이지로 이동
+                wd.get(link)
+                article_html = wd.page_source
+                article_soup = BeautifulSoup(article_html, 'html.parser')
+                # 날짜 추출
+                date_span = article_soup.select_one('p.small span')
+                if not date_span: error_message = Error_Message(error_message, "None Date")
+                if date_span:
+                    article_date = datetime.strptime(date_span.text.strip(), '%B %d, %Y').date()
+                    if article_date == today:
+                      content = ' '.join(p.text.strip() for p in article_soup.find_all('p'))
+                      if error_message is not str():
+                          error_list.append({
+                              'Error Link': url_5,
+                              'Error': error_message
+                              })
+                      else:
+                          articles.append({
+                              'Title': title,
+                              'Link': link,
+                              'Content(RAW)': content
+                              })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_5,
+        'Error': str(e)
+    })
 ########################################### <6> ##############################################
 #url_6 = 'https://www.navy.mil/Press-Office/'
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -283,6 +525,197 @@ except Exception as e:
       'Error Link': url_6,
       'Error': str(e)
       })
+########################################### <7> ##############################################
+# url_7 = 'https://www.af.mil/News/Category/22750/'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_7)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try :
+  #뉴스 아이템 가져오기
+  news_items = soup.find_all('article', class_='article-listing-item')
+  if not news_items:
+    error_list.append({
+        'Error Link': url_7,
+        'Error': "None News"
+        })
+  else :
+    for item in news_items :
+      title_tag = item.find('h1')
+      if title_tag and title_tag.find('a'):
+        title = title_tag.get_text().strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+      link_tag = title_tag.find('a')
+      link = link_tag['href'].strip() if link_tag else None
+      if not link: error_message = Error_Message(error_message, "None Link")
+      date_tag = item.find('time')
+      if date_tag:
+        date_string = date_tag.text.strip()
+        article_date = date_util(date_string)
+        if article_date == today:
+          wd.get(link)
+          time.sleep(5)
+          article_html = wd.page_source
+          article_soup = BeautifulSoup(article_html, 'html.parser')
+          paragraphs = article_soup.find_all('p')
+          if not paragraphs: error_message = Error_Message(error_message, "None Contents")
+          content = ' '.join(paragraph.get_text().strip() for paragraph in paragraphs)
+          if error_message is not str():
+                    error_list.append({
+                        'Error Link': url_7,
+                        'Error': error_message
+                        })
+          else:
+                    articles.append({
+                        'Title': title,
+                        'Link': link,
+                        'Content(RAW)': content
+                        })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_7,
+        'Error': str(e)
+    })
+########################################### <8> ##############################################
+# url_8 = 'https://www.nsa.gov/Press-Room/Press-Releases-Statements/'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_8)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 가져오기
+    news_items = soup.find_all('div', class_='item')
+    if not news_items:
+      error_list.append({
+          'Error Link': url_7,
+          'Error': "None News"
+          })
+    else :
+      for item in news_items :
+        title_tag = item.find('div', class_='title').find('a')
+        title = title_tag.text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        link = title_tag['href'].strip()
+        if not link: error_message = Error_Message(error_message, "None Link")
+        date_tag = item.find('span', class_='date')
+        if date_tag:
+          date_string = date_tag.text.strip()
+          article_date = date_util(date_string)
+          if article_date == today:
+              wd.get(link)
+              time.sleep(5)
+              article_html = wd.page_source
+              article_soup = BeautifulSoup(article_html, 'html.parser')
+              article_body = article_soup.find('div', itemprop='articleBody')
+              content = ''
+              if article_body:
+                # 'articleBody' div 내에서 HTML을 그대로 유지하면서 모든 텍스트를 추출
+                content = ''.join(str(article_body).splitlines())
+              else: error_message = Error_Message(error_message, "None Contents")
+              if error_message is not str():
+                  error_list.append({
+                      'Error Link' : url_8,
+                      'Error': error_message
+                      })
+              else :
+                  articles.append({
+                      'Title': title,
+                      'Link': link,
+                      'Content(RAW)': content
+                      })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_8,
+        'Error': str(e)
+    })
+########################################### <9> ##############################################
+# url_9 = 'https://www.justice.gov/news'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_9)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try :
+  #뉴스 아이템 가져오기
+  news_items = soup.find_all('article', class_='news-content-listing')
+  if not news_items:
+    error_list.append({
+        'Error Link': url_9,
+        'Error': "None News"
+        })
+  else :
+    for item in news_items :
+      title_tag = item.find('h2', class_='news-title')
+      if title_tag and title_tag.find('a'):
+        title = title_tag.get_text().strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+      link_tag = title_tag.find('a')
+      if link_tag:
+        relative_link = link_tag['href']
+        # 상대 링크를 절대 링크로 변환
+        base_url = url_9.rsplit('/', 1)[0]  # 'https://www.justice.gov'를 얻기 위해 /news 제거
+        full_link = base_url + relative_link
+      date_tag = item.find('time')
+      if date_tag :
+          date_string = date_tag.text.strip()
+          article_date = date_util(date_string)
+          if article_date == today:
+            wd.get(full_link)
+            time.sleep(5)
+            article_html = wd.page_source
+            article_soup = BeautifulSoup(article_html, 'html.parser')
+            article_body = article_soup.find('div', class_='node-body')
+            content = ''
+            if article_body: paragraphs = article_soup.find_all('p')
+            content = ' '.join(paragraph.get_text(strip=True) for paragraph in paragraphs)
+            if error_message is not str():
+                      error_list.append({
+                          'Error Link': url_9,
+                          'Error': error_message
+                          })
+            else:
+                      articles.append({
+                        'Title': title,
+                        'Link': full_link,
+                        'Content(RAW)': content
+                        })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_9,
+        'Error': str(e)
+    })
 ########################################### <10> ##############################################
 #url_10 = 'https://www.fbi.gov/news/press-releases'
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -426,6 +859,77 @@ except Exception as e:
       'Error Link': url_12,
       'Error': str(e)
       })
+########################################### <13> ##############################################
+# url_13 = 'https://www.ars.usda.gov/news-events/news-archive/'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_13)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+base_url = 'https://www.ars.usda.gov'
+try:
+    # 뉴스 아이템 가져오기
+    news_items = soup.find_all('a', id=lambda x: x and x.startswith('anch_'))
+    if not news_items:
+        error_list.append({
+            'Error Link': url_13,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            error_message = ''
+            title_link = item
+            if title_link:
+                title = title_link.text.strip()
+                if not title:
+                    error_message = Error_Message(error_message, "None Title")
+                relative_link = item['href']
+                if relative_link.startswith('/'):
+                    full_link = base_url + relative_link
+                else:
+                    full_link = base_url + '/' + relative_link
+                if not full_link:
+                    error_message = Error_Message(error_message, "None Link")
+                date_tag = item.find_next_sibling('td', class_='ars-tablecell-space')
+                if date_tag:
+                    date_string = date_tag.text.strip()
+                    article_date = date_util(date_string)
+                    if article_date == today:
+                        wd.get(full_link)
+                        time.sleep(5)
+                        article_html = wd.page_source
+                        article_soup = BeautifulSoup(article_html, 'html.parser')
+                        paragraphs = article_soup.find_all('p')
+                        content = '\n'.join([p.text for p in paragraphs if p])
+                        if not paragraphs:
+                            error_message = Error_Message(error_message, "None Contents")
+
+                        if error_message is not str():
+                            error_list.append({
+                                'Error Link': url_13,
+                                'Error': error_message
+                            })
+                        else:
+                            articles.append({
+                                'Title': title,
+                                'Link': full_link,
+                                'Content(RAW)': content
+                            })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_13,
+        'Error': str(e)
+    })
 ########################################### <14> ##############################################
 # url_14 = 'https://www.fs.usda.gov/news/releases'
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -479,6 +983,142 @@ except Exception as e:
          'Error Link': url_14,
          'Error': str(e)
      })
+########################################### <15> ##############################################
+# url_15 = 'https://www.fas.usda.gov/newsroom/search'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_15)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+base_url = 'https://fas.usda.gov'
+try:
+    # 뉴스 아이템 가져오기
+    news_items = soup.find_all('div', class_='card__header')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_15,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            error_message = ''
+            link_tag = item.find('a', class_='card__url')
+            if link_tag:
+                title = link_tag.text.strip()
+                if not title:
+                    error_message = Error_Message(error_message, "None Title")
+                relative_link = link_tag['href']
+                full_link = base_url + relative_link
+                if not full_link:
+                    error_message = Error_Message(error_message, "None Link")
+                date_tag = item.find('time')
+                if date_tag:
+                    date_time_str = date_tag['datetime']
+                    date_str = date_time_str.split('T')[0]
+                    article_date = date_util(date_str)
+                    if article_date == today:
+                        wd.get(full_link)
+                        time.sleep(5)
+                        article_html = wd.page_source
+                        article_soup = BeautifulSoup(article_html, 'html.parser')
+                        article_body = article_soup.find('div', class_='l-story__body-inner')
+                        paragraphs = [p.get_text() for p in article_body.find_all('p') if p.get_text().strip() != '']
+                        content_text = ' '.join(paragraphs)
+                        if not content_text:
+                            error_message = Error_Message(error_message, "None Content")
+                        if error_message is not str():
+                            error_list.append({
+                                'Error Link': url_15,
+                                'Error': error_message
+                            })
+                        else:
+                            articles.append({
+                                'Title': title,
+                                'Link': full_link,
+                                'Content(RAW)': content_text
+                            })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_15,
+        'Error': str(e)
+    })
+########################################### <16> ##############################################
+# url_16 = 'https://www.commerce.gov/news'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_16)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 가져오기
+    news_items = soup.find_all('div', class_='views-row')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_16,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            error_message = ''
+            date_tag = item.find('time', class_='datetime')
+            title_tag = item.find('span', class_='field field--name-title field--type-string field--label-hidden')
+            if date_tag and title_tag:
+                date_string = date_tag['datetime'].split('T')[0]  # 'YYYY-MM-DD' 형식으로 추출
+                article_date = date_util(date_string)
+                title = title_tag.get_text(strip=True)
+                if not title:
+                    error_message = Error_Message(error_message, "None Title")
+                link_tag = item.find('a', href=True)
+                link = link_tag['href'] if link_tag else '#'
+                full_link = f"https://www.commerce.gov{link}"  # 절대 URL 생성
+                if not full_link:
+                    error_message = Error_Message(error_message, "None Link")
+                if article_date == today:
+                    # 기사의 전체 내용 가져오기
+                    wd.get(full_link)
+                    time.sleep(5)
+                    article_html = wd.page_source
+                    article_soup = BeautifulSoup(article_html, 'html.parser')
+                    article_body = article_soup.find('div', id='block-commerce-content', class_='block block-system block-system-main-block')
+                    content = article_body.get_text(separator=' ', strip=True) if article_body else "No content available."
+                    if not content:
+                        error_message = Error_Message(error_message, "None Contents")
+                    if error_message is not str():
+                        error_list.append({
+                            'Error Link': url_16,
+                            'Error': error_message
+                        })
+                    else:
+                        articles.append({
+                            'Title': title,
+                            'Link': full_link,
+                            'Content(RAW)': content
+                        })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_16,
+        'Error': str(e)
+    })
 ########################################### <17> ##############################################
 #url_17 = 'https://www.dol.gov/newsroom/releases?agency=All&state=All&topic=All&year=all&page=0'
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -4082,10 +4722,72 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <94> ##############################################
-
-
-
-
+# url_94 = 'https://commerce.maryland.gov/media/press-room'
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+chrome_options = Options()
+chrome_options.page_load_strategy = 'normal'
+chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument(f'user-agent={USER_AGENT}')
+service = Service()  # ChromeDriver 경로를 지정해야 함
+wd = webdriver.Chrome(service=service, options=chrome_options)
+wd.get(url_94)
+base_url = "https://commerce.maryland.gov"
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 가져오기
+    news_item = soup.find('table', id='speakerTable')
+    if not news_item:
+        error_list.append({
+            'Error Link': url_94,
+            'Error': "None News"
+        })
+    else:
+        for row in news_item.find_all('tr'):
+            error_message = ''
+            # 날짜와 제목을 추출
+            date_tag = row.find('nobr')
+            title_tag = row.find('a')
+            if date_tag and title_tag:
+                date_string = date_tag.text.strip()
+                article_date = date_util(date_string)
+                title = title_tag.text.strip()
+                link = title_tag['href']
+                full_link = base_url + link if link.startswith('/') else link
+                if article_date == today:
+                    wd.get(full_link)
+                    time.sleep(5)
+                    article_html = wd.page_source
+                    article_soup = BeautifulSoup(article_html, 'html.parser')
+                    content = ''
+                    content_blocks = article_soup.find('div', id='ctl00_PlaceHolderMain_ctl06__ControlWrapper_RichHtmlField')
+                    if content_blocks:
+                        spans = content_blocks.find_all('span', style=lambda value: value and 'font-family' in value)
+                        for span in spans:
+                            content += span.get_text(strip=True) + ' '
+                    if not content:
+                        error_message = Error_Message(error_message, "None Contents")
+                    if error_message is not str():
+                        error_list.append({
+                            'Error Link': url_94,
+                            'Error': error_message
+                        })
+                    else:
+                        articles.append({
+                            'Title': title,
+                            'Link': full_link,
+                            'Content(RAW)': content
+                        })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_94,
+        'Error': str(e)
+    })
 ########################################### <95> ##############################################
 # 메릴랜드 노동부
 wd = webdriver.Chrome(service=service, options=chrome_options)
