@@ -160,7 +160,7 @@ url_87 = 'https://dpw.dc.gov/newsroom'
 url_88 = 'https://www.governor.virginia.gov/newsroom/news-releases/'
 url_89 = 'https://www.vedp.org/press-releases'
 url_90 = 'https://www.doli.virginia.gov/category/announcements/'
-url_91 = 'https://vachamber.com/news/'
+url_91 = 'https://vachamber.com/category/press-releases/'
 
 # Maryland
 url_92 = 'https://governor.maryland.gov/news/press/Pages/default.aspx?page=1'
@@ -406,7 +406,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -518,7 +518,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -754,7 +754,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -803,7 +803,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -852,7 +852,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -976,7 +976,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
      error_list.append({
@@ -1165,7 +1165,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1213,7 +1213,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1263,7 +1263,7 @@ try:
             articles.append({
               'Title': title,
               'Link': article_link,
-              'Content(Raw)': bodys
+              'Content(RAW)': bodys
             })
 except Exception as e:
   error_list.append({
@@ -1317,7 +1317,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': extracted_article
+            'Content(RAW)': extracted_article
           })
 except Exception as e:
   error_list.append({
@@ -1365,7 +1365,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1413,7 +1413,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1461,7 +1461,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1509,7 +1509,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1557,7 +1557,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1609,7 +1609,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1657,7 +1657,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1705,7 +1705,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1753,7 +1753,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1809,7 +1809,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1863,7 +1863,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1913,7 +1913,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -1968,7 +1968,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -2018,7 +2018,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -2068,7 +2068,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -2117,7 +2117,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -2166,7 +2166,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -2215,7 +2215,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -2265,7 +2265,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -2312,7 +2312,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e:
     error_list.append({
@@ -2362,7 +2362,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
      error_list.append({
@@ -2412,7 +2412,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
      error_list.append({
@@ -2469,7 +2469,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
     error_list.append({
@@ -2523,7 +2523,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
      error_list.append({
@@ -2572,7 +2572,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e: 
     error_list.append({
@@ -2622,7 +2622,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e:
     error_list.append({
@@ -2672,7 +2672,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e: # 코드상 에러가 생김
     error_list.append({
@@ -2722,7 +2722,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e: # 코드상 에러가 생김
     error_list.append({
@@ -2792,7 +2792,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -2841,7 +2841,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e:
     error_list.append({
@@ -2891,7 +2891,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e:
     error_list.append({
@@ -2937,7 +2937,7 @@ try:
               articles.append({
               'Title': title,
               'Link': link,
-              'Content(Raw)': content
+              'Content(RAW)': content
               })
 except Exception as e:
     error_list.append({
@@ -2989,7 +2989,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3039,7 +3039,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3085,7 +3085,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3183,7 +3183,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e: # 코드상 에러가 생김
     error_list.append({
@@ -3228,7 +3228,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3276,7 +3276,7 @@ try:
                     articles.append({
                     'Title': title,
                     'Link': link,
-                    'Content(Raw)': content
+                    'Content(RAW)': content
                     })
 except Exception as e:
     error_list.append({
@@ -3325,7 +3325,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3377,7 +3377,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3422,7 +3422,7 @@ try :
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3467,7 +3467,7 @@ try:
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
@@ -3521,7 +3521,7 @@ try:
                         articles.append({
                         'Title': title,
                         'Link': link,
-                        'Content(Raw)': content
+                        'Content(RAW)': content
                         })
 except Exception as e:
     error_list.append({
@@ -3575,7 +3575,7 @@ try:
                             articles.append({
                             'Title': title,
                             'Link': link,
-                            'Content(Raw)': content
+                            'Content(RAW)': content
                             })
 except Exception as e:
     error_list.append({
@@ -3626,7 +3626,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
     error_list.append({
@@ -3802,7 +3802,7 @@ try:
             articles.append({
               'Title': title,
               'Link': article_link,
-              'Content(Raw)': bodys
+              'Content(RAW)': bodys
             })
 except Exception as e:
   error_list.append({
@@ -3852,7 +3852,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -3902,7 +3902,7 @@ try:
           articles.append({
             'Title': title,
             'Link': article_link,
-            'Content(Raw)': bodys
+            'Content(RAW)': bodys
           })
 except Exception as e:
   error_list.append({
@@ -4087,7 +4087,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 
 except Exception as e:
@@ -4394,7 +4394,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
     error_list.append({
@@ -4611,7 +4611,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 
 except Exception as e:
@@ -4661,7 +4661,7 @@ try :
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e: # 코드상 에러가 생김
     error_list.append({
@@ -4714,7 +4714,7 @@ try:
                      articles.append({
                          'Title': title,
                          'Link': article_link,
-                         'Content(Raw)': article_body
+                         'Content(RAW)': article_body
                      })
 except Exception as e:
     error_list.append({
@@ -4830,7 +4830,7 @@ try :
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(Raw)': content
+                'Content(RAW)': content
                 })
 except Exception as e:
     error_list.append({
