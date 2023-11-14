@@ -176,15 +176,6 @@ urls = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, u
         url_81, url_82, url_83, url_84, url_86, url_87, url_88, url_89, url_90, url_91, url_92, url_93, url_94, url_95, url_96]
 ########################################### <1> ##############################################
 # url_1 = 'https://www.state.gov/press-releases/'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_1)
 time.sleep(5)
@@ -233,15 +224,6 @@ except Exception as e:
     })
 ########################################### <2> ##############################################
 # url_2 = 'https://www.state.gov/department-press-briefings/'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_2)
 time.sleep(5)
@@ -290,15 +272,6 @@ except Exception as e:
     })
 ########################################### <3> ##############################################
 # url_3 = 'https://home.treasury.gov/news/press-releases'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_3)
 time.sleep(5)
@@ -415,15 +388,6 @@ except Exception as e:
       })
 ########################################### <5> ##############################################
 # url_5 = 'https://www.army.mil/news'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_5)
 time.sleep(5)
@@ -527,15 +491,6 @@ except Exception as e:
       })
 ########################################### <7> ##############################################
 # url_7 = 'https://www.af.mil/News/Category/22750/'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_7)
 time.sleep(5)
@@ -589,15 +544,6 @@ except Exception as e:
     })
 ########################################### <8> ##############################################
 # url_8 = 'https://www.nsa.gov/Press-Room/Press-Releases-Statements/'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_8)
 time.sleep(5)
@@ -652,15 +598,6 @@ except Exception as e:
     })
 ########################################### <9> ##############################################
 # url_9 = 'https://www.justice.gov/news'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_9)
 time.sleep(5)
@@ -861,15 +798,6 @@ except Exception as e:
       })
 ########################################### <13> ##############################################
 # url_13 = 'https://www.ars.usda.gov/news-events/news-archive/'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_13)
 time.sleep(5)
@@ -985,15 +913,6 @@ except Exception as e:
      })
 ########################################### <15> ##############################################
 # url_15 = 'https://www.fas.usda.gov/newsroom/search'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_15)
 time.sleep(5)
@@ -1054,15 +973,6 @@ except Exception as e:
     })
 ########################################### <16> ##############################################
 # url_16 = 'https://www.commerce.gov/news'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_16)
 time.sleep(5)
@@ -4771,15 +4681,6 @@ except Exception as e:
     })
 ########################################### <94> ##############################################
 # url_94 = 'https://commerce.maryland.gov/media/press-room'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
-chrome_options = Options()
-chrome_options.page_load_strategy = 'normal'
-chrome_options.add_argument('--headless')  # 올바른 하이픈 사용
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument(f'user-agent={USER_AGENT}')
-service = Service()  # ChromeDriver 경로를 지정해야 함
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_94)
 base_url = "https://commerce.maryland.gov"
