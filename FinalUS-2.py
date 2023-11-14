@@ -690,7 +690,9 @@ try:
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = block.find_parent().find_parent().find('a').text.strip()
         if not title: error_message = Error_Message(error_message, "None Title")
-        bodys = article_soup.find('div',class_=['node-body','mosaic-tile-content']).text.strip()
+        body = [] ; bodys = str()
+        body = article_soup.find_all('div',class_=['node-body','mosaic-tile-content'])
+        for i in body: bodys += i.text.strip()
         if not bodys: error_message = Error_Message(error_message, "None Contents")
         if error_message is not str():
           error_list.append({
@@ -2200,7 +2202,6 @@ except Exception as e:
 ########################################### <40> ##############################################
 # NASA : https://www.nasa.gov/news/all-news/
 wd = initialize_chrome_driver()
-url_40 = 'https://www.nasa.gov/news/all-news/'
 wd.get(url_40)
 time.sleep(5)
 html = wd.page_source
@@ -2248,6 +2249,7 @@ except Exception as e:
 ########################################### <41> ##############################################
 #url_41 = 'https://sos.ga.gov/news/division/31?page=0'
 wd = initialize_chrome_driver()
+wd.get(url_41)
 time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
@@ -2299,6 +2301,7 @@ except Exception as e:
 ########################################### <42> ##############################################
 #url_42 = 'https://gov.georgia.gov/press-releases'
 wd = initialize_chrome_driver()
+wd.get(url_42)
 time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
