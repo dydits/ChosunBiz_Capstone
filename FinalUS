@@ -3093,11 +3093,11 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <57> ##############################################
-wd = webdriver.Chrome(service=service, options=chrome_options)
 #url_57 = "https://www.txdot.gov/about/newsroom/statewide.html"
+wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_57)
 time.sleep(5)
-html = wd.page_source  
+html = wd.page_source
 def get_article_list_updated(html, filter_date):
     soup = BeautifulSoup(html, 'html.parser')
     articles_info = []
@@ -3140,9 +3140,9 @@ try:
             })
 except Exception as e:
     error_list.append({
-     'Error Link': url_57, 
+     'Error Link': url_57,
      'Error': str(e)
-     })   
+     })
 ########################################### <58> ##############################################
 # 텍사스 교통부
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -3709,7 +3709,7 @@ def get_article_list_updated(html, filter_date):
             articles_info.append({'Title': Title, 'Link': Link, 'Date': date_str})
     return articles_info
 def get_article_content(article_url):
-    wd.get(article_url)
+    wd.get(url_74)
     article_html = wd.page_source
     article_soup = BeautifulSoup(article_html, 'html.parser')
     content_div = article_soup.find('div', itemprop='articleBody')
@@ -3756,7 +3756,7 @@ try:
           try:
               date_tag = li.find('span', class_='news_item_date')
               if date_tag:
-                  date_text = date_tag.get_text(strip=True) 
+                  date_text = date_tag.get_text(strip=True)
                   date_parsed = datetime.strptime(date_text, '%m/%d/%Y').date()
                   if date_parsed != filter_date:
                       continue
@@ -3777,7 +3777,7 @@ try:
               error_list.append({'Error Link': url_75, 'Error': str(e)})
       return articles_info
   def get_article_content(article_url):
-      wd.get(article_url)
+      wd.get(url_81)
       article_html = wd.page_source
       article_soup = BeautifulSoup(article_html, 'html.parser')
       content_div = article_soup.find('div', class_='mainText')
@@ -3960,16 +3960,17 @@ except Exception as e:
 #url_81 = "https://www.iprcenter.gov/news"
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_81)
-time.sleep(5) 
-html = wd.page_source 
+time.sleep(5)
+html = wd.page_source
 error_message = str()
 try:
     def get_article_list(url, filter_date):
-        response = requests.get(url)
-        html = response.text
+        wd.get(url_81)
+        html = wd.page_source 
         soup = BeautifulSoup(html, 'html.parser')
         articles_info = []
-        blocks = soup.find_all('li', class_='portal-type-news-item')
+        blocks = soup.find_all('li', class_='portal-type-news-item') 
+        article_html = wd.page_source
         if not blocks:
           error_list.append({
               'Error Link': url_81,
@@ -3981,20 +3982,20 @@ try:
             try:
                 date_parsed = datetime.strptime(date_text, '%m.%d.%Y').date()
             except ValueError:
-                print(f"날짜 파싱 실패: {date_text}")
+                print(f"parsing error: {date_text}")
                 continue
             if date_parsed == filter_date:
                 title_tag = news_item.find('p', class_='title')
-                link_tag = title_tag.find('a') 
-                title = link_tag.text.strip() 
+                link_tag = title_tag.find('a')
+                title = link_tag.text.strip()
                 link = link_tag['href']
                 if not link: error_message = Error_Message(error_message, "None Link")
                 if not title: error_message = Error_Message(error_message, "None Title")
                 articles_info.append({'title': title, 'link': link, 'date': date_parsed})
         return articles_info
     def get_article_content(article_url):
-        response = requests.get(article_url, verify=False)
-        article_html = response.text
+        wd.get(url_81) 
+        article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         content_div = article_soup.find_all('div', class_='mosaic-tile-content')
         if not content_div: error_message = Error_Message(error_message, "None Contents")
@@ -4032,8 +4033,8 @@ html = wd.page_source
 error_message = str()
 try:
       def get_article_list(url, filter_date):
-          response = requests.get(url)
-          html = response.text
+          wd.get(url_82)
+          html = wd.page_source
           soup = BeautifulSoup(html, 'html.parser')
           articles_info = []
           blocks = soup.find_all('div', class_='four columns')
@@ -4049,11 +4050,11 @@ try:
               try:
                   date_parsed = datetime.strptime(date_text, '%m/%d/%Y').date()
               except ValueError:
-                  print(f"날짜 파싱 실패: {date_text}")
+                  print(f"parsing error: {date_text}")
                   continue
               if date_parsed == filter_date:
                   title_tag = article_div.find('h3')
-                  title = title_tag.text.strip() 
+                  title = title_tag.text.strip()
                   link_tag = article_div.find('a', class_='blog_read_more')
                   link = link_tag['href']
                   if not link: error_message = Error_Message(error_message, "None Link")
@@ -4061,11 +4062,11 @@ try:
                   articles_info.append({'title': title, 'link': link, 'date': date_parsed})
           return articles_info
       def get_article_content(article_url):
-          response = requests.get(article_url, verify=False)
-          article_html = response.text
+          wd.get(url_82) 
+          article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           content_div = article_soup.find('div', class_='ten offset-by-one columns newsDetail')
-          if not content_div: error_message = Error_Message(error_message, "None Contents")    
+          if not content_div: error_message = Error_Message(error_message, "None Contents")
           paragraphs = content_div.find_all('p') if content_div else []
           content = ' '.join(paragraph.text.strip() for paragraph in paragraphs)
           return content.strip()
@@ -4087,7 +4088,7 @@ except Exception as e:
  error_list.append({
      'Error Link': url_82,
      'Error': str(e)
-     })    
+     })
 ########################################### <83> ##############################################
 #url_83 = "https://ncchamber.com/category/chamber-updates/"
 wd = webdriver.Chrome(service=service, options=chrome_options)
@@ -4146,15 +4147,15 @@ except Exception as e:
 #url_84 = "https://dc.gov/newsroom"
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_84)
-time.sleep(5)
-html = wd.page_source
+time.sleep(5) 
+html = wd.page_source 
 error_message = str()
 def Error_Message(current_error, new_error):
     return f"{current_error}; {new_error}" if current_error else new_error
 try:
     def get_article_list(url, filter_date):
-        response = requests.get(url)
-        html = response.text
+        wd.get(url_84)
+        html = wd.page_source
         soup = BeautifulSoup(html, 'html.parser')
         articles_info = []
         error_message = ""
@@ -4202,12 +4203,12 @@ try:
                 articles_info.append({'title': title, 'link': link})
         return articles_info
     def get_article_content(article_url):
-        response = requests.get(article_url)
-        article_html = response.text
+        wd.get(url_84) 
+        article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         error_message = ""
         content_div = article_soup.find('div', property="content:encoded")
-        if not content_div: error_message = "None Contents"    
+        if not content_div: error_message = "None Contents"
         paragraphs = content_div.find_all('p') if content_div else []
         content = ' '.join(paragraph.text.strip() for paragraph in paragraphs)
         return content, error_message
@@ -4219,7 +4220,7 @@ try:
                 'Error Link': url_84,
                 'Error': "None News"
             })
-            continue 
+            continue
         full_url = domain + article['link']
         content, content_error_message = get_article_content(full_url)
         if content_error_message:
@@ -4242,15 +4243,15 @@ except Exception as e:
 #url_86 = "https://planning.dc.gov/newsroom"
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_86)
-time.sleep(5)
-html = wd.page_source 
+time.sleep(5) 
+html = wd.page_source
 error_message = str()
 def Error_Message(current_error, new_error):
     return f"{current_error}; {new_error}" if current_error else new_error
 try:
       def get_article_list(url, filter_date):
-          response = requests.get(url)
-          html = response.text
+          wd.get(url_86) 
+          html = wd.page_source 
           soup = BeautifulSoup(html, 'html.parser')
           articles_info = []
           error_message = ""
@@ -4283,8 +4284,8 @@ try:
                   })
           return articles_info
       def get_article_content(article_url):
-          response = requests.get(article_url)
-          article_html = response.text
+          wd.get(url_86) 
+          article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           error_message = ""
           content_div = article_soup.find('div', property="content:encoded")
@@ -4293,7 +4294,7 @@ try:
               content = ' '.join(paragraph.text.strip() for paragraph in paragraphs)
           else:
               error_message = "None Contents"
-              content = "" 
+              content = ""
           return content, error_message
       articles_list = get_article_list(url_86, today)
       domain = 'https://planning.dc.gov'
@@ -4333,7 +4334,7 @@ try:
                   'Error': "None News"
               })
           for block in news_blocks:
-              link = None
+              link = None  
               try:
                   title_tag = block.find('span', class_='field-content').find('a')
                   if title_tag:
@@ -4359,7 +4360,7 @@ try:
                   error_list.append({'Error Link': "https://dpw.dc.gov" + (link or ""), 'Error': str(e)})
           return articles_info
       def get_article_content(article_url):
-          wd.get(article_url)
+          wd.get(url_87)
           article_html = wd.page_source
           article_soup = BeautifulSoup(article_html, 'html.parser')
           content_div = article_soup.find('div', property="content:encoded")
@@ -4456,10 +4457,10 @@ time.sleep(5)
 error_message = str()
 def Error_Message(current_error, new_error):
     return f"{current_error}; {new_error}" if current_error else new_error
-try: 
+try:
       def get_article_list(url, filter_date):
-          response = requests.get(url)
-          html = response.text
+          wd.get(url_89)
+          html = wd.page_source 
           soup = BeautifulSoup(html, 'html.parser')
           articles_info = []
           blocks = soup.find_all('h3', class_='field-content')
@@ -4495,7 +4496,7 @@ try:
                   })
           return articles_info
       def get_article_content(article_url):
-          wd.get(article_url)
+          wd.get(url_89)
           article_html = wd.page_source
           article_soup = BeautifulSoup(article_html, 'html.parser')
           content_section = article_soup.find('section', class_='content__top__main')
@@ -4504,7 +4505,7 @@ try:
               content = ' '.join(paragraph.text.strip() for paragraph in paragraphs)
               return content, ""
           else:
-              return "", "None Contents" 
+              return "", "None Contents"
       articles_list = get_article_list(url_89, today)
       for article in articles_list:
           full_url = 'https://www.vedp.org' + article['link']
@@ -4533,8 +4534,8 @@ time.sleep(5)
 error_message = str()
 try:
       def get_article_list(url, filter_date):
-          response = requests.get(url)
-          html = response.text
+          wd.get(url_90)  
+          html = wd.page_source 
           soup = BeautifulSoup(html, 'html.parser')
           articles_info = []
           error_message = ""
@@ -4546,7 +4547,7 @@ try:
               })
           for article in blocks:
               error_message = ""
-              title_tag = article.find('h3')
+              title_tag = article.find('h3') 
               link_tag = article.find('a', rel='bookmark')
               date_tag = article.find('time', class_='updated')
               if title_tag:
@@ -4574,17 +4575,17 @@ try:
                   })
           return articles_info
       def get_article_content(article_url):
-          response = requests.get(article_url, verify=False)
-          article_html = response.text
+          wd.get(url_90)
+          article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           error_message = ""
           content_div = article_soup.find('div', {'class': 'proclamation'})
           if not content_div:
               error_message = "None Contents"
-              return "", error_message
+              return "", error_message 
           paragraphs = content_div.find_all('p') if content_div else []
           content = ' '.join(paragraph.text.strip() for paragraph in paragraphs)
-          return content, error_message  
+          return content, error_message
       articles_list = get_article_list(url_90, today)
       for article in articles_list:
           full_url = article['link']
@@ -4888,12 +4889,12 @@ except Exception as e:
 #url_96 = "https://www.mdchamber.org/news/"
 wd = webdriver.Chrome(service=service, options=chrome_options)
 wd.get(url_96)
-time.sleep(5) 
+time.sleep(5)
 error_message = str()
 try:
       def get_article_list(url, filter_date):
-          response = requests.get(url)
-          html = response.text
+          wd.get(url_96)
+          html = wd.page_source
           soup = BeautifulSoup(html, 'html.parser')
           articles_info = []
           error_message = ""
@@ -4929,8 +4930,8 @@ try:
                   })
           return articles_info
       def get_article_content(article_url):
-          response = requests.get(article_url)
-          article_html = response.text
+          wd.get(url_96)  
+          article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           error_message = ""
           content_divs = article_soup.find_all('div', class_='fl-rich-text')
@@ -4958,7 +4959,6 @@ except Exception as e:
      'Error Link': url_96,
      'Error': str(e)
      })
-
 ########################################### <Print> ##############################################
 if articles == []:
       print("No news for today!")
