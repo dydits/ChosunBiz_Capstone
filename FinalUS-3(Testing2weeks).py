@@ -663,51 +663,6 @@ except Exception as e:
         'Error Link': url_9,
         'Error': str(e)
     })
-########################################### <10> ##############################################
-#url_10 = 'https://www.fbi.gov/news/press-releases'
-wd = initialize_chrome_driver()
-wd.get(url_10)
-time.sleep(5)
-html = wd.page_source
-soup = BeautifulSoup(html, 'html.parser')
-error_message = str()
-date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
-try:
-  date_blocks = soup.find_all('p',class_='date')
-  if not date_blocks: error_list.append({'Error Link': url_10, 'Error': "Date Blocks"})
-  else:
-    for block in date_blocks:
-      date_str = block.text.strip()
-      article_date = date_util(date_str)
-      article_link, title, bodys = None, None, None
-      if article_date == today:
-        article_link = block.find_parent().find_parent().find('a')['href']
-        if not article_link: error_message = Error_Message(error_message, "None Link")
-        wd = initialize_chrome_driver()
-        wd.get(article_link)
-        time.sleep(5)
-        article_html = wd.page_source
-        article_soup = BeautifulSoup(article_html, 'html.parser')
-        title = block.find_parent().find_parent().find('a').text.strip()
-        if not title: error_message = Error_Message(error_message, "None Title")
-        bodys = article_soup.find('div',class_=['node-body','mosaic-tile-content']).text.strip()
-        if not bodys: error_message = Error_Message(error_message, "None Contents")
-        if error_message is not str():
-          error_list.append({
-            'Error Link': url_10,
-            'Error': error_message
-          })
-        else:
-          articles.append({
-            'Title': title,
-            'Link': article_link,
-            'Content(RAW)': bodys
-          })
-except Exception as e:
-  error_list.append({
-      'Error Link': url_10,
-      'Error': str(e)
-      })
 ########################################### <11> ##############################################
 #url_11 = 'https://www.doi.gov/news'
 wd = initialize_chrome_driver()
@@ -1898,56 +1853,6 @@ try:
 except Exception as e:
   error_list.append({
       'Error Link': url_33,
-      'Error': str(e)
-      })
-########################################### <34> ##############################################
-#url_34 = 'https://www.rtx.com/news'
-wd = initialize_chrome_driver()
-wd.get(url_34)
-time.sleep(5)
-html = wd.page_source
-soup = BeautifulSoup(html, 'html.parser')
-error_message = str()
-date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
-try:
-  date_blocks = soup.find('div', class_='row esds-cards__content').find_all('time')
-  if not date_blocks: error_list.append({'Error Link': url_34, 'Error': "Date Blocks"})
-  else:
-    for block in date_blocks:
-      date_str = block.text.strip()
-      article_date = date_util(date_str)
-      article_link, title, bodys = None, None, None
-      if article_date == today:
-        article_link = block.find_parent().find_parent().find('a', class_='esds-cards__source')['href']
-        if article_link[0] =='/': article_link = 'https://www.rtx.com' + article_link
-        if not article_link: error_message = Error_Message(error_message, "None Link")
-        wd = initialize_chrome_driver()
-        wd.get(article_link)
-        time.sleep(5)
-        article_html = wd.page_source
-        article_soup = BeautifulSoup(article_html, 'html.parser')
-        title = block.find_parent().find('h3').text.strip()
-        if not title: error_message = Error_Message(error_message, "None Title")
-        # 기사 본문을 찾습니다.
-        body = [] ; bodys = str()
-        paragraphs = article_soup.find('section', class_='wrapper wrapper--8-col margin-top--none margin-bottom--small padding-top--standard padding-bottom--standard esds-rich-text')
-        for p in paragraphs: body.append(p.get_text().strip())
-        bodys = str(body[1])
-        if not bodys: error_message = Error_Message(error_message, "None Contents")
-        if error_message is not str():
-          error_list.append({
-            'Error Link': url_34,
-            'Error': error_message
-          })
-        else:
-          articles.append({
-            'Title': title,
-            'Link': article_link,
-            'Content(RAW)': bodys
-          })
-except Exception as e:
-  error_list.append({
-      'Error Link': url_34,
       'Error': str(e)
       })
 ########################################### <35> ##############################################
