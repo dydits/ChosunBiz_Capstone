@@ -278,7 +278,7 @@ for page_num in range(1, 5):
             if date_tag:
                 date_string = date_tag.text.strip()
                 news_date = parser.parse(date_string).date()
-                if news_date >= today:
+                if news_date in today_list:
                     paragraphs = news_soup.find_all('p')
                     content = '\n'.join(p.text for p in paragraphs if p)
                     if error_message is not str():
@@ -2708,7 +2708,7 @@ try:
         td_tags = item.find_all('td')
         if td_tags:
             article_date = date_util(td_tags[0].text)
-            if article_date == today:
+            if article_date in today_list:
                 a_tag = item.find('a')
                 if not a_tag: error_list.append({'Error Link': url_51, 'Error': "Entire Error3"})
                 if a_tag and 'href' in a_tag.attrs:
@@ -2761,7 +2761,7 @@ try:
         if not td_tags: error_list.append({'Error Link': url_52, 'Error': "Entire Error2"})
         if td_tags:
             article_date = date_util(td_tags[0].text)
-            if article_date == today:
+            if article_date in today_list:
                 a_tag = item.find('a')
                 title = a_tag.attrs.get('aria-label').strip()
                 if not title: error_message = Error_Message(error_message, "None title")
@@ -2813,7 +2813,7 @@ try:
         if not date: error_message = Error_Message(error_message, "None date")
         author = article.find('a', rel='author').get_text(strip=True)
         article_date = date_util(date)
-        if article_date == today:
+        if article_date in today_list:
             wd = initialize_chrome_driver()
             wd.get(link)
             time.sleep(5)
@@ -2862,7 +2862,7 @@ try:
         newspaper, date_str = em_text.split(',', 1)  
         date_str = date_str.strip() 
         date = date_util(date_str)
-        if date == today:
+        if date in today_list:
             title = article.a.text
             if not title: error_message = Error_Message(error_message, "None title")
             link = article.a['href']
@@ -2913,7 +2913,7 @@ try:
         date_str = f"{month.text} {day_s[i].text}"
         article_date = date_util(date_str)
         i+=1
-        if article_date == today:
+        if article_date in today_list:
             title = h3_tags[i-1].a.text
             if not title: error_message = Error_Message(error_message, "None title")
             link = h3_tags[i-1].a['href']
@@ -2959,7 +2959,7 @@ try:
         date_str = article.find_next_sibling('p', class_='meta').get_text()
         if not date_str: error_message = Error_Message(error_message, "None date")
         article_date = date_util(date_str.split('|')[0].strip())
-        if article_date == today:
+        if article_date in today_list:
             a_tag = article.find('a')  
             if not a_tag: error_message = Error_Message(error_message, "None title")
             title = a_tag.text.strip() 
@@ -3013,7 +3013,7 @@ def get_article_list_updated(html, filter_date):
             date_parsed = datetime.strptime(date_text, '%m/%d/%y').date()
         except ValueError:
             continue
-        if date_parsed == filter_date:
+        if date_parsed >= filter_date:
             articles_info.append({'title': title, 'link': link, 'date': date_parsed})
     return articles_info
 def get_article_content(article_url):
@@ -3064,7 +3064,7 @@ try:
         date = item.select_one('.views-field-created').get_text(strip=True)
         if not date: error_message = Error_Message(error_message, "None date")
         news_date = date_util(date)
-        if news_date == today:
+        if news_date in today_list:
             wd = initialize_chrome_driver()
             wd.get(link)
             time.sleep(5)
@@ -3110,7 +3110,7 @@ try:
         date = item.find('div', class_='news-date').get_text(strip=True)
         if not date: error_message = Error_Message(error_message, "None date")
         news_date = date_util(date)
-        if news_date == today:
+        if news_date in today_list:
             wd = initialize_chrome_driver()
             wd.get(link)
             time.sleep(5)
@@ -3213,7 +3213,7 @@ try:
         date_str = br_tag.next_sibling.strip() 
         if not date_str: error_message = Error_Message(error_message, "None date")
         news_date = date_util(date_str)
-        if news_date == today:
+        if news_date in today_list:
             wd = initialize_chrome_driver()
             wd.get(link)
             time.sleep(5)
@@ -3260,7 +3260,7 @@ try:
         date_str = strong_tag.get_text().rstrip(':')
         if not date_str: error_message = Error_Message(error_message, "None date")
         news_date = date_util(date_str)
-        if news_date == today:
+        if news_date in today_list:
             a_tag = p_tag.find('a')
             if not a_tag: error_message = Error_Message(error_message, "Entire Error3")
             title = a_tag.get_text().strip()
@@ -3312,7 +3312,7 @@ try :
         date = article.find('span', class_='post-metadata__date').text
         if not date: error_message = Error_Message(error_message, "None date")
         news_date = date_util(date)
-        if news_date == today:
+        if news_date in today_list:
             wd = initialize_chrome_driver()
             wd.get(link)
             time.sleep(5)
@@ -3358,7 +3358,7 @@ try:
         date = article.find('span', class_='post-metadata__date').text
         if not date: error_message = Error_Message(error_message, "None date")
         news_date = date_util(date)
-        if news_date == today:
+        if news_date in today_list:
             wd = initialize_chrome_driver()
             wd.get(link)
             time.sleep(5)
@@ -3464,7 +3464,7 @@ try:
         if date_cell:
             date_text = date_cell.text.strip()
             article_date = date_util(date_text)
-            if article_date == today:
+            if article_date in today_list:
                 a_tag = row.find('a', href=True, target="_blank")
                 if not a_tag: error_message = Error_Message(error_message, "Entire Error3")
                 if not a_tag['href'].startswith('http'): error_message = Error_Message(error_message, "Entire Error4")
@@ -3521,7 +3521,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date in today_list:
                  title = item.select_one('a').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -3568,7 +3568,7 @@ try:
       date_str = block.find('li').text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find('a')['href']
         if article_link[0] !='h' : article_link = 'https://chamber.nyc/' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -3624,7 +3624,7 @@ def get_article_list_updated(html, filter_date):
         date_str = item.find_next_sibling('div', class_='g-array-item-details').find('span', class_='g-array-item-date').get_text(strip=True)
         if not date_str: error_message = Error_Message(error_message, "None Date")
         date_str = parser.parse(date_str).date()
-        if date_str == today:
+        if date_str in today_list:
             articles_info.append({'Title': Title, 'Link': Link, 'Date': date_str})
     return articles_info
 def get_article_content(article_url):
@@ -3678,7 +3678,7 @@ try:
               if date_tag:
                   date_text = date_tag.get_text(strip=True)
                   date_parsed = datetime.strptime(date_text, '%m/%d/%Y').date()
-                  if date_parsed != filter_date:
+                  if date_parsed < filter_date:
                       continue
               else:
                   raise ValueError("None Date")
@@ -3752,7 +3752,7 @@ try:
           if i == 2: date_str = finddate[i].text.strip()
         article_date = date_util(date_str)
         title, bodys = None, None
-        if article_date == today:
+        if article_date in today_list:
           article = article_soup.find_all('p')
           entire = []
           for p in article: entire.append(p.get_text().strip())  # 텍스트 내용을 출력
@@ -3794,7 +3794,7 @@ try:
       date_str = block['content'].strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find_parent().find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.commerce.nc.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -3844,7 +3844,7 @@ try:
       date_str = block['content'].strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find_parent().find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.ncdor.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -3905,7 +3905,7 @@ try:
             except ValueError:
                 print(f"parsing error: {date_text}")
                 continue
-            if date_parsed == filter_date:
+            if date_parsed < filter_date:
                 title_tag = news_item.find('p', class_='title')
                 link_tag = title_tag.find('a')
                 title = link_tag.text.strip()
@@ -3974,7 +3974,7 @@ try:
               except ValueError:
                   print(f"parsing error: {date_text}")
                   continue
-              if date_parsed == filter_date:
+              if date_parsed >= filter_date:
                   title_tag = article_div.find('h3')
                   title = title_tag.text.strip()
                   link_tag = article_div.find('a', class_='blog_read_more')
@@ -4020,7 +4020,6 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
-today = datetime(2023, 11, 8).date()     #실험용 날짜
 try:
      news_items = soup.select(".entry-article")
      if not news_items:
@@ -4034,7 +4033,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date in today_list:
                  title = item.select_one('h2 a').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -4124,7 +4123,7 @@ try:
                     'Error Link': url_84,
                     'Error': error_message
                 })
-            elif date == filter_date:
+            elif date >= filter_date:
                 articles_info.append({'title': title, 'link': link})
         return articles_info
     def get_article_content(article_url):
@@ -4199,7 +4198,7 @@ try:
                   error_message = Error_Message(error_message, "None Title")
               if link is None:
                   error_message = Error_Message(error_message, "None Link")
-              if date is None or date != filter_date:
+              if date is None or date >= filter_date:
                   continue 
               if not error_message:
                   articles_info.append({'title': title, 'link': link})
@@ -4274,7 +4273,7 @@ try:
                       date_text = date_span.get_text()
                       try:
                           date = datetime.strptime(date_text, '%m/%d/%Y').date()
-                          if date != filter_date:
+                          if date < filter_date:
                               continue
                       except ValueError:
                           raise ValueError("None Date")
@@ -4336,7 +4335,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date in today_list:
                  title = item.select_one(".va-icon--arrow-ext").text
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -4416,7 +4415,7 @@ try:
                   except ValueError:
                       date = None
                       error_message = Error_Message(error_message, "None Link")
-              if date == filter_date and not error_message:
+              if date > filter_date and not error_message:
                   articles_info.append({'title': title, 'link': link})
               elif error_message:
                   error_list.append({
@@ -4496,7 +4495,7 @@ try:
               else:
                   date_parsed = None
                   error_message = Error_Message(error_message, "None Date")
-              if date_parsed == filter_date and not error_message:
+              if date_parsed >= filter_date and not error_message:
                   articles_info.append({'title': title, 'link': link})
               elif error_message:
                   error_list.append({
@@ -4558,7 +4557,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date in today_list:
                  title = item.select_one('h4 a').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -4672,7 +4671,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date in today_list:
                  title = item.select_one('a').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -4732,7 +4731,7 @@ try:
                 title = title_tag.text.strip()
                 link = title_tag['href']
                 full_link = base_url + link if link.startswith('/') else link
-                if article_date == today:
+                if article_date in today_list:
                     wd = initialize_chrome_driver()
                     wd.get(full_link)
                     time.sleep(5)
@@ -4786,7 +4785,7 @@ try :
         date_str = li.text.split(' - ')[-1]
         if not date_str: error_message = Error_Message(error_message, "None date")
         news_date = date_util(date_str)
-        if news_date == today:
+        if news_date in today_list:
             wd = initialize_chrome_driver()
             wd.get(link)
             time.sleep(5)
@@ -4848,7 +4847,7 @@ try:
               except (AttributeError, ValueError):
                   date_parsed = None
                   error_message = Error_Message(error_message, "None Date")
-              if date_parsed == filter_date and not error_message:
+              if date_parsed >= filter_date and not error_message:
                   articles_info.append({'title': title, 'link': link, 'date': date_parsed})
               elif error_message:
                   error_list.append({
