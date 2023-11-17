@@ -59,7 +59,7 @@ articles = []
 error_list = []
 today = parser.parse('2023-11-01').date()
 today_list = [parser.parse('2023-11-' + str(i)).date() for i in range(1, 18)]
-
+start_date = datetime.strptime('2023-11-01', '%Y-%m-%d').date()
 # 연방정부 + 방산업체들 + NASA
 url_1 = 'https://www.state.gov/press-releases/'
 url_2 = 'https://www.state.gov/department-press-briefings/'
@@ -2448,6 +2448,7 @@ except Exception as e:
 # 캘리포니아 주지사 뉴스
 #url_47 = 'https://www.gov.ca.gov/newsroom/'
 wd = initialize_chrome_driver()
+url_47 = 'https://www.gov.ca.gov/newsroom/'
 wd.get(url_47)
 html = wd.page_source
 time.sleep(5)
@@ -2462,7 +2463,7 @@ for _ in range(4):
         )
         wd.execute_script("arguments[0].click();", load_more_button)
         time.sleep(5)
-        htmls.append(wd.page_source)
+        htmls.append(wd.page_source) 
     except Exception as e:
         error_list.append({
             'Error Link': url_47,
@@ -2480,7 +2481,7 @@ for html in htmls:
             if not date_text:
                 error_message = error_list.append({'Error Link': url_47, 'Error': "None Date"})
             article_date = date_util(date_text)
-            if article_date == today:
+            if start_date <= article_date:
                 news_items = soup.find_all('h2', class_='entry-title')
                 if not news_items:
                     error_message = error_list.append({'Error Link': url_47, 'Error': "None news_items"})
@@ -2797,48 +2798,65 @@ except Exception as e:
 #url_53 = 'https://news.caloes.ca.gov/'
 wd = initialize_chrome_driver()
 wd.get(url_53)
-time.sleep(5)
 html = wd.page_source
+time.sleep(5)
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
-try:
-    news_items = soup.find_all('article')
-    if not news_items: error_list.append({'Error Link': url_53, 'Error': "Entire Error1"})
-    for article in news_items:
-        title = article.find('h2', class_='entry-title').get_text(strip=True)
-        if not title: error_message = Error_Message(error_message, "None title")
-        link = article.find('a', class_='entry-featured-image-url')['href']
-        if not link: error_message = Error_Message(error_message, "None link")
-        date = article.find('span', class_='published').get_text(strip=True)
-        if not date: error_message = Error_Message(error_message, "None date")
-        author = article.find('a', rel='author').get_text(strip=True)
-        article_date = date_util(date)
-        if article_date in today_list:
-            wd = initialize_chrome_driver()
-            wd.get(link)
-            time.sleep(5)
-            article_html = wd.page_source
-            article_soup = BeautifulSoup(article_html, 'html.parser')
-            paragraphs = article_soup.find_all('p')
-            content_list = [p.text for p in paragraphs if p]
-            content = '\n'.join(content_list)
-            if not content: error_message = Error_Message(error_message, "None Contents")
-            if error_message is not str():
-              error_list.append({
-              'Error Link': url_53,
-              'Error': error_message
-              })
-            else:
-              articles.append({
-              'Title': title,
-              'Link': link,
-              'Content(RAW)': content
-              })
-except Exception as e:
-    error_list.append({
-     'Error Link': url_53,
-     'Error': str(e)
-     })
+htmls = []
+htmls = [wd.page_source]
+for _ in range(3):
+    try:
+        load_more_button = WebDriverWait(wd, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div.alignleft a"))
+        )
+        wd.execute_script("arguments[0].click();", load_more_button)
+        time.sleep(5) 
+        htmls.append(wd.page_source) 
+    except Exception as e:
+        error_list.append({
+            'Error Link': url_53,
+            'Error': str(e)
+        })
+for html in htmls:
+    soup = BeautifulSoup(html, 'html.parser')
+    try:
+        news_items = soup.find_all('article')
+        if not news_items: error_list.append({'Error Link': url_53, 'Error': "Entire Error1"})
+        for article in news_items:
+            title = article.find('h2', class_='entry-title').get_text(strip=True)
+            if not title: error_message = Error_Message(error_message, "None title")
+            link = article.find('a', class_='entry-featured-image-url')['href']
+            if not link: error_message = Error_Message(error_message, "None link")
+            date = article.find('span', class_='published').get_text(strip=True)
+            if not date: error_message = Error_Message(error_message, "None date")
+            author = article.find('a', rel='author').get_text(strip=True)
+            article_date = date_util(date)
+            if article_date in today_list:
+                wd = initialize_chrome_driver()
+                wd.get(link)
+                time.sleep(5)
+                article_html = wd.page_source
+                article_soup = BeautifulSoup(article_html, 'html.parser')
+                paragraphs = article_soup.find_all('p')
+                content_list = [p.text for p in paragraphs if p]
+                content = '\n'.join(content_list)
+                if not content: error_message = Error_Message(error_message, "None Contents")
+                if error_message is not str():
+                  error_list.append({
+                  'Error Link': url_53,
+                  'Error': error_message
+                  })
+                else:
+                  articles.append({
+                  'Title': title,
+                  'Link': link,
+                  'Content(RAW)': content
+                  })
+    except Exception as e:
+        error_list.append({
+         'Error Link': url_53,
+         'Error': str(e)
+         })
 ########################################### <54> ##############################################
 # 캘리포니아 상공회의소
 #url_54 = 'https://advocacy.calchamber.com/california-works/calchamber-members-in-the-news/'
@@ -2901,48 +2919,62 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
-try:
-    h3_tags = soup.find_all('h3', class_='h2')
-    if not h3_tags: error_list.append({'Error Link': url_55, 'Error': "Entire Error1"})
-    month_s = soup.find_all('span', class_='date-month')
-    if not month_s: error_list.append({'Error Link': url_55, 'Error': "Entire Error2"})
-    day_s= soup.find_all('span', class_='date-day')
-    if not day_s: error_list.append({'Error Link': url_55, 'Error': "Entire Error3"})
-    i = 0
-    for month in month_s:
-        date_str = f"{month.text} {day_s[i].text}"
-        article_date = date_util(date_str)
-        i+=1
-        if article_date in today_list:
-            title = h3_tags[i-1].a.text
-            if not title: error_message = Error_Message(error_message, "None title")
-            link = h3_tags[i-1].a['href']
-            if not link: error_message = Error_Message(error_message, "None link")
-            wd = initialize_chrome_driver()
-            wd.get(link)
-            time.sleep(5)
-            article_html = wd.page_source
-            article_soup = BeautifulSoup(article_html, 'html.parser')
-            paragraphs = article_soup.find_all('p')
-            content_list = [p.text for p in paragraphs if p]
-            content = '\n'.join(content_list)
-            if not content: error_message = Error_Message(error_message, "None Contents")
-            if error_message is not str():
-                error_list.append({
-                'Error Link': url_55,
-                'Error': error_message
-                })
-            else:
-                articles.append({
-                'Title': title,
-                'Link': link,
-                'Content(RAW)': content
-                })
-except Exception as e:
-    error_list.append({
-     'Error Link': url_55,
-     'Error': str(e)
-     })
+htmls = []
+htmls = [wd.page_source]
+base_url = "https://gov.texas.gov/news/"
+wd.get(base_url)
+time.sleep(2) 
+htmls.append(wd.page_source)
+for page_num in range(1, 5): 
+    page_suffix = f'P{page_num * 8}'  
+    page_url = f"{base_url}{page_suffix}"
+    wd.get(page_url)
+    time.sleep(2)
+    htmls.append(wd.page_source)
+for html in htmls:
+    try:
+        soup = BeautifulSoup(html, 'html.parser')
+        h3_tags = soup.find_all('h3', class_='h2')
+        if not h3_tags: error_list.append({'Error Link': url_55, 'Error': "Entire Error1"})
+        month_s = soup.find_all('span', class_='date-month')
+        if not month_s: error_list.append({'Error Link': url_55, 'Error': "Entire Error2"})
+        day_s = soup.find_all('span', class_='date-day')
+        if not day_s: error_list.append({'Error Link': url_55, 'Error': "Entire Error3"})
+        i = 0
+        for month in month_s:
+            date_str = f"{month.text} {day_s[i].text}"
+            article_date = date_util(date_str)
+            i += 1
+            if article_date >= start_date:
+                title = h3_tags[i-1].a.text
+                if not title: error_message = Error_Message(error_message, "None title")
+                link = h3_tags[i-1].a['href']
+                if not link: error_message = Error_Message(error_message, "None link")
+                wd = initialize_chrome_driver()
+                wd.get(link)
+                time.sleep(2)
+                article_html = wd.page_source
+                article_soup = BeautifulSoup(article_html, 'html.parser')
+                paragraphs = article_soup.find_all('p')
+                content_list = [p.text for p in paragraphs if p]
+                content = '\n'.join(content_list)
+                if not content: error_message = Error_Message(error_message, "None Contents")
+                if error_message is not str():
+                    error_list.append({
+                        'Error Link': url_55,
+                        'Error': error_message
+                    })
+                else:
+                    articles.append({
+                        'Title': title,
+                        'Link': link,
+                        'Content(RAW)': content
+                    })
+    except Exception as e:
+        error_list.append({
+            'Error Link': url_55,
+            'Error': str(e)
+        })
 ########################################### <56> ##############################################
 # 텍사스 법무장관실
 #url_56 = 'https://www.texasattorneygeneral.gov/news'
@@ -4601,12 +4633,27 @@ except Exception as e:
 ########################################### <92> ##############################################
 # 메릴랜드 주지사
 #url_92 = "https://governor.maryland.gov/news/press/Pages/default.aspx?page=1"
+start_date = datetime.strptime('2023-11-01', '%Y-%m-%d').date()
+end_date = datetime.strptime('2023-11-17', '%Y-%m-%d').date()
+url_92 = "https://governor.maryland.gov/news/press/Pages/default.aspx?page=1"
 wd = initialize_chrome_driver()
 wd.get(url_92)
 time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+htmls = []
+htmls = [wd.page_source]
+base_url = "https://governor.maryland.gov/news/press/Pages/default.aspx?page="
+start_page = 1
+end_page = 2
+wd = initialize_chrome_driver()
+for page_num in range(start_page, end_page + 1):
+    page_url = f"{base_url}{page_num}"
+    wd.get(page_url)
+    time.sleep(5) 
+    htmls.append(wd.page_source)
+    soup = BeautifulSoup(html, 'html.parser')
 try :
     div_content = soup.find('div', class_ = 'mdgov-twoCol-col2 order-1')
     if not div_content: error_list.append({'Error Link': url_92, 'Error': "Entire Error1"})
@@ -4623,8 +4670,7 @@ try :
         date_str = date_tag.text.split(': ')[-1]
         if not date_str: error_message = Error_Message(error_message, "None date")
         date = date_util(date_str)
-        if date == today:
-            wd = initialize_chrome_driver()
+        if start_date <= date:
             wd.get(link)
             time.sleep(5)
             article_html = wd.page_source
@@ -4641,9 +4687,9 @@ try :
                 articles.append({
                 'Title': title,
                 'Link': link,
-                'Content(RAW)': content
+                'Content(RAW)': text_content
                 })
-except Exception as e: # 코드상 에러가 생김
+except Exception as e:
     error_list.append({
      'Error Link': url_92,
      'Error': str(e)
