@@ -14,8 +14,6 @@ import re
 
 def initialize_chrome_driver():
   # Chrome 옵션 설정 : USER_AGENT는 알아서 수정
-  #USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.105 Safari/537.36"
-  # 태준컴
   USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5.2 Safari/605.1.15'
   chrome_options = Options()
   chrome_options.page_load_strategy = 'normal'  # 'none', 'eager', 'normal'
@@ -357,65 +355,6 @@ for page_num in range(0, 6):  # 6 페이지까지 순회 (더 많은 페이지�
                 'Error Link': url_3,
                 'Error': str(e)
             })
-########################################### <4> ##############################################
-#url_4 = 'https://www.defense.gov/News/'
-wd = initialize_chrome_driver()
-wd.get(url_4)
-time.sleep(5)
-html = wd.page_source
-soup = BeautifulSoup(html, 'html.parser')
-error_message = str()
-date_blocks, article_date = None, None
-try:
-  date_blocks = soup.find_all('time')
-  if not date_blocks: error_list.append({'Error Link': url_4, 'Error': "Date Blocks"})
-  else:
-    for block in date_blocks:
-      date_str = block['data-dateap']
-      article_date = date_util(date_str)
-      article_link, title, bodys = None, None, None
-      if article_date == today:
-        article_link = block.find_parent().find_parent().find_parent().find_parent().find('a').find_next('a')['href']
-        if not article_link: error_message = Error_Message(error_message, "None Link")
-        wd = initialize_chrome_driver()
-        wd.get(article_link)
-        time.sleep(5)
-        article_html = wd.page_source
-        article_soup = BeautifulSoup(article_html, 'html.parser')
-        title = article_soup.find('h1', class_='maintitle').text.strip()
-        if not title: error_message = Error_Message(error_message, "None Title")
-        # 기사 본문을 찾습니다.
-        body = [] ; bodys = str()
-        # 조건에 맞는 요소를 찾는 함수
-        def custom_filter(tag):
-          # 'p' 태그는 클래스에 상관없이 모두 선택
-          if tag.name == 'p':
-            return True
-          # 'div' 태그는 'ast-glance' 클래스만 선택
-          if tag.name == 'div' and 'ast-glance' in tag.get('class', []):
-            return True
-          # 그 외의 경우는 선택하지 않음
-          return False
-        paragraphs = article_soup.find_all(custom_filter)
-        for p in paragraphs: body.append(p.get_text().strip())
-        for i in range(3,len(body)-2): bodys += str(body[i]).strip()
-        if not bodys: error_message = Error_Message(error_message, "None Contents")
-        if error_message is not str():
-          error_list.append({
-            'Error Link': url_4,
-            'Error': error_message
-          })
-        else:
-          articles.append({
-            'Title': title,
-            'Link': article_link,
-            'Content(RAW)': bodys
-          })
-except Exception as e:
-  error_list.append({
-      'Error Link': url_4,
-      'Error': str(e)
-      })
 ########################################### <5> ##############################################
 # url_5 = 'https://www.army.mil/news'
 wd = initialize_chrome_driver()
@@ -488,7 +427,7 @@ try:
       date_str = article.find('h6').text
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = article.find('h2').find('a')['href']
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
@@ -549,7 +488,7 @@ try :
       if date_tag:
         date_string = date_tag.text.strip()
         article_date = date_util(date_string)
-        if article_date == today:
+        if article_date >= today:
           wd = initialize_chrome_driver()
           wd.get(link)
           time.sleep(5)
@@ -587,7 +526,7 @@ try:
     news_items = soup.find_all('div', class_='item')
     if not news_items:
       error_list.append({
-          'Error Link': url_7,
+          'Error Link': url_8,
           'Error': "None News"
           })
     else :
@@ -601,7 +540,7 @@ try:
         if date_tag:
           date_string = date_tag.text.strip()
           article_date = date_util(date_string)
-          if article_date == today:
+          if article_date >= today:
               wd = initialize_chrome_driver()
               wd.get(link)
               time.sleep(5)
@@ -694,7 +633,7 @@ for page_num in range(0, 10):  # 10 페이지까지 순회 (더 많은 페이지
             'Error': str(e)
         })
 ########################################### <11> ##############################################
-#url_11 = 'https://www.doi.gov/news'
+# url_11 = 'https://www.doi.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_11)
 time.sleep(5)
@@ -710,7 +649,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent()['href']
         if article_link[0] =='/': article_link = 'https://www.doi.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -834,7 +773,7 @@ try:
                 if date_tag:
                     date_string = date_tag.text.strip()
                     article_date = date_util(date_string)
-                    if article_date == today:
+                    if article_date >= today:
                         wd = initialize_chrome_driver()
                         wd.get(full_link)
                         time.sleep(5)
@@ -883,7 +822,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date >= today:
                  title_tag = item.find('span', class_='field-content featured-title')
                  title = title_tag.get_text(strip=True)
                  if not title:
@@ -949,7 +888,7 @@ try:
                     date_time_str = date_tag['datetime']
                     date_str = date_time_str.split('T')[0]
                     article_date = date_util(date_str)
-                    if article_date == today:
+                    if article_date >= today:
                         wd = initialize_chrome_driver()
                         wd.get(full_link)
                         time.sleep(5)
@@ -1089,7 +1028,7 @@ for page_num in range(0, 10):  # 10 페이지까지 순회
             'Error': str(e)
         })
 ########################################### <19> ##############################################
-#url_19 = 'https://www.fda.gov/news-events/fda-newsroom/press-announcements'
+# url_19 = 'https://www.fda.gov/news-events/fda-newsroom/press-announcements'
 wd = initialize_chrome_driver()
 wd.get(url_19)
 time.sleep(5)
@@ -1106,7 +1045,7 @@ try:
         date_str = block.text.strip()
         article_date = date_util(date_str)
         article_link, title, bodys = None, None, None
-        if article_date == today:
+        if article_date >= today:
           article_link = block.find_parent().find_parent().find('a')['href']
           if article_link[0] =='/': article_link = 'https://www.fda.gov' + article_link
           if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1139,7 +1078,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <20> ##############################################
-#url_20 = 'https://www.fda.gov/news-events/speeches-fda-officials'
+# url_20 = 'https://www.fda.gov/news-events/speeches-fda-officials'
 wd = initialize_chrome_driver()
 wd.get(url_20)
 time.sleep(5)
@@ -1155,7 +1094,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.fda.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1193,7 +1132,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <21> ##############################################
-#url_21 = 'https://www.transportation.gov/newsroom/press-releases'
+# url_21 = 'https://www.transportation.gov/newsroom/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_21)
 time.sleep(5)
@@ -1209,7 +1148,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.transportation.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1241,7 +1180,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <22> ##############################################
-#url_22 = 'https://www.transportation.gov/newsroom/speeches'
+# url_22 = 'https://www.transportation.gov/newsroom/speeches'
 wd = initialize_chrome_driver()
 wd.get(url_22)
 time.sleep(5)
@@ -1257,7 +1196,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.transportation.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1289,7 +1228,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <23> ##############################################
-#url_23 = 'https://www.energy.gov/newsroom'
+# url_23 = 'https://www.energy.gov/newsroom'
 wd = initialize_chrome_driver()
 wd.get(url_23)
 time.sleep(5)
@@ -1305,7 +1244,7 @@ try:
       date_str = block.find('p').text
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find('a', class_="search-result-title")['href']
         if article_link[0] =='/': article_link = 'https://www.energy.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1337,7 +1276,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <24> ##############################################
-#url_24 = 'https://www.ed.gov/news/press-releases'
+# url_24 = 'https://www.ed.gov/news/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_24)
 time.sleep(5)
@@ -1353,7 +1292,7 @@ try:
       date_str = block.text
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.ed.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1385,7 +1324,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <25> ##############################################
-#url_25 = 'https://www.ed.gov/news/speeches'
+# url_25 = 'https://www.ed.gov/news/speeches'
 wd = initialize_chrome_driver()
 wd.get(url_25)
 time.sleep(5)
@@ -1401,7 +1340,7 @@ try:
       date_str = block.text
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.ed.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1433,7 +1372,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <26> ##############################################
-#url_26 = 'https://news.va.gov/news/'
+# url_26 = 'https://news.va.gov/news/'
 wd = initialize_chrome_driver()
 wd.get(url_26)
 time.sleep(5)
@@ -1455,7 +1394,7 @@ try:
       date_str = article_soup.find('div', class_='fusion-text fusion-text-3').find('p').text
       article_date = date_util(date_str)
       title, bodys = None, None
-      if article_date == today:
+      if article_date >= today:
         title = article_soup.find('h1', class_='fusion-title-heading title-heading-left').text
         if not title: error_message = Error_Message(error_message, "None Title")
         # 기사 본문을 찾습니다.
@@ -1485,7 +1424,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <27> ##############################################
-#url_27 = 'https://www.dhs.gov/news-releases/press-releases'
+# url_27 = 'https://www.dhs.gov/news-releases/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_27)
 time.sleep(5)
@@ -1501,7 +1440,7 @@ try:
       date_str = block.get('datetime')
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.dhs.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1533,7 +1472,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <28> ##############################################
-#url_28 = 'https://www.dhs.gov/news-releases/speeches'
+# url_28 = 'https://www.dhs.gov/news-releases/speeches'
 wd = initialize_chrome_driver()
 wd.get(url_28)
 time.sleep(5)
@@ -1549,7 +1488,7 @@ try:
       date_str = block.get('datetime')
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.dhs.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1634,7 +1573,7 @@ for page_num in range(0, 10):  # 10 페이지까지 순회 (더 많은 페이지
             'Error': str(e)
         })
 ########################################### <30> ##############################################
-#url_30 = 'https://www.secretservice.gov/newsroom'
+# url_30 = 'https://www.secretservice.gov/newsroom'
 wd = initialize_chrome_driver()
 wd.get(url_30)
 time.sleep(5)
@@ -1655,7 +1594,7 @@ try:
       date_str = f"{month} {day}, {year}"
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.secretservice.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1754,7 +1693,7 @@ for page_num in range(0, 10):  # 10 페이지까지 순회 (더 많은 페이지
             'Error': str(e)
         })
 ########################################### <32> ##############################################
-#url_32 = 'https://www.lockheedmartin.com/en-us/news.html'
+# url_32 = 'https://www.lockheedmartin.com/en-us/news.html'
 wd = initialize_chrome_driver()
 wd.get(url_32)
 time.sleep(5)
@@ -1770,7 +1709,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.lockheedmartin.com' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1804,7 +1743,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <33> ##############################################
-#url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
+# url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
 wd = initialize_chrome_driver()
 wd.get(url_33)
 time.sleep(5)
@@ -1820,7 +1759,7 @@ try:
       date_str = block.text
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         links = block.find_parent().find_parent().find_all('a')
         if len(links) > 1: article_link = links[2].get('href')
         else: article_link = block.find_parent().find_parent().find('a')['href']
@@ -1859,7 +1798,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <35> ##############################################
-#url_35 = 'https://news.northropgrumman.com/news/releases'
+# url_35 = 'https://news.northropgrumman.com/news/releases'
 wd = initialize_chrome_driver()
 wd.get(url_35)
 time.sleep(5)
@@ -1875,7 +1814,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://news.northropgrumman.com' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -1909,7 +1848,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <36> ##############################################
-#url_36 = 'https://www.gd.com/news/news-feed?page=0&types=Press Release'
+# url_36 = 'https://www.gd.com/news/news-feed?page=0&types=Press Release'
 wd = initialize_chrome_driver()
 wd.get(url_36)
 time.sleep(5)
@@ -1925,7 +1864,7 @@ try:
       date_str = block.contents[0].strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find('a')['href']
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
@@ -1958,7 +1897,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <37> ##############################################
-#url_37 = 'https://www.baesystems.com/en/newsroom'
+# url_37 = 'https://www.baesystems.com/en/newsroom'
 wd = initialize_chrome_driver()
 wd.get(url_37)
 time.sleep(5)
@@ -1978,7 +1917,7 @@ try:
       date_str = block.find_next('div',class_='searchresult-tags').text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_parent().find_parent().find_parent().find('a')['href']
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
@@ -2062,7 +2001,7 @@ for page_num in range(1, 10):  # 10 페이지까지 순회 -> 더 많은 페이�
             'Error': str(e)
         })
 ########################################### <39> ##############################################
-#url_39 = 'https://investor.textron.com/news/news-releases/default.aspx'
+# url_39 = 'https://investor.textron.com/news/news-releases/default.aspx'
 wd = initialize_chrome_driver()
 wd.get(url_39)
 time.sleep(5)
@@ -2078,7 +2017,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date >= today:
         article_link = block.find_next('a', class_='ModuleMoreLink')['href']
         if article_link[0] =='/': article_link = 'https://investor.textron.com' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -2199,7 +2138,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date >= today:
                  title = item.select_one('.heading__link').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -2250,7 +2189,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date >= today:
                  title = item.select_one('.global-teaser__title').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -2303,7 +2242,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date >= today:
                  a_tag = item.find('a')
                  if not a_tag: error_message = Error_Message(error_message, "a_tag 못찾음")
                  all_text = a_tag.get_text(strip=True)
@@ -2362,7 +2301,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date >= today:
                  title = item.select_one('a').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -2413,7 +2352,7 @@ try:
             date_text = td_tags[1].get_text(strip=True)
             article_date = date_util(date_text)
             if not article_date: error_message = Error_Message(error_message, "None Date")
-            if article_date == today:
+            if article_date >= today:
               a_tag = td_tags[1].find('a')
               link = a_tag['href']
               if not link: error_message = Error_Message(error_message, "None Link")
@@ -2536,7 +2475,7 @@ try:
         date_text = date_span.get_text(strip=True)
         if not date_text: error_message = error_list.append({'Error Link': url_48, 'Error': "None Date"})
         article_date = date_util(date_text)
-        if article_date == today:
+        if article_date >= today:
             news_items = soup.find_all('li', class_= 'listing-item')
             if not news_items: error_message = error_list.append({'Error Link': url_48, 'Error': "None news_items"})
             for item in news_items:
@@ -2566,13 +2505,12 @@ try:
                     'Link': link,
                     'Content(RAW)': content
                     })
-except Exception as e: # 코드상 에러가 생김
+except Exception as e: 
     error_list.append({
      'Error Link': url_48,
      'Error': str(e)
      })
 ########################################### <49> ##############################################
-# 캘리포니아 소기업홍보청
 #url_49 = 'https://business.ca.gov/calosba-latest-news/'
 wd = initialize_chrome_driver()
 wd.get(url_49)
@@ -2587,7 +2525,7 @@ try:
         date_text = date_span.get_text(strip=True)
         if not date_text: error_message = error_list.append({'Error Link': url_49, 'Error': "None Date"})
         article_date = date_util(date_text)
-        if article_date == today:
+        if article_date >= today:
             news_items = soup.find_all('li', class_= 'listing-item')
             if not news_items: error_message = error_list.append({'Error Link': url_49, 'Error': "None news_items"})
             for item in news_items:
@@ -2617,7 +2555,7 @@ try:
                     'Link': link,
                     'Content(RAW)': content
                     })
-except Exception as e: # 코드상 에러가 생김
+except Exception as e: 
     error_list.append({
      'Error Link': url_49,
      'Error': str(e)
@@ -2661,7 +2599,7 @@ try:
         td_tags = row.find('td', class_ = "nowrap")
         date_text = td_tags.get_text(strip=True)
         article_date = date_util(date_text)
-        if article_date == today:
+        if article_date >= today:
             a_tag = td_tags[1].find('a')
             if not a_tag: error_message = Error_Message(error_message, "None title")
             title = a_tag['aria-label'].strip()
@@ -3168,61 +3106,7 @@ except Exception as e:
      'Error Link': url_59,
      'Error': str(e)
      })
-########################################### <60> ##############################################
-#url_60 = 'https://tpwd.texas.gov/newsmedia/releases/'
-for page_num in range(1,3): 
-    wd = initialize_chrome_driver()
-    wd.get(url_60 + '?nrspan=All&nrtype=all&page=' + str(page_num))
-    time.sleep(5)
-    html = wd.page_source
-    soup = BeautifulSoup(html, 'html.parser')
-    error_message = str()
-    try:
-        soup = soup.find('div', class_='cell medium-12 large-8')
-        soup = soup.find_all
-        if not soup: error_list.append({'Error Link': url_60, 'Error': "Entire Error1"})
-        i = 0
-        for date_header in soup:
-            i += 1
-            if i == len(soup):
-                date_text = date_header.get_text(strip=True)
-                if not date_text: error_message = Error_Message(error_message, "None date")
-                news_date = date_util(date_text)
-                if news_date in today_list:
-                    soup_a = date_header.find_next_siblings('a', class_='article__lede__link')
-                    if not soup_a: error_list.append({'Error Link': url_60, 'Error': "Entire Error2"})
-                    for article_link in soup_a:
-                        link = 'https://tpwd.texas.gov' + article_link['href']
-                        if not link: error_message = Error_Message(error_message, "None link")
-                        title = article_link.find('h3').get_text(strip=True)
-                        if not title: error_message = Error_Message(error_message, "None title")
-                        wd = initialize_chrome_driver()
-                        wd.get(link)
-                        time.sleep(2)
-                        article_html = wd.page_source
-                        article_soup = BeautifulSoup(article_html, 'html.parser')
-                        paragraphs = article_soup.find_all('p')
-                        content_list = [p.text for p in paragraphs if p]
-                        content = '\n'.join(content_list)
-                        if not content: error_message = Error_Message(error_message, "None Contents")
-                        if error_message is not str():
-                            error_list.append({
-                            'Error Link': url_60,
-                            'Error': error_message
-                            })
-                        else:
-                            articles.append({
-                            'Title': title,
-                            'Link': link,
-                            'Content(RAW)': content
-                            })
-    except Exception as e:
-        error_list.append({
-         'Error Link': url_60,
-         'Error': str(e)
-         })
 ########################################### <61> ##############################################
-# 텍사스 회계감사원
 #url_61 = 'https://comptroller.texas.gov/about/media-center/news//'
 wd = initialize_chrome_driver()
 wd.get(url_61)
