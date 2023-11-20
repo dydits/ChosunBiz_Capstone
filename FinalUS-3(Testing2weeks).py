@@ -435,17 +435,15 @@ try:
         time.sleep(5)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
-        title = article.find('h2').get_text().strip()
+        title = article_soup.find('h1', class_='maintitle press-briefing__title').get_text().strip()
         if not title: error_message = Error_Message(error_message, "None Title")
         # 기사 본문을 찾습니다.
         body = [] ; bodys = str()
-        paragraphs = article_soup.find('div', class_='acontent-container').find_all('p')
-        for p in paragraphs: body.append(p.get_text().strip())
-        for i in range(len(body)): bodys += str(body[i]).strip()
+        bodys = article_soup.find('div', class_=['press-briefing-columns','acontent-container']).text.strip()
         if not bodys: error_message = Error_Message(error_message, "None Contents")
         if error_message is not str():
           error_list.append({
-            'Error Link': url_6,
+            'Error Link': article_link,
             'Error': error_message
           })
         else:
