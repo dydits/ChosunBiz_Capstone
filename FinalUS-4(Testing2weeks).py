@@ -637,3 +637,214 @@ except Exception as e:
       'Error Link': url_30,
       'Error': str(e)
       })
+
+
+
+
+
+########################################### <35> ##############################################
+# url_35 = 'https://news.northropgrumman.com/news/releases'
+wd = initialize_chrome_driver()
+wd.get(url_35)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  date_blocks = soup.find_all('div', class_='index-item-info')
+  if not date_blocks: error_list.append({'Error Link': url_35, 'Error': "Date Blocks"})
+  else:
+    for block in date_blocks:
+      date_str = block.text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date >= today:
+        article_link = block.find_parent().find('a')['href']
+        if article_link[0] =='/': article_link = 'https://news.northropgrumman.com' + article_link
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        wd = initialize_chrome_driver()
+        wd.get(article_link)
+        time.sleep(5)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        title = article_soup.find('h1').text
+        if not title: error_message = Error_Message(error_message, "None Title")
+        # 기사 본문을 찾습니다.
+        body = [] ; bodys = str()
+        paragraphs = article_soup.find_all('p')
+        for p in paragraphs: body.append(p.get_text().strip())
+        for i in range(len(body)-8): bodys += str(body[i])
+        if not bodys: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': article_link,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': bodys
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_35,
+      'Error': str(e)
+      })
+
+
+########################################### <37> ##############################################
+# url_37 = 'https://www.baesystems.com/en/newsroom'
+wd = initialize_chrome_driver()
+wd.get(url_37)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  date_blocks = soup.find_all('div', class_='cell__body')
+  if not date_blocks:
+    error_list.append({
+            'Error Link': url_37,
+            'Error': "Date Blocks"
+          })
+  else:
+    for block in date_blocks:
+      date_str = block.find_next('div',class_='searchresult-tags').text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date >= today:
+        article_link = block.find_parent().find_parent().find_parent().find('a')['href']
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        wd = initialize_chrome_driver()
+        wd.get(article_link)
+        time.sleep(5)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        title = block.find_parent().find('h3').text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        bodys = article_soup.find('div', class_='content-container').get_text().strip()
+        if not bodys: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': article_link,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': bodys
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_37,
+      'Error': str(e)
+      })
+########################################### <38> ##############################################
+# url_38 = 'https://www.l3harris.com/ko-kr/newsroom/search?size=n_10_n&sort-field%5Bname%5D=Publish%20Date&sort-field%5Bvalue%5D=created_date&sort-field%5Bdirection%5D=desc'
+wd = initialize_chrome_driver()
+wd.get(url_38)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+base_url = 'https://www.l3harris.com/ko-kr/newsroom/search'
+date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+for page_num in range(1, 10):  # 10 페이지까지 순회 -> 더 많은 페이지 필요하면 이 값 변경
+    if page_num == 1:
+        url = f'{base_url}?size=n_10_n&sort-field%5Bname%5D=Publish%20Date&sort-field%5Bvalue%5D=created_date&sort-field%5Bdirection%5D=desc'
+    else:
+        url = f'{base_url}?current=n_{page_num}_n&size=n_10_n&sort-field%5Bname%5D=Publish%20Date&sort-field%5Bvalue%5D=created_date&sort-field%5Bdirection%5D=desc'
+    wd.get(url)
+    time.sleep(5)
+    html = wd.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    try:
+        date_blocks = soup.find('ul', class_='search-results-page__result-list').find_all('p', class_='d-block mb-4 mb-lg-8 subtitle')
+        if not date_blocks: error_list.append({'Error Link': url_38, 'Error': "Date Blocks"})
+        else:
+            for block in date_blocks:
+                date_str = block.get_text().split('|')[1].strip()
+                article_date = parser.parse(date_str).date()
+                if article_date >= today:  # 시작 날짜 이후의 기사만 추출
+                    article_link = block.find_parent().find_parent().find_parent().find('a')['href']
+                    if not article_link: error_message = Error_Message(error_message, "None Link")
+                    wd.get(article_link)
+                    time.sleep(5)
+                    article_html = wd.page_source
+                    article_soup = BeautifulSoup(article_html, 'html.parser')
+                    title = block.find_parent().find('p', class_='result-item__link font-600 d-block mb-4 mb-lg-8').text.strip()
+                    if not title: error_message = Error_Message(error_message, "None Title")
+                    body = [] ; bodys = str()
+                    body = [p.get_text().strip() for p in article_soup.find_all('div', class_='text-long')]
+                    for p in paragraphs: body.append(p.get_text().strip())
+                    for i in range(len(body)): bodys += str(body[i]).strip()
+                    if not bodys: error_message = Error_Message(error_message, "None Contents")
+                    if error_message is not str():
+                        error_list.append({
+                            'Error Link': article_link,
+                            'Error': error_message
+                        })
+                    else: articles.append({
+                        'Title': title,
+                        'Link': article_link,
+                        'Content(RAW)': bodys
+                    })
+    except Exception as e:
+        error_list.append({
+            'Error Link': url_38,
+            'Error': str(e)
+        })
+########################################### <39> ##############################################
+# url_39 = 'https://investor.textron.com/news/news-releases/default.aspx'
+wd = initialize_chrome_driver()
+wd.get(url_39)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  date_blocks = soup.find_all('span', class_='ModuleDate')
+  if not date_blocks: error_list.append({'Error Link': url_39, 'Error': "Date Blocks"})
+  else:
+    for block in date_blocks:
+      date_str = block.text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date >= today:
+        article_link = block.find_next('a', class_='ModuleMoreLink')['href']
+        if article_link[0] =='/': article_link = 'https://investor.textron.com' + article_link
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        wd = initialize_chrome_driver()
+        wd.get(article_link)
+        time.sleep(5)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        title = block.find_parent().find('span', class_='ModuleHeadline').text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        # 기사 본문을 찾습니다.
+        body = [] ; bodys = str()
+        paragraphs = article_soup.find('div',class_=['q4default','module_body']).find_all('p')
+        for p in paragraphs: body.append(p.get_text().strip())
+        for i in range(len(body)-2): bodys += str(body[i])
+        if not bodys: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': article_link,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': bodys
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_39,
+      'Error': str(e)
+      })
