@@ -3889,7 +3889,6 @@ html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 article_links = soup.find_all('h3', class_='fl-post-feed-title')
 links = [link.find('a')['href'] for link in article_links]
-print(links)
 try:
     for link in links:
         wd.get(link)  
