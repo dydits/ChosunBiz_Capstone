@@ -4126,7 +4126,7 @@ try:
           return articles_info
       def get_article_content(article_url):
           wd = initialize_chrome_driver()
-          wd.get(url_86) 
+          wd.get(article_url) 
           article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           error_message = ""
