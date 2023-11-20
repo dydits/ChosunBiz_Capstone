@@ -508,6 +508,61 @@ except Exception as e:
         'Error Link': url_7,
         'Error': str(e)
     })
+########################################### <8> ##############################################
+url_8 = 'https://www.nsa.gov/Press-Room/Press-Releases-Statements/'
+wd = initialize_chrome_driver()
+wd.get(url_8)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 가져오기
+    news_items = soup.find_all('div', class_='item')
+    if not news_items:
+      error_list.append({
+          'Error Link': url_8,
+          'Error': "None News"
+          })
+    else :
+      for item in news_items :
+        title_tag = item.find('div', class_='title').find('a')
+        title = title_tag.text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        link = title_tag['href'].strip()
+        if not link: error_message = Error_Message(error_message, "None Link")
+        date_tag = item.find('span', class_='date')
+        if date_tag:
+          date_string = date_tag.text.strip()
+          article_date = date_util(date_string)
+          if article_date >= today:
+              wd = initialize_chrome_driver()
+              wd.get(link)
+              time.sleep(5)
+              article_html = wd.page_source
+              article_soup = BeautifulSoup(article_html, 'html.parser')
+              article_body = article_soup.find('div', itemprop='articleBody')
+              content = ''
+              if article_body:
+                # 'articleBody' div 내에서 텍스트만 추출 (HTML 구조를 무시하고 텍스트만 가져옴)
+                content = article_body.get_text(strip=True, separator=' ')
+              else: error_message = Error_Message(error_message, "None Contents")
+              if error_message is not str():
+                  error_list.append({
+                      'Error Link' : link,
+                      'Error': error_message
+                      })
+              else :
+                  articles.append({
+                      'Title': title,
+                      'Link': link,
+                      'Content(RAW)': content
+                      })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_8,
+        'Error': str(e)
+    })
 ########################################### <9> ##############################################
 # url_9 = 'https://www.justice.gov/news' 
 wd = initialize_chrome_driver()
