@@ -1632,10 +1632,6 @@ except Exception as e:
       'Error': str(e)
       })
 
-
-
-
-
 ########################################### <35> ##############################################
 # url_35 = 'https://news.northropgrumman.com/news/releases'
 wd = initialize_chrome_driver()
@@ -1842,6 +1838,58 @@ except Exception as e:
       'Error Link': url_39,
       'Error': str(e)
       })
+########################################### <42> ##############################################
+# url_42 = 'https://gov.georgia.gov/press-releases'
+wd = initialize_chrome_driver()
+wd.get(url_42)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+     news_items = soup.select(".news-teaser")
+     if not news_items:
+         error_list.append({
+             'Error Link': url_42,
+             'Error': "None News"
+         })
+     else:
+         for item in news_items:
+             date_str = item.select_one('.global-teaser__description').get_text(strip=True)
+             article_date = date_util(date_str)
+             if not article_date:
+                 error_message = Error_Message(error_message, "None Date")
+             if article_date >= today:
+                 title = item.select_one('.global-teaser__title').get_text(strip=True)
+                 if not title:
+                     error_message = Error_Message(error_message, "None Title")
+                 article_link = f"https://gov.georgia.gov{item.a['href']}"
+                 if not article_link:
+                     error_message = Error_Message(error_message, "None Link")
+                 wd = initialize_chrome_driver()
+                 wd.get(article_link)
+                 article_html = wd.page_source
+                 article_soup = BeautifulSoup(article_html, 'html.parser')
+                 paragraphs = article_soup.select("main.content-page__main p")
+                 article_body = ' '.join(p.get_text(strip=True) for p in paragraphs)
+                 if not article_body:
+                     error_message = Error_Message(error_message, "None Contents")
+                 if error_message != "":
+                     error_list.append({
+                         'Error Link': url_42,
+                         'Error': error_message
+                     })
+                 else:
+                     articles.append({
+                         'Title': title,
+                         'Link': article_link,
+                         'Content(RAW)': article_body
+                     })
+except Exception as e:
+     error_list.append({
+         'Error Link': url_42,
+         'Error': str(e)
+     })
 ########################################### <94> ##############################################
 # url_94 = 'https://commerce.maryland.gov/media/press-room'
 wd = initialize_chrome_driver()
