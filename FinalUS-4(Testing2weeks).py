@@ -35,7 +35,7 @@ def date_util(article_date):
   except ValueError:
     # If parsing fails, handle the relative dates
     article_date = article_date.lower()
-    time_keywords = ["h", "hrs", "hr", "m", "s", "hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
+    time_keywords = ["h", "hrs", "hr", "m", "hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
     if any(keyword in article_date for keyword in time_keywords):
       article_date = today
     elif "days" in article_date or "day" in article_date:
