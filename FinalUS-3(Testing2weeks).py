@@ -2119,6 +2119,7 @@ for page_num in range(1, 7):
 ########################################### <41> ##############################################
 #url_41 = 'https://sos.ga.gov/news/division/31?page=0'
 wd = initialize_chrome_driver()
+wd.get(url_41)
 time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
@@ -2170,6 +2171,7 @@ except Exception as e:
 ########################################### <42> ##############################################
 #url_42 = 'https://gov.georgia.gov/press-releases'
 wd = initialize_chrome_driver()
+wd.get(url_42)
 time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
