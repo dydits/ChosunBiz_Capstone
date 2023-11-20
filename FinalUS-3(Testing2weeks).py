@@ -3305,8 +3305,6 @@ except Exception as e:
 # url_65 = 'https://www.governor.ny.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_65)
-articles = []
-error_list = []
 try:
     for page_num in range(1,12):
         html = wd.page_source
