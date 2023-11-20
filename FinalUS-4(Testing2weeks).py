@@ -1632,7 +1632,7 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <33> ##############################################
-url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
+# url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
 wd = initialize_chrome_driver()
 wd.get(url_33)
 time.sleep(5)
