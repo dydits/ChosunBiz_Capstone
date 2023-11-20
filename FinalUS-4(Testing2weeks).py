@@ -1682,8 +1682,55 @@ except Exception as e:
       'Error Link': url_35,
       'Error': str(e)
       })
-
-
+########################################### <36> ##############################################
+# url_36 = 'https://www.gd.com/news/news-feed?page=0'
+wd = initialize_chrome_driver()
+wd.get(url_36)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  date_blocks = soup.find('div', class_='news-feed-target').find_all('div', class_='news__publish-date')
+  if not date_blocks: error_list.append({'Error Link': url_36, 'Error': "Date Blocks"})
+  else:
+    for block in date_blocks:
+      date_str = block.contents[0].strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date >= today:
+        article_link = block.find_parent().find('a')['href']
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        wd = initialize_chrome_driver()
+        wd.get(article_link)
+        time.sleep(5)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        title = block.find_parent().find('h3').text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        # 기사 본문을 찾습니다.
+        body = [] ; bodys = str()
+        paragraphs = article_soup.find('div', class_='article-body')
+        for p in paragraphs: body.append(p.get_text().strip())
+        for i in range(len(body)): bodys += str(body[i]).strip()
+        if not bodys: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': article_link,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': bodys
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_36,
+      'Error': str(e)
+      })
 ########################################### <37> ##############################################
 # url_37 = 'https://www.baesystems.com/en/newsroom'
 wd = initialize_chrome_driver()
