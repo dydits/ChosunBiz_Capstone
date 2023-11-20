@@ -181,7 +181,7 @@ urls = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, u
         url_81, url_82, url_83, url_84, url_86, url_87, url_88, url_89, url_90, url_91, url_92, url_93, url_94, url_95, url_96]
 
 ########################################### <1> ##############################################
-#url_1 = 'https://www.state.gov/press-releases/'
+# url_1 = 'https://www.state.gov/press-releases/'
 wd = initialize_chrome_driver()
 wd.get(url_1)
 time.sleep(5)
@@ -238,7 +238,7 @@ for page_num in range(1, 20):  # 20 페이지까지 순회 (더 많은 페이지
             'Error': str(e)
         })
 ########################################### <2> ##############################################
-#url_2 = 'https://www.state.gov/department-press-briefings/'
+# url_2 = 'https://www.state.gov/department-press-briefings/'
 wd = initialize_chrome_driver()
 wd.get(url_1)
 time.sleep(5)
