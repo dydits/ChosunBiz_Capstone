@@ -3543,7 +3543,7 @@ def get_article_list_updated(html, filter_date):
     return articles_info
 def get_article_content(article_url):
     wd = initialize_chrome_driver()
-    wd.get(url_74)
+    wd.get(article_url)
     article_html = wd.page_source
     article_soup = BeautifulSoup(article_html, 'html.parser')
     content_div = article_soup.find('div', itemprop='articleBody')
@@ -3612,7 +3612,7 @@ try:
       return articles_info
   def get_article_content(article_url):
       wd = initialize_chrome_driver()
-      wd.get(url_81)
+      wd.get(article_url)
       article_html = wd.page_source
       article_soup = BeautifulSoup(article_html, 'html.parser')
       content_div = article_soup.find('div', class_='mainText')
@@ -3830,7 +3830,7 @@ try:
         return articles_info
     def get_article_content(article_url):
         wd = initialize_chrome_driver()
-        wd.get(url_81) 
+        wd.get(article_url) 
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         content_div = article_soup.find_all('div', class_='mosaic-tile-content')
@@ -3899,7 +3899,7 @@ try:
           return articles_info
       def get_article_content(article_url):
           wd = initialize_chrome_driver()
-          wd.get(url_82) 
+          wd.get(article_url) 
           article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           content_div = article_soup.find('div', class_='ten offset-by-one columns newsDetail')
@@ -4042,7 +4042,7 @@ try:
         return articles_info
     def get_article_content(article_url):
         wd = initialize_chrome_driver()
-        wd.get(url_84) 
+        wd.get(article_url) 
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         error_message = ""
@@ -4201,7 +4201,7 @@ try:
           return articles_info
       def get_article_content(article_url):
           wd = initialize_chrome_driver()
-          wd.get(url_87)
+          wd.get(article_url)
           article_html = wd.page_source
           article_soup = BeautifulSoup(article_html, 'html.parser')
           content_div = article_soup.find('div', property="content:encoded")
@@ -4339,7 +4339,7 @@ try:
           return articles_info
       def get_article_content(article_url):
           wd = initialize_chrome_driver()
-          wd.get(url_89)
+          wd.get(article_url)
           article_html = wd.page_source
           article_soup = BeautifulSoup(article_html, 'html.parser')
           content_section = article_soup.find('section', class_='content__top__main')
@@ -4419,7 +4419,7 @@ try:
           return articles_info
       def get_article_content(article_url):
           wd = initialize_chrome_driver()
-          wd.get(url_90)
+          wd.get(article_url)
           article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           error_message = ""
@@ -4785,7 +4785,7 @@ try:
           return articles_info
       def get_article_content(article_url):
           wd = initialize_chrome_driver()
-          wd.get(url_96)  
+          wd.get(article_url)  
           article_html = wd.page_source 
           article_soup = BeautifulSoup(article_html, 'html.parser')
           error_message = ""
