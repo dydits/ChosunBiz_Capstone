@@ -41,7 +41,7 @@ def date_util(article_date):
     elif "days" in article_date or "day" in article_date:
       # Find the number of days and subtract from today
       number_of_days = int(''.join(filter(str.isdigit, article_date)))
-      article_date = today - timedelta(days=number_of_days)
+      article_date = parser.parse('2023-11-20').date() - timedelta(days=number_of_days)
     else:
       return None
   return article_date
