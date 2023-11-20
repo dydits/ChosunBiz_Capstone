@@ -1842,3 +1842,62 @@ except Exception as e:
       'Error Link': url_39,
       'Error': str(e)
       })
+########################################### <94> ##############################################
+# url_94 = 'https://commerce.maryland.gov/media/press-room'
+wd = initialize_chrome_driver()
+wd.get(url_94)
+base_url = "https://commerce.maryland.gov"
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 가져오기
+    news_item = soup.find('table', id='speakerTable')
+    if not news_item:
+        error_list.append({
+            'Error Link': url_94,
+            'Error': "None News"
+        })
+    else:
+        for row in news_item.find_all('tr'):
+            error_message = ''
+            # 날짜와 제목을 추출
+            date_tag = row.find('nobr')
+            title_tag = row.find('a')
+            if date_tag and title_tag:
+                date_string = date_tag.text.strip()
+                article_date = date_util(date_string)
+                title = title_tag.text.strip()
+                link = title_tag['href']
+                full_link = base_url + link if link.startswith('/') else link
+                if article_date in today_list:
+                    wd = initialize_chrome_driver()
+                    wd.get(full_link)
+                    time.sleep(5)
+                    article_html = wd.page_source
+                    article_soup = BeautifulSoup(article_html, 'html.parser')
+                    content = ''
+                    content_blocks = article_soup.find('div', id='ctl00_PlaceHolderMain_ctl06__ControlWrapper_RichHtmlField')
+                    if content_blocks:
+                        spans = content_blocks.find_all('span', style=lambda value: value and 'font-family' in value)
+                        for span in spans:
+                            content += span.get_text(strip=True) + ' '
+                    if not content:
+                        error_message = Error_Message(error_message, "None Contents")
+                    if error_message is not str():
+                        error_list.append({
+                            'Error Link': full_link,
+                            'Error': error_message
+                        })
+                    else:
+                        articles.append({
+                            'Title': title,
+                            'Link': full_link,
+                            'Content(RAW)': content
+                        })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_94,
+        'Error': str(e)
+    })
