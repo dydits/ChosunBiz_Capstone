@@ -1753,6 +1753,38 @@ except Exception as e:
         'Error Link': url_33,
         'Error': str(e)
     })
+########################################### <34 Korean Air> ##############################################
+article_link = 'https://www.rtx.com/news/news-center/2023/11/09/korean-air-now-using-rtx-to-improve-predictive-maintenance'
+
+wd = initialize_chrome_driver()
+wd.get(article_link)
+time.sleep(5)
+html = wd.page_source
+article_soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+date_blocks, article_date, title, bodys = None, None, None, None
+
+article_date = date_util(article_soup.find('time').text.strip())
+if article_date == parser.parse('2023-11-09').date():
+    title = article_soup.find('h1',class_='esds-article-header__headline').text.strip()
+    if not title: error_message = Error_Message(error_message, "None Title")
+    # 기사 본문을 찾습니다.
+    body = [] ; bodys = str()
+    paragraphs = article_soup.find('section', class_='wrapper wrapper--8-col margin-top--none margin-bottom--small padding-top--standard padding-bottom--standard esds-rich-text')
+    for p in paragraphs: body.append(p.get_text().strip())
+    bodys = str(body[1])
+    if not bodys: error_message = Error_Message(error_message, "None Contents")
+    if error_message is not str():
+      error_list.append({
+        'Error Link': article_link,
+        'Error': error_message
+      })
+    else:
+      articles.append({
+        'Title': title,
+        'Link': article_link,
+        'Content(RAW)': bodys
+      })
 ########################################### <35> ##############################################
 # url_35 = 'https://news.northropgrumman.com/news/releases'
 wd = initialize_chrome_driver()
@@ -3735,7 +3767,7 @@ time.sleep(5)
 html = wd.page_source
 error_message = str()
 try:
-    def get_article_list(url, filter_date):
+    def get_article_list(url, today):
         wd.get(url_81)
         html = wd.page_source 
         soup = BeautifulSoup(html, 'html.parser')
@@ -3755,7 +3787,7 @@ try:
             except ValueError:
                 print(f"parsing error: {date_text}")
                 continue
-            if date_parsed >= filter_date:
+            if date_parsed >= today:
                 title_tag = news_item.find('p', class_='title')
                 link_tag = title_tag.find('a')
                 title = link_tag.text.strip()
@@ -3804,7 +3836,7 @@ time.sleep(5)
 html = wd.page_source 
 error_message = str()
 try:
-      def get_article_list(url, filter_date):
+      def get_article_list(url, today):
           wd.get(url_82)
           html = wd.page_source
           soup = BeautifulSoup(html, 'html.parser')
@@ -3824,7 +3856,7 @@ try:
               except ValueError:
                   print(f"parsing error: {date_text}")
                   continue
-              if date_parsed >= filter_date:
+              if date_parsed >= today:
                   title_tag = article_div.find('h3')
                   title = title_tag.text.strip()
                   link_tag = article_div.find('a', class_='blog_read_more')
@@ -3926,7 +3958,7 @@ error_message = str()
 def Error_Message(current_error, new_error):
     return f"{current_error}; {new_error}" if current_error else new_error
 try:
-    def get_article_list(url, filter_date):
+    def get_article_list(url, today):
         wd = initialize_chrome_driver()
         wd.get(url_84)
         html = wd.page_source
@@ -3973,7 +4005,7 @@ try:
                     'Error Link': url_84,
                     'Error': error_message
                 })
-            elif date >= filter_date:
+            elif date >= today:
                 articles_info.append({'title': title, 'link': link})
         return articles_info
     def get_article_content(article_url):
@@ -4024,7 +4056,7 @@ error_message = str()
 def Error_Message(current_error, new_error):
     return f"{current_error}; {new_error}" if current_error else new_error
 try:
-      def get_article_list(url, filter_date):
+      def get_article_list(url, today):
           wd.get(url_86) 
           html = wd.page_source 
           soup = BeautifulSoup(html, 'html.parser')
@@ -4048,7 +4080,7 @@ try:
                   error_message = Error_Message(error_message, "None Title")
               if link is None:
                   error_message = Error_Message(error_message, "None Link")
-              if date is None or date >= filter_date:
+              if date is None or date >= today:
                   continue 
               if not error_message:
                   articles_info.append({'title': title, 'link': link})
@@ -4099,7 +4131,7 @@ wd = initialize_chrome_driver()
 wd.get(url_87)
 time.sleep(5)
 try:
-      def get_article_list_updated(html, filter_date):
+      def get_article_list_updated(html, today):
           soup = BeautifulSoup(html, 'html.parser')
           articles_info = []
           pattern = re.compile(r"views-row views-row-\d+ views-row-(odd|even)(?!.*views-row-last)")
@@ -4123,7 +4155,7 @@ try:
                       date_text = date_span.get_text()
                       try:
                           date = datetime.strptime(date_text, '%m/%d/%Y').date()
-                          if date <= filter_date:
+                          if date >= today:
                               continue
                       except ValueError:
                           raise ValueError("None Date")
@@ -4236,7 +4268,7 @@ error_message = str()
 def Error_Message(current_error, new_error):
     return f"{current_error}; {new_error}" if current_error else new_error
 try:
-      def get_article_list(url, filter_date):
+      def get_article_list(url, today):
           wd.get(url_89)
           html = wd.page_source 
           soup = BeautifulSoup(html, 'html.parser')
@@ -4265,7 +4297,7 @@ try:
                   except ValueError:
                       date = None
                       error_message = Error_Message(error_message, "None Link")
-              if date > filter_date and not error_message:
+              if date >= today and not error_message:
                   articles_info.append({'title': title, 'link': link})
               elif error_message:
                   error_list.append({
@@ -4312,7 +4344,7 @@ wd.get(url_90)
 time.sleep(5)
 error_message = str()
 try:
-      def get_article_list(url, filter_date):
+      def get_article_list(url, today):
           wd.get(url_90)  
           html = wd.page_source 
           soup = BeautifulSoup(html, 'html.parser')
@@ -4345,7 +4377,7 @@ try:
               else:
                   date_parsed = None
                   error_message = Error_Message(error_message, "None Date")
-              if date_parsed >= filter_date and not error_message:
+              if date_parsed >= today and not error_message:
                   articles_info.append({'title': title, 'link': link})
               elif error_message:
                   error_list.append({
@@ -4482,7 +4514,7 @@ for html in htmls:
             date_str = date_tag.text.split(': ')[-1]
             if not date_str: error_message = Error_Message(error_message, "None date")
             date = date_util(date_str)
-            if start_date <= date:
+            if today <= date:
                 wd.get(link)
                 time.sleep(5)
                 article_html = wd.page_source
