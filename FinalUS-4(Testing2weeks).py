@@ -4736,3 +4736,8 @@ except Exception as e:
         'Error Link': url_96,
         'Error': str(e)
     })
+########################################### <Print> ##############################################
+if articles == []:
+      print("No news for today!")
+(pd.DataFrame(articles)).to_csv('articles1120.csv')
+(pd.DataFrame(error_list)).to_csv('error_list1120.csv')
