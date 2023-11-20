@@ -2041,7 +2041,6 @@ except Exception as e:
 ########################################### <40> ##############################################
 # url_40 = 'https://www.nasa.gov/news/all-news/'
 for page_num in range(1, 7):
-    print(page_num)
     try: 
         if 1 < page_num < 7:
             wd = initialize_chrome_driver()
@@ -2095,7 +2094,6 @@ for page_num in range(1, 7):
                         'Error Link': link,
                         'Error': error_message
                         })
-                        print(f"error_list : {len(error_list)}")
                     else:
                         articles.append({
                         'Title': title,
@@ -3555,7 +3553,6 @@ try:
               if date_tag:
                   date_text = date_tag.get_text(strip=True)
                   date_parsed = datetime.strptime(date_text, '%m/%d/%Y').date()
-                  print(date_parsed)
                   if date_parsed >= filter_date:
                       continue
               else:
@@ -3785,7 +3782,6 @@ try:
             try:
                 date_parsed = datetime.strptime(date_text, '%m.%d.%Y').date()
             except ValueError:
-                print(f"parsing error: {date_text}")
                 continue
             if date_parsed >= today:
                 title_tag = news_item.find('p', class_='title')
@@ -3854,7 +3850,6 @@ try:
               try:
                   date_parsed = datetime.strptime(date_text, '%m/%d/%Y').date()
               except ValueError:
-                  print(f"parsing error: {date_text}")
                   continue
               if date_parsed >= today:
                   title_tag = article_div.find('h3')
