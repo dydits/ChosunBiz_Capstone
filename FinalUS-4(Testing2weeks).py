@@ -426,12 +426,59 @@ except Exception as e:
       'Error Link': url_25,
       'Error': str(e)
       })
-
-
-
-
-
-
+########################################### <26> ##############################################
+# url_26 = 'https://news.va.gov/news/'
+wd = initialize_chrome_driver()
+wd.get(url_26)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+article_links, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  article_links = soup.find_all('a', class_='awb-custom-text-color awb-custom-text-hover-color')
+  if not article_links: error_list.append({'Error Link': url_26, 'Error': "None Links"})
+  else:
+    links = [link.get('href') for link in article_links]
+    for link in links:
+      wd = initialize_chrome_driver()
+      wd.get(link)
+      time.sleep(5)
+      article_html = wd.page_source
+      article_soup = BeautifulSoup(article_html, 'html.parser')
+      date_str = article_soup.find('div', class_='fusion-text fusion-text-3').find('p').text
+      article_date = date_util(date_str)
+      article_link = link
+      title, bodys = None, None
+      if article_date >= today:
+        title = article_soup.find('h1', class_='fusion-title-heading title-heading-left').text
+        if not title: error_message = Error_Message(error_message, "None Title")
+        # 기사 본문을 찾습니다.
+        body = [] ; bodys = str()
+        article = (article_soup.find('article',class_='fusion-layout-column fusion_builder_column fusion-builder-column-7 fusion-flex-column'))
+        for tag in article.find_all(True):  # True는 모든 태그를 찾는다는 의미입니다.
+            # 현재 태그의 이름을 가져옵니다.
+            current_tag_name = tag.name
+            if tag.name == 'p':
+                body.append(tag.get_text())
+        for i in range(len(body)-1): bodys += str(body[i])
+        if not bodys: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': article_link,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': bodys
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_26,
+      'Error': str(e)
+      })
 ########################################### <27> ##############################################
 # url_27 = 'https://www.dhs.gov/news-releases/press-releases'
 wd = initialize_chrome_driver()
