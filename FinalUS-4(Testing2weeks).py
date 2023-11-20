@@ -1880,9 +1880,8 @@ try:
                     content = ''
                     content_blocks = article_soup.find('div', id='ctl00_PlaceHolderMain_ctl06__ControlWrapper_RichHtmlField')
                     if content_blocks:
-                        spans = content_blocks.find_all('span', style=lambda value: value and 'font-family' in value)
-                        for span in spans:
-                            content += span.get_text(strip=True) + ' '
+                        # content_blocks 내의 모든 텍스트 추출
+                        content = content_blocks.get_text(strip=True, separator='\n')
                     if not content:
                         error_message = Error_Message(error_message, "None Contents")
                     if error_message is not str():
