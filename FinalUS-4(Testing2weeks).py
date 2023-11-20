@@ -1631,7 +1631,67 @@ except Exception as e:
       'Error Link': url_30,
       'Error': str(e)
       })
-
+########################################### <33> ##############################################
+url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
+wd = initialize_chrome_driver()
+wd.get(url_33)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    date_blocks = soup.find_all('div', class_='wd_date')
+    if not date_blocks:
+        error_list.append({'Error Link': url_33, 'Error': "Date Blocks"})
+    else:
+        for block in date_blocks:
+            date_str = block.text
+            article_date = date_util(date_str)
+            if article_date >= today:
+                parent_div = block.find_parent()
+                article_link = parent_div.find('a')['href'] if parent_div.find('a') else None
+                if not article_link:
+                    parent_div = parent_div.find_parent()
+                    article_link = parent_div.find('a')['href'] if parent_div.find('a') else None
+                    if not article_link:
+                        error_message = Error_Message(error_message, "None Link")
+                        continue
+                wd_article = initialize_chrome_driver()
+                wd_article.get(article_link)
+                time.sleep(5)
+                article_html = wd_article.page_source
+                article_soup = BeautifulSoup(article_html, 'html.parser')
+                title = article_soup.find(['div', 'h1'], class_=['wd_title wd_language_left', 'elementor-heading-title elementor-size-default']).text.strip()
+                if not title:
+                    error_message = Error_Message(error_message, "None Title")
+                    continue
+                bodys = article_soup.find('div', class_='wd_body wd_news_body')
+                if bodys:
+                  bodys = bodys.get_text().strip()
+                else:
+                  bodys = str()
+                  paragraphs = article_soup.find_all('p')  
+                  for p in paragraphs:
+                    bodys += p.get_text().strip() + '\n'  
+                if not bodys:
+                    error_message = Error_Message(error_message, "None Contents")
+                    continue
+                if error_message is not str():
+                    error_list.append({
+                        'Error Link': article_link,
+                        'Error': error_message
+                    })
+                else:
+                    articles.append({
+                        'Title': title,
+                        'Link': article_link,
+                        'Content(RAW)': bodys
+                    })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_33,
+        'Error': str(e)
+    })
 ########################################### <35> ##############################################
 # url_35 = 'https://news.northropgrumman.com/news/releases'
 wd = initialize_chrome_driver()
