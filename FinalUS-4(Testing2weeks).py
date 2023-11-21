@@ -3204,8 +3204,6 @@ except Exception as e:
 ########################################### <63> ##############################################
 # 텍사스 상공회의소 BESTCOMPANY NEWS
 #url_63 = 'https://www.txbiz.org/chamber-news'
-articles = []
-error_list = []
 wd = initialize_chrome_driver()
 wd.get(url_63)
 time.sleep(5)
@@ -4192,7 +4190,7 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <88> ##############################################
-#url_88 = 'https://www.governor.virginia.gov/newsroom/news-releases/' 
+#url_88 = 'https://www.governor.virginia.gov/newsroom/news-releases/'
 wd = initialize_chrome_driver()
 wd.get(url_88)
 time.sleep(5)
@@ -4221,6 +4219,7 @@ try:
                      error_message = Error_Message(error_message, "None Link")
                  wd = initialize_chrome_driver()
                  wd.get(article_link)
+                 time.sleep(5)
                  article_html = wd.page_source
                  article_soup = BeautifulSoup(article_html, 'html.parser')
                  article_body = None
