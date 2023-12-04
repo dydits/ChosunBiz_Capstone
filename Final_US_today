@@ -1591,7 +1591,7 @@ error_message = str()
 date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
 try:
   date_blocks = soup.find_all('div', class_='field-content usss-news-blk-date-y')
-  if not date_blocks: error_list.append({'Error Link': url_29, 'Error': "Date Blocks"})
+  if not date_blocks: error_list.append({'Error Link': url_30, 'Error': "Date Blocks"})
   else:
     for block in date_blocks:
       day = block.find('p', class_='usss-news-date-d').text
