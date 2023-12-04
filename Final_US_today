@@ -54,7 +54,7 @@ def Error_Message(message, add_error):
 # 데이터프레임
 articles = []
 error_list = []
-today = date_util((datetime.now()- timedelta(days=1)).strftime("%Y-%m-%d"))
+today_list = [date_util((datetime.now()- timedelta(days=1)).strftime("%Y-%m-%d")), date_util((datetime.now()).strftime("%Y-%m-%d"))]
 
 # 정부업체들 + 방산업체 + NASA
 url_1 = 'https://www.state.gov/press-releases/'
@@ -187,7 +187,7 @@ try:
       date_str = block['data-dateap']
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find_parent().find_parent().find('a').find_next('a')['href']
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
@@ -248,7 +248,7 @@ try:
       date_str = article.find('h6').text
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = article.find('h2').find('a')['href']
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
@@ -305,7 +305,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent()['href']
         if article_link[0] =='/': article_link = 'https://www.doi.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -366,7 +366,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find_parent().find('a')['href']
         if article_link[0] =='/': article_link = 'https://www.hhs.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -422,7 +422,7 @@ try:
       date_str = block.find('p').text
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find('a', class_="search-result-title")['href']
         if article_link[0] =='/': article_link = 'https://www.energy.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -488,7 +488,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find_parent().find('a', class_='usa-link')['href']
         if article_link[0] =='/': article_link = 'https://www.epa.gov' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -543,7 +543,7 @@ try:
       date_str = block.text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find('a', class_='esds-cards__source')['href']
         if article_link[0] =='/': article_link = 'https://www.rtx.com' + article_link
         if not article_link: error_message = Error_Message(error_message, "None Link")
@@ -601,7 +601,7 @@ try:
       date_str = block.find_next('div',class_='searchresult-tags').text.strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find_parent().find('a')['href']
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
@@ -664,7 +664,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date in today_list:
                  title = item.select_one('a').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -777,7 +777,7 @@ try:
              article_date = date_util(date_str)
              if not article_date:
                  error_message = Error_Message(error_message, "None Date")
-             if article_date == today:
+             if article_date in today_list:
                  title = item.select_one('h2 a').get_text(strip=True)
                  if not title:
                      error_message = Error_Message(error_message, "None Title")
@@ -861,7 +861,7 @@ try:
               else:
                   date_parsed = None
                   error_message = Error_Message(error_message, "None Date")
-              if date_parsed == filter_date and not error_message:
+              if date_parsed in filter_date and not error_message:
                   articles_info.append({'title': title, 'link': link})
               elif error_message:
                   error_list.append({
@@ -882,7 +882,7 @@ try:
           paragraphs = content_div.find_all('p') if content_div else []
           content = ' '.join(paragraph.text.strip() for paragraph in paragraphs)
           return content, error_message
-      articles_list = get_article_list(url_90, today)
+      articles_list = get_article_list(url_90, today_list)
       for article in articles_list:
           full_url = article['link']
           content, content_error_message = get_article_content(full_url)
@@ -937,7 +937,7 @@ try:
                 title = title_tag.text.strip()
                 link = title_tag['href']
                 full_link = base_url + link if link.startswith('/') else link
-                if article_date == today:
+                if article_date in today_list:
                     wd = initialize_chrome_driver()
                     wd.get(full_link)
                     time.sleep(5)
