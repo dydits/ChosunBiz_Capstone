@@ -3084,3 +3084,49 @@ except Exception as e:
 ########################################### <95> ##############################################
 
 ########################################### <96> ##############################################
+url_96 = "https://www.mdchamber.org/news/"
+wd = initialize_chrome_driver()
+wd.get(url_96)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    items = soup.find_all('div', class_='fl-post-feed-header')
+    if not items:
+        error_list.append({
+            'Error Link': url_96,
+            'Error': "None News"
+        })
+    else:
+        for item in items:
+            link_tag = item.find('a', href=True)
+            link = link_tag['href'] if link_tag else None
+            date_tag = item.find('span', class_='fl-post-feed-date')
+            date = date_tag.get_text(strip=True) if date_tag else None
+            if article_date in today_list :
+              article = Article(link, language='en')
+              article.download()
+              article.parse()            
+              title = article.title
+              if not title:
+                error_message = Error_Message(error_message, "None Title") 
+              text = article.text
+              if not text:
+                error_message = Error_Message(error_message, "None Content")       
+              if error_message is not str():
+                error_list.append({
+                    'Error Link': url_96,
+                    'Error': error_message
+                    })     
+              else:
+                articles.append({
+                    'Title': title,
+                    'Link': link,
+                    'Content(RAW)': text
+                    })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_96,
+        'Error': str(e)
+    })
