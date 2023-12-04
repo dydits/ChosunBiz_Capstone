@@ -8,6 +8,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from dateutil import parser
 import re
+import feedparser
 
 def initialize_chrome_driver():
   # Chrome 옵션 설정 : USER_AGENT는 알아서 수정
@@ -95,7 +96,7 @@ url_35 = 'https://news.northropgrumman.com/news/releases'
 url_36 = 'https://www.gd.com/news/news-feed?page=0&types=Press Release'
 url_37 = 'https://www.baesystems.com/en/newsroom'
 url_38 = 'https://www.l3harris.com/ko-kr/newsroom/search?size=n_10_n&sort-field%5Bname%5D=Publish%20Date&sort-field%5Bvalue%5D=created_date&sort-field%5Bdirection%5D=desc&sort-direction='
-url_39 = 'https://investor.textron.com/news/news-releases/default.aspx'
+url_39 = 'https://investor.textron.com/rss/pressrelease.aspx'   ### rss feed
 url_40 = 'https://www.nasa.gov/news/all-news/'
 
 # Georgia
@@ -2010,7 +2011,38 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <39> ##############################################
-
+feed = feedparser.parse(url_39)
+try:
+  # 각 기사에 대한 정보 추출
+  for entry in feed.entries:
+      title = entry.title
+      if not title: error_message = Error_Message(error_message, "None Title")
+      link = entry.link
+      if not link: error_message = Error_Message(error_message, "None Link")
+      date = date_util(entry.published)
+      if not date: error_message = Error_Message(error_message, "None date")
+      if date in today_list:
+        article = Article(link, language = 'en') # URL과 언어를 입력
+        article.download()
+        article.parse()
+        content = article.text
+        if not content: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+                  error_list.append({
+                      'Error Link': url_39,
+                      'Error': error_message
+                      })
+        else:
+                  articles.append({
+                      'Title': title,
+                      'Link': link,
+                      'Content(RAW)': content
+                      })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_39,
+        'Error': str(e)
+    })
 ########################################### <40> ##############################################
 # url_40 = https://www.nasa.gov/news/all-news/
 wd = initialize_chrome_driver()
