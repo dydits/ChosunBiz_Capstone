@@ -1,5 +1,66 @@
+# 라이브러리 import
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+import time
+from bs4 import BeautifulSoup
+import pandas as pd
+from datetime import datetime, timedelta
+from dateutil import parser
+import re
+from newspaper import Article
+import requests
+import numpy as np
+from google.colab import drive
 
+def initialize_chrome_driver():
+  # Chrome 옵션 설정 : USER_AGENT는 알아서 수정
+  #USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.105 Safari/537.36"
+  # 태준컴
+  USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5.2 Safari/605.1.15'
+  chrome_options = Options()
+  chrome_options.page_load_strategy = 'normal'  # 'none', 'eager', 'normal'
+  chrome_options.add_argument('--headless')
+  chrome_options.add_argument('--no-sandbox')
+  chrome_options.add_argument('--disable-dev-shm-usage')
+  chrome_options.add_argument('--disable-gpu')
+  chrome_options.add_argument(f'user-agent={USER_AGENT}')
+  # Chrome 드라이버 설정
+  service = Service()
+  wd = webdriver.Chrome(service=service, options=chrome_options)
+  return wd
 
+# 날짜 통합 함수
+def date_util(article_date):
+  try:
+    # Parse the date using dateutil.parser
+    article_date = parser.parse(article_date).date()
+  except ValueError:
+    # If parsing fails, handle the relative dates
+    article_date = article_date.lower()
+    time_keywords = ["h", "hrs", "hr", "m", "s", "hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
+    if any(keyword in article_date for keyword in time_keywords):
+      article_date = today
+    elif "days" in article_date or "day" in article_date:
+      # Find the number of days and subtract from today
+      number_of_days = int(''.join(filter(str.isdigit, article_date)))
+      article_date = today - timedelta(days=number_of_days)
+    else:
+      return None
+  return article_date
+
+# 에러 메시지 작성 함수
+def Error_Message(message, add_error):
+    if message is not str() : message += '/'
+    message += add_error
+    return message
+
+# 데이터프레임
+articles = []
+error_list = []
+today = datetime.now().date()
+
+# urls
 # Georgia
 url_local_1 = 'ajc.com'
 url_local_2 = 'valdostadailytimes.com'
@@ -35,3 +96,39 @@ url_local_16 = 'richmond.com'
 # Maryland
 url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 url_local_18 = 'https://www.savannahnow.com/news/local/'
+
+###############################################url_local_1###############################################
+
+###############################################url_local_2###############################################
+
+###############################################url_local_3###############################################
+
+###############################################url_local_4###############################################
+
+###############################################url_local_5###############################################
+
+###############################################url_local_6###############################################
+
+###############################################url_local_7###############################################
+
+###############################################url_local_8###############################################
+
+###############################################url_local_9###############################################
+
+###############################################url_local_10###############################################
+
+###############################################url_local_11###############################################
+
+###############################################url_local_12###############################################
+
+###############################################url_local_13###############################################
+
+###############################################url_local_14###############################################
+
+###############################################url_local_15###############################################
+
+###############################################url_local_16###############################################
+
+###############################################url_local_17###############################################
+
+###############################################url_local_18###############################################
