@@ -4393,10 +4393,10 @@ Articles_Select1 = {'Company':[],'Title':[],'Link':[],'Content(RAW)':[]}
 for index, row in articles.iterrows():
     for company in Top50_Name_list:
         if (company in row['Title']) or (company in row['Content(RAW)']) :
-            ArticlesNov1to20_Select1['Company'].append(company)
-            ArticlesNov1to20_Select1['Title'].append(row['Title'])
-            ArticlesNov1to20_Select1['Link'].append(row['Link'])
-            ArticlesNov1to20_Select1['Content(RAW)'].append(row['Content(RAW)'])
+            Articles_Select1['Company'].append(company)
+            Articles_Select1['Title'].append(row['Title'])
+            Articles_Select1['Link'].append(row['Link'])
+            Articles_Select1['Content(RAW)'].append(row['Content(RAW)'])
             break
 
 Articles_Select1 = (pd.DataFrame(Articles_Select1))
