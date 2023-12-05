@@ -132,8 +132,8 @@ url_65 = 'https://www.governor.ny.gov/news'
 url_67 = 'https://www.dot.ny.gov/news/press-releases/2023'
 url_68 = 'https://ag.ny.gov/press-releases'
 url_71 = 'https://chamber.nyc/news'
-url_72 = ‘https://aging.ny.gov/pressroom’ 
-url_73 = ‘https://www.nyserda.ny.gov/About/Newsroom/2023-Announcements’
+url_72 = 'https://aging.ny.gov/pressroom' 
+url_73 = 'https://www.nyserda.ny.gov/About/Newsroom/2023-Announcements'
 
 # New Jersey
 url_74 = 'https://www.njchamber.com/press-releases'
@@ -206,8 +206,7 @@ try:
               articles.append({
                             'Title': title,
                             'Link': link,
-                            'Content': text,
-                            'Date' : article_date
+                            'Content(RAW)': text,
                         })
 except Exception as e:
     error_list.append({
@@ -1979,22 +1978,18 @@ try:
       date_str = block.get_text().split('|')[1].strip()
       article_date = date_util(date_str)
       article_link, title, bodys = None, None, None
-      if article_date == today:
+      if article_date in today_list:
         article_link = block.find_parent().find_parent().find_parent().find('a')['href']
         if not article_link: error_message = Error_Message(error_message, "None Link")
-
         article = Article(article_link, language='en')
         article.download()
         article.parse()
-        
         title = article.title
         if not title:
           error_message = Error_Message(error_message, "None Title")
-        
         text = article.text
         if not text:
           error_message = Error_Message(error_message, "None Content")
-          
         if error_message is not str():
                         error_list.append({
                             'Error Link': url_38,
@@ -2677,13 +2672,154 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <56> ##############################################
-
+#url_56 = 'https://www.texasattorneygeneral.gov/news/releases'
+wd = initialize_chrome_driver()
+wd.get(url_56)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.find_all('h4', class_='h4-sans')
+    if not news_items:
+        error_list.append({'Error Link': url_56, 'Error': "Entire Error1"})
+    for article in news_items:
+        date_str = article.find_next_sibling('p', class_='meta').get_text()
+        if not date_str:
+            error_message = Error_Message(error_message, "None date")
+        article_date = date_util(date_str.split('|')[0].strip())
+        # print(article_date)
+        if article_date in today_list:
+            a_tag = article.find('a')
+            if not a_tag:
+                error_message = Error_Message(error_message, "None title")
+            title = a_tag.text.strip()
+            link = 'https://www.texasattorneygeneral.gov' + a_tag['href']
+            if not link:
+                error_message = Error_Message(error_message, "None link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_56,
+     'Error': str(e)
+     })
 ########################################### <57> ##############################################
-
+#url_57 = "https://www.txdot.gov/about/newsroom/statewide.html"
+wd = initialize_chrome_driver()
+wd.get(url_57)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.find_all('tr')
+    if not news_items:
+        error_list.append({'Error Link': url_57, 'Error': "Entire Error1"})
+    for item in news_items:
+        date_tags = item.find_all('td')
+        if len(date_tags) < 2:
+          continue
+        date_str = date_tags[1].get_text(strip=True)
+        # print(date_str)
+        if not date_str:
+            error_message = Error_Message(error_message, "None date")
+        article_date = date_util(date_str)
+        # print(article_date)
+        if article_date in today_list:
+            a_tag = item.find('a')
+            if not a_tag:
+                error_message = Error_Message(error_message, "None title")
+            title = a_tag.text.strip()
+            link = 'https://www.txdot.gov' + a_tag['href']
+            if not link:
+                error_message = Error_Message(error_message, "None link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_57,
+     'Error': str(e)
+     })
 ########################################### <58> ##############################################
-
+#url_58 = 'https://www.dps.texas.gov/news/press-releases'
+wd = initialize_chrome_driver()
+wd.get(url_58)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    soup = soup.find('div', class_ = 'item-list')
+    if not soup: error_list.append({'Error Link': url_58, 'Error': "Entire Error1"})
+    news_items = soup.find_all('li')
+    if not news_items: error_list.append({'Error Link': url_58, 'Error': "Entire Error2"})
+    for item in news_items:
+        date = item.select_one('.views-field-created').get_text(strip=True)
+        if not date: error_message = Error_Message(error_message, "None date")
+        news_date = date_util(date)
+        if news_date == today:
+          title = item.select_one('.views-field-title a').get_text(strip=True)
+          if not title: error_message = Error_Message(error_message, "None title")
+          alink = item.select_one('.views-field-title a')['href']
+          link = f"https://www.dps.texas.gov{alink}"
+          if not link:
+              error_message = Error_Message(error_message, "None link")
+          else:
+              article = Article(link, language='en')
+              article.download()
+              article.parse()
+              content = article.text
+              new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+              articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e: # 코드상 에러가 생김
+    error_list.append({
+     'Error Link': url_58,
+     'Error': str(e)
+     })
 ########################################### <59> ##############################################
-
+#url_59 = 'https://www.twc.texas.gov/news'
+wd = initialize_chrome_driver()
+wd.get(url_59)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.find_all('div', class_='views-row')
+    if not news_items: error_list.append({'Error Link': url_59, 'Error': "Entire Error"})
+    for item in news_items:
+        date = item.find('div', class_='news-date').get_text(strip=True)
+        if not date: error_message = Error_Message(error_message, "None date")
+        news_date = date_util(date)
+        if news_date == today:
+          title = item.find('div', class_='news-title').get_text(strip=True)
+          if not title: error_message = Error_Message(error_message, "None title")
+          link = 'https://www.twc.texas.gov' + item.find('div', class_='news-title').a['href']
+          if not link:
+              error_message = Error_Message(error_message, "None link")
+          else:
+              article = Article(link, language='en')
+              article.download()
+              article.parse()
+              content = article.text
+              new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+              articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_59,
+     'Error': str(e)
+     })
 ########################################### <60> ##############################################
 
 ########################################### <61> ##############################################
@@ -2727,7 +2863,44 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <62> ##############################################
-
+#url_62 = 'https://www.tdi.texas.gov/news/2023/index.html' ######################문제발생
+wd = initialize_chrome_driver()
+wd.get(url_62)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = []
+    for p_tag in soup.find_all('p'):
+        if p_tag.find('strong'):
+            news_items.append(p_tag)
+    if not news_items: error_list.append({'Error Link': url_62, 'Error': "Entire Error1"})
+    for item in news_items:
+        strong_tag = item.find('strong')
+        if not strong_tag: error_message = Error_Message(error_message, "Entire Error2")
+        date_str = strong_tag.get_text().rstrip(':')
+        if not date_str: error_message = Error_Message(error_message, "None date")
+        article_date = date_util(date_str)
+        if article_date in today_list:
+            a_tag = item.find('a')
+            if not a_tag: error_message = Error_Message(error_message, "Entire Error3")
+            title = a_tag.get_text().strip()
+            if not title: error_message = Error_Message(error_message, "None title")
+            link = f'https://www.tdi.texas.gov/news/2023/{item.a["href"]}'
+            if not link: error_message = Error_Message(error_message, "None link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_62,
+     'Error': str(e)
+     })
 ########################################### <63> ##############################################
 #url_63 = 'https://www.txbiz.org/chamber-news'
 wd = initialize_chrome_driver()
@@ -2811,11 +2984,127 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <65> ##############################################
-
+#url_65 = 'https://www.governor.ny.gov/news'
+wd = initialize_chrome_driver()
+wd.get(url_65)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.select('.content-right')
+    if not news_items: error_list.append({'Error Link': url_65, 'Error': "Entire Error1"})
+    for item in news_items:
+        date_str = item.select_one('.text-proxima.text-extra-bold').get_text().strip()
+        article_date = date_util(date_str)
+        if not article_date: error_message = Error_Message(error_message, "None Date")
+        if article_date in today_list:
+            title = item.select_one(".field--name-title").get_text(strip=True)
+            if not title: error_message = Error_Message(error_message, "None title")
+            link = f"https://www.governor.ny.gov/{item.a['href']}"
+            if not link: error_message = Error_Message(error_message, "None link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_65,
+     'Error': str(e)
+     })
 ########################################### <67> ##############################################
-
+#url_67 = 'https://www.dot.ny.gov/news/press-releases/2023'
+wd = initialize_chrome_driver()
+wd.get(url_67)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+seen_news_set = set()
+try:
+    news_items = soup.find_all('tr', align="LEFT")
+    if not news_items: error_list.append({'Error Link': url_67, 'Error': "Entire Error1"})
+    for item in news_items:
+        date_cell = item.find('td', style="width:130px;")
+        if date_cell == None:
+          continue
+        date_str = date_cell.text.strip()
+        article_date = date_util(date_str)
+        if article_date in today_list:
+            a_tag = item.find('a', href=True, target="_blank")
+            if a_tag:
+              title = a_tag.text.strip()
+              if not title: error_message = Error_Message(error_message, "None title")
+              link = a_tag['href']
+              if not link: error_message = Error_Message(error_message, "None link")
+              else:
+                  article = Article(link, language='en')
+                  article.download()
+                  article.parse()
+                  content = article.text
+                  new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                  articles = pd.concat([articles, new_row], ignore_index=True)
+            else:
+              title_cell = item.find('td', style=None)
+              if not title_cell: error_message = Error_Message(error_message, "None title cell")
+              title = title_cell.get_text(strip=True)
+              link = item.a['href']
+              if not link:
+                error_message = Error_Message(error_message, "None link2")
+              else:
+                  article = Article(link, language='en')
+                  article.download()
+                  article.parse()
+                  content = article.text
+                  new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                  articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_67,
+     'Error': str(e)
+     })
 ########################################### <68> ##############################################
-
+#url_68 = 'https://ag.ny.gov/press-releases'
+wd = initialize_chrome_driver()
+wd.get(url_68)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.find_all('div', class_='views-row')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_68,
+            'Error': "None News"
+        })
+    for item in news_items:
+        date_str = item.select_one(".field-content").get_text(strip=True)
+        article_date = date_util(date_str)
+        if not article_date:
+            error_message = Error_Message(error_message, "None Date")
+        if article_date in today_list:
+            title = item.select_one('a').get_text(strip=True)
+            if not title:
+                error_message = Error_Message(error_message, "None Title")
+            link = f"https://ag.ny.gov{item.a['href']}"
+            if not link:
+                error_message = Error_Message(error_message, "None Link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+        'Error Link': url_68,
+        'Error': str(e)
+    })
 ########################################### <71> ##############################################
 #url_71 = 'https://chamber.nyc/news'
 wd = initialize_chrome_driver()
@@ -2903,7 +3192,39 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <74> ##############################################
-
+#url_74 = "https://www.njchamber.com/press-releases"
+wd = initialize_chrome_driver()
+wd.get(url_74)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.find_all('div', class_='g-array-item-title')
+    if not news_items: error_list.append({'Error Link': url_74, 'Error': "Entire Error1"})
+    for item in news_items:
+        date_tag = item.find_next_sibling('div', class_='g-array-item-details').find('span', class_='g-array-item-date')
+        date_str = date_tag.get_text(strip=True) if date_tag else None
+        article_date = date_util(date_str)
+        if not article_date: error_message = Error_Message(error_message, "None Date")
+        if article_date in today_list:
+            title_tag = item.find('a')
+            title = title_tag.get_text(strip=True)
+            if not title: error_message = Error_Message(error_message, "None title")
+            link = "https://www.njchamber.com" + title_tag['href']
+            if not link: error_message = Error_Message(error_message, "None link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_74,
+     'Error': str(e)
+     })
 ########################################### <75> ##############################################
 
 ########################################### <76> ##############################################
@@ -2953,11 +3274,109 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <80> ##############################################
-
+#url_80 = 'https://www.ncdor.gov/news/press-releases'
+wd = initialize_chrome_driver()
+wd.get(url_80)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+  news_items = soup.select('.views-row')
+  if not news_items: error_list.append({'Error Link': url_80, 'Error': "None News"})
+  for item in news_items:
+    date_str = item.select_one('.datetime').text.strip()
+    article_date = date_util(date_str)
+    if article_date in today_list:
+      title = item.select_one('a').get_text(strip=True)
+      if not title:
+          error_message = Error_Message(error_message, "None Title")
+      link = f"https://www.ncdor.gov{item.a['href']}"
+      if not link:
+          error_message = Error_Message(error_message, "None Link")
+      else:
+          article = Article(link, language='en')
+          article.download()
+          article.parse()
+          content = article.text
+          new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+          articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+  error_list.append({
+      'Error Link': url_80,
+      'Error': str(e)
+      })
 ########################################### <81> ##############################################
-
+#url_81 = "https://www.iprcenter.gov/news"
+wd = initialize_chrome_driver()
+wd.get(url_81)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = []
+    for p_tag in soup.select("[class=row]"):
+        if p_tag.find('p', class_='date'):
+            news_items.append(p_tag)
+    if not news_items:
+        error_list.append({'Error Link': url_81, 'Error': "None News"})
+    for item in news_items:
+        date_str = item.select_one('.date').text.strip()
+        article_date = date_util(date_str)
+        if not article_date:
+            error_list.append({'Error Link': url_81, 'Error': "None Date"})
+        if article_date in today_list:
+            title = item.select_one('a').get_text(strip=True)
+            if not title:
+                error_message = Error_Message(error_message, "None Title")
+            link = item.a['href']
+            if not link:
+                error_message = Error_Message(error_message, "None Link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+        'Error Link': url_81,
+        'Error': str(e)
+    })
 ########################################### <82> ##############################################
-
+#url_82 = "https://edpnc.com/news-events/"
+wd = initialize_chrome_driver()
+wd.get(url_82)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+  news_items = soup.select('.four')
+  if not news_items: error_list.append({'Error Link': url_82, 'Error': "None News"})
+  for item in news_items:
+    date_str = item.select_one('.blog_date').text.strip()
+    article_date = date_util(date_str)
+    if not article_date: error_list.append({'Error Link': url_82, 'Error': "None Date"})
+    if article_date in today_list:
+      title = item.find('h3').get_text(strip=True)
+      if not title: error_message = Error_Message(error_message, "None Title")
+      link = item.a['href']
+      if not link: error_message = Error_Message(error_message, "None Link")
+      else:
+          article = Article(link, language='en')
+          article.download()
+          article.parse()
+          content = article.text
+          new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+          articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+ error_list.append({
+     'Error Link': url_82,
+     'Error': str(e)
+     })
 ########################################### <83> ##############################################
 #url_83 = "https://ncchamber.com/category/chamber-updates/"
 wd = initialize_chrome_driver()
@@ -3012,17 +3431,180 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <84> ##############################################
-
+#url_84 = "https://dc.gov/newsroom"
+wd = initialize_chrome_driver()
+wd.get(url_84)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.select('.views-row')
+    if not news_items: error_list.append({'Error Link': url_84, 'Error': "None News"})
+    for item in news_items:
+      date_str = item.select_one('.date-display-single').text.strip()
+      article_date = date_util(date_str)
+      if not article_date: error_list.append({'Error Link': url_84, 'Error': "None Date"})
+      if article_date in today_list:
+        a_tag = item.find('a')
+        title = a_tag.text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        link = f"https://dc.gov{a_tag['href']}"
+        if not link: error_message = Error_Message(error_message, "None Link")
+        else:
+            article = Article(link, language='en')
+            article.download()
+            article.parse()
+            content = article.text
+            new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+            articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+        'Error Link': url_84,
+        'Error': str(e)
+    })
 ########################################### <85> ##############################################
 
 ########################################### <86> ##############################################
-
+#url_86 = "https://planning.dc.gov/newsroom"
+wd = initialize_chrome_driver()
+wd.get(url_86)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = []
+    for p_tag in soup.select(".views-row"):
+        if p_tag.select('.date-display-single'):
+            news_items.append(p_tag)
+    if not news_items: error_list.append({'Error Link': url_86, 'Error': "None News"})
+    for item in news_items:
+      date_str = item.select_one('.date-display-single').text.strip()
+      article_date = date_util(date_str)
+      if not article_date: error_list.append({'Error Link': url_86, 'Error': "None Date"})
+      if article_date in today_list:
+        a_tag = item.find('a')
+        title = a_tag.text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        link = f"https://planning.dc.gov{a_tag['href']}"
+        if not link: error_message = Error_Message(error_message, "None Link")
+        else:
+            article = Article(link, language='en')
+            article.download()
+            article.parse()
+            content = article.text
+            new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+            articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+ error_list.append({
+     'Error Link': url_86,
+     'Error': str(e)
+     })
 ########################################### <87> ##############################################
-
+#url_87 = "https://dpw.dc.gov/newsroom"
+wd = initialize_chrome_driver()
+wd.get(url_87)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = []
+    for p_tag in soup.select(".views-row"):
+        if p_tag.select('.date-display-single'):
+            news_items.append(p_tag)
+    if not news_items: error_list.append({'Error Link': url_87, 'Error': "None News"})
+    for item in news_items:
+      date_str = item.select_one('.date-display-single').text.strip()
+      article_date = date_util(date_str)
+      if not article_date: error_list.append({'Error Link': url_87, 'Error': "None Date"})
+      if article_date in today_list:
+        a_tag = item.find('a')
+        title = a_tag.text.strip()
+        if not title: error_message = Error_Message(error_message, "None Title")
+        link = f"https://dpw.dc.gov{a_tag['href']}"
+        if not link: error_message = Error_Message(error_message, "None Link")
+        else:
+            article = Article(link, language='en')
+            article.download()
+            article.parse()
+            content = article.text
+            new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+            articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+ error_list.append({
+     'Error Link': url_87,
+     'Error': str(e)
+     })
 ########################################### <88> ##############################################
-
+#url_88 = 'https://www.governor.virginia.gov/newsroom/news-releases/'
+wd = initialize_chrome_driver()
+wd.get(url_88)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.select(".col-md-12")
+    if not news_items: error_list.append({'Error Link': url_88, 'Error': "None News"})
+    for item in news_items:
+        date_str = item.select_one(".date").text.strip().strip('"')
+        article_date = date_util(date_str)
+        if not article_date: error_message = Error_Message(error_message, "None Date")
+        if article_date in today_list:
+            title = item.select_one(".va-icon--arrow-ext").text
+            if not title: error_message = Error_Message(error_message, "None Title")
+            link = f"https://www.governor.virginia.gov{item.a['href']}"
+            if not link: error_message = Error_Message(error_message, "None Link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+        'Error Link': url_88,
+        'Error': str(e)
+    })
 ########################################### <89> ##############################################
-
+#url_89 = "https://www.vedp.org/press-releases"
+wd = initialize_chrome_driver()
+wd.get(url_89)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+  date_items = soup.select("[class=date]")
+  if not news_items: error_list.append({'Error Link': url_89, 'Error': "None News"})
+  for datezz in date_items:
+    date_str = datezz.text.strip()
+    article_date = date_util(date_str)
+    if not article_date: error_message = Error_Message(error_message, "None Date")
+    if article_date in today_list:
+      h3_tag = datezz.find_previous_sibling('h3', class_='field-content')
+      if not h3_tag: error_message = Error_Message(error_message, "None h3_tag")
+      a_tag = h3_tag.find('a')
+      if not a_tag: error_message = Error_Message(error_message, "None a_tag")
+      title = a_tag.text.strip()
+      if not title: error_message = Error_Message(error_message, "None Title")
+      link = f"https://www.vedp.org{a_tag['href']}"
+      if not link: error_message = Error_Message(error_message, "None Link")
+      else:
+          article = Article(link, language='en')
+          article.download()
+          article.parse()
+          content = article.text
+          new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+          articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+ error_list.append({
+     'Error Link': url_89,
+     'Error': str(e)
+     })
 ########################################### <90> ##############################################
 #url_90 = "https://www.doli.virginia.gov/category/announcements/"
 wd = initialize_chrome_driver()
@@ -3105,11 +3687,108 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <91> ##############################################
-
+#url_91 = 'https://vachamber.com/category/press-releases/'
+wd = initialize_chrome_driver()
+wd.get(url_91)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.select(".archiveitem")
+    if not news_items: error_list.append({'Error Link': url_91, 'Error': "None News"})
+    for item in news_items:
+        date_str = item.select_one('.item_meta').get_text(strip=True)
+        article_date = date_util(date_str)
+        if not article_date: error_message = Error_Message(error_message, "None Date")
+        if article_date in today_list:
+            title = item.select_one('h4 a').get_text(strip=True)
+            if not title: error_message = Error_Message(error_message, "None Title")
+            link = f"{item.a['href']}"
+            if not link: error_message = Error_Message(error_message, "None Link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+        'Error Link': url_91,
+        'Error': str(e)
+    })
 ########################################### <92> ##############################################
-
+#url_92 = "https://governor.maryland.gov/news/press/Pages/default.aspx?page=1"
+wd = initialize_chrome_driver()
+wd.get(url_92)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try :
+    div_content = soup.find('div', class_ = 'mdgov-twoCol-col2 order-1')
+    if not div_content: error_list.append({'Error Link': url_92, 'Error': "Entire Error1"})
+    tags = div_content.find_all('div', class_ = 'col')
+    if not tags: error_list.append({'Error Link': url_92, 'Error': "Entire Error2"})
+    for div_tag in tags:
+        date_tag = div_tag.find('p', class_='font-weight-bold')
+        date_str = date_tag.text.split(': ')[-1]
+        if not date_str: error_message = Error_Message(error_message, "None date")
+        article_date = date_util(date_str)
+        if article_date in today_list:
+            title_tag = div_tag.find('h2')
+            if not title_tag: error_message = Error_Message(error_message, "None title")
+            title = title_tag.text
+            linkzz = title_tag.find_parent('a')['href']
+            link = f'https://governor.maryland.gov{linkzz}'
+            if not link: error_message = Error_Message(error_message, "None Link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_92,
+     'Error': str(e)
+     })
 ########################################### <93> ##############################################
-
+#url_93 = 'https://news.maryland.gov/mde/category/press-release/'
+wd = initialize_chrome_driver()
+wd.get(url_93)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    news_items = soup.select(".type-post")
+    if not news_items: error_list.append({'Error Link': url_93, 'Error': "None News"})
+    for item in news_items:
+        li_tag = item.select_one('li')
+        title_str = li_tag.select_one('a').text.strip()
+        date_str = li_tag.text.replace(title_str, '').strip()
+        article_date = date_util(date_str)
+        if not article_date: error_message = Error_Message(error_message, "None Date")
+        if article_date in today_list:
+            title = item.select_one('a').get_text(strip=True)
+            if not title: error_message = Error_Message(error_message, "None Title")
+            link = f"{item.a['href']}"
+            if not link: error_message = Error_Message(error_message, "None Link")
+            else:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                content = article.text
+                new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+                articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+        'Error Link': url_93,
+        'Error': str(e)
+    })
 ########################################### <94> ##############################################
 # url_94 = 'https://commerce.maryland.gov/media/press-room'
 wd = initialize_chrome_driver()
@@ -3170,7 +3849,41 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <95> ##############################################
-
+#url_95 = 'https://www.dllr.state.md.us/whatsnews/'
+wd = initialize_chrome_driver()
+wd.get(url_95)
+time.sleep(3)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try :
+    div_content = soup.find('div', {'id': 'ui-id-2'})
+    if not div_content: error_list.append({'Error Link': url_95, 'Error': "None div_content"})    
+    li_tags = div_content.select('ul li')
+    if not li_tags: error_list.append({'Error Link': url_95, 'Error': "None li_tags"})    
+    for li in li_tags:
+        a_tag = li.find('a')
+        date_str = li.text.split(' - ')[-1]
+        if not date_str: error_message = Error_Message(error_message, "None date")
+        article_date = date_util(date_str)        
+        if article_date in today_list:
+          title = a_tag.text
+          if not title: error_message = Error_Message(error_message, "None Title")
+          link = f"https://www.dllr.state.md.us/whatsnews/{a_tag['href']}"
+          print(link)
+          if not link: error_message = Error_Message(error_message, "None Link")
+          else:
+              article = Article(link, language='en')
+              article.download()
+              article.parse()
+              content = article.text
+              new_row = pd.DataFrame({'Title': [title], 'Link': [link], 'Content(RAW)': [content]})
+              articles = pd.concat([articles, new_row], ignore_index=True)
+except Exception as e:
+    error_list.append({
+     'Error Link': url_95,
+     'Error': str(e)
+     })
 ########################################### <96> ##############################################
 url_96 = "https://www.mdchamber.org/news/"
 wd = initialize_chrome_driver()
