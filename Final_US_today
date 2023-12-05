@@ -109,7 +109,7 @@ url_45 = 'https://www.gachamber.com/all-news/'
 url_46 = 'https://www.sos.ca.gov/administration/news-releases-and-advisories/2023-news-releases-and-advisories'
 url_48 = 'https://business.ca.gov/newsroom/'
 url_49 = 'https://business.ca.gov/calosba-latest-news/'
-url_50 = 'https://www.dir.ca.gov/dlse/DLSE_whatsnew.htm'
+url_50 = 'https://www.dir.ca.gov/dlse/DLSE_whatsnew2023.htm' ## 년도 바뀔 때마다 새로운 링크 찾아줘야함(https://www.dir.ca.gov/dlse/DLSE_whatsnew.htm)
 url_51 = 'https://www.dir.ca.gov/dosh/DOSH_Archive.html'
 url_52 = 'https://www.dir.ca.gov/mediaroom.html'
 url_53 = 'https://news.caloes.ca.gov/'
@@ -2440,7 +2440,50 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <50> ##############################################
-
+#url_50 = 'https://www.dir.ca.gov/dlse/DLSE_whatsnew2023.htm'
+wd.get(url_50)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    tbody = soup.find('tbody', class_='latest_news')
+    selected_rows = []
+    for tr in tbody.find_all('tr'):
+        if tr.find('td', class_='nowrap'):
+            selected_rows.append(tr)
+    if not selected_rows: error_list.append({'Error Link': url_50, 'Error': "Entire Error4"})
+    for row in selected_rows:
+        td_tags = row.find('td', class_ = "nowrap")
+        date_text = td_tags.get_text(strip=True)
+        article_date = date_util(date_text)
+        if article_date in today_list:
+            a_tag = td_tags.find_parent().find('a')
+            link = f"https://www.dir.ca.gov{a_tag['href']}"
+            if not link: error_message = Error_Message(error_message, "None link")
+            article = Article(link, language = 'en') # URL과 언어를 입력
+            article.download()
+            article.parse()
+            title = article.title
+            if not title: error_message = Error_Message(error_message, "None Title")
+            content = article.text
+            if not content: error_message = Error_Message(error_message, "None Contents")
+            if error_message is not str():
+                error_list.append({
+                'Error Link': url_50,
+                'Error': error_message
+                })
+            else:
+                articles.append({
+                'Title': title,
+                'Link': link,
+                'Content(RAW)': content
+                })
+except Exception as e:
+    error_list.append({
+     'Error Link': url_50,
+     'Error': str(e)
+     })
 ########################################### <51> ##############################################
 # url_51 = 'https://www.dir.ca.gov/dosh/DOSH_Archive.html'
 wd = initialize_chrome_driver()
