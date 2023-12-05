@@ -8,7 +8,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from dateutil import parser
 import re
-from newspaper import Articlehttps://www.doi.gov/news
+from newspaper import Article
 import feedparser
 
 
