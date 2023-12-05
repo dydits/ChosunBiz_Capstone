@@ -170,7 +170,7 @@ url_96 = 'https://www.mdchamber.org/news/'
 # url_1 = 'https://www.state.gov/press-releases/'
 wd = initialize_chrome_driver()
 wd.get(url_1)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -217,7 +217,7 @@ except Exception as e:
 # url_2 = 'https://www.state.gov/department-press-briefings/'
 wd = initialize_chrome_driver()
 wd.get(url_2)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -264,7 +264,7 @@ except Exception as e:
 # url_3 = 'https://home.treasury.gov/news/press-releases' 
 wd = initialize_chrome_driver()
 wd.get(url_3)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 wd.quit()
 soup = BeautifulSoup(html, 'html.parser')
@@ -321,7 +321,7 @@ except Exception as e:
 #url_4 = 'https://www.defense.gov/News/'
 wd = initialize_chrome_driver()
 wd.get(url_4)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -339,7 +339,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = article_soup.find('h1', class_='maintitle').text.strip()
@@ -380,7 +380,7 @@ except Exception as e:
 # url_5 = 'https://www.army.mil/news'
 wd = initialize_chrome_driver()
 wd.get(url_5)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -434,7 +434,7 @@ except Exception as e:
 #url_6 = 'https://www.navy.mil/Press-Office/'
 wd = initialize_chrome_driver()
 wd.get(url_6)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -452,7 +452,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = article.find('h2').get_text().strip()
@@ -483,7 +483,7 @@ except Exception as e:
 # url_7 = 'https://www.af.mil/News/Category/22750/'
 wd = initialize_chrome_driver()
 wd.get(url_7)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -531,7 +531,7 @@ except Exception as e:
 # url_8 = 'https://www.nsa.gov/Press-Room/Press-Releases-Statements/'
 wd = initialize_chrome_driver()
 wd.get(url_8)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 wd.quit()
 soup = BeautifulSoup(html, 'html.parser')
@@ -584,7 +584,7 @@ except Exception as e:
 # url_9 = 'https://www.justice.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_9)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -636,7 +636,7 @@ except Exception as e:
 # url_10 = 'https://www.fbi.gov/news/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_10)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 
@@ -680,7 +680,7 @@ except Exception as e:
 #url_11 = 'https://www.doi.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_11)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -699,7 +699,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = article_soup.find('h1',class_='section-page-title').text.strip()
@@ -729,7 +729,7 @@ except Exception as e:
 #url_12 = 'https://www.usda.gov/media/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_12)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -773,7 +773,7 @@ except Exception as e:
 # url_13 = 'https://www.ars.usda.gov/news-events/news-archive/'
 wd = initialize_chrome_driver()
 wd.get(url_13)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -834,7 +834,7 @@ except Exception as e:
 # url_14 = 'https://www.fs.usda.gov/news/releases'
 wd = initialize_chrome_driver()
 wd.get(url_14)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -883,7 +883,7 @@ except Exception as e:
 # url_15 = 'https://www.fas.usda.gov/newsroom/search'
 wd = initialize_chrome_driver()
 wd.get(url_15)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -941,7 +941,7 @@ except Exception as e:
 # url_16 = 'https://www.commerce.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_16)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -993,7 +993,7 @@ except Exception as e:
 # url_17 = 'https://www.dol.gov/newsroom/releases?agency=All&state=All&topic=All&year=all&page=0'
 wd = initialize_chrome_driver()
 wd.get(url_17)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1042,7 +1042,7 @@ except Exception as e:
 #url_18 = 'https://www.hhs.gov/about/news/index.html'
 wd = initialize_chrome_driver()
 wd.get(url_18)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1061,7 +1061,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = article_soup.find('h1').text
@@ -1090,7 +1090,7 @@ except Exception as e:
 #url_19 = 'https://www.fda.gov/news-events/fda-newsroom/press-announcements'
 wd = initialize_chrome_driver()
 wd.get(url_19)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1135,7 +1135,7 @@ except Exception as e:
 #url_20 = 'https://www.fda.gov/news-events/speeches-fda-officials'
 wd = initialize_chrome_driver()
 wd.get(url_20)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1179,7 +1179,7 @@ except Exception as e:
 # url_21 = 'https://www.transportation.gov/newsroom/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_21)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1225,7 +1225,7 @@ except Exception as e:
 # url_22 = 'https://www.transportation.gov/newsroom/speeches'
 wd = initialize_chrome_driver()
 wd.get(url_22)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1271,7 +1271,7 @@ except Exception as e:
 #url_23 = 'https://www.energy.gov/newsroom'
 wd = initialize_chrome_driver()
 wd.get(url_23)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1290,7 +1290,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = article_soup.find('h1', class_='page-title').text.replace('\n','').strip()
@@ -1319,7 +1319,7 @@ except Exception as e:
 # url_24 = 'https://www.ed.gov/news/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_24)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1365,7 +1365,7 @@ except Exception as e:
 # url_25 = 'https://www.ed.gov/news/speeches'
 wd = initialize_chrome_driver()
 wd.get(url_25)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1411,7 +1411,7 @@ except Exception as e:
 #url_26 = 'https://news.va.gov/news/'
 wd = initialize_chrome_driver()
 wd.get(url_26)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1452,7 +1452,7 @@ except Exception as e:
 #url_27 = 'https://www.dhs.gov/news-releases/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_27)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1496,7 +1496,7 @@ except Exception as e:
 #url_28 = 'https://www.dhs.gov/news-releases/speeches'
 wd = initialize_chrome_driver()
 wd.get(url_28)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1540,7 +1540,7 @@ except Exception as e:
 #url_29 = 'https://www.fema.gov/about/news-multimedia/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_29)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1584,7 +1584,7 @@ except Exception as e:
 # url_30 = 'https://www.secretservice.gov/newsroom'
 wd = initialize_chrome_driver()
 wd.get(url_30)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1633,7 +1633,7 @@ except Exception as e:
 #url_31 = 'https://www.epa.gov/newsreleases/search'
 wd = initialize_chrome_driver()
 wd.get(url_31)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1656,7 +1656,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = article_soup.find('h1', class_='page-title').text.strip()
@@ -1688,7 +1688,7 @@ except Exception as e:
 #url_32 = 'https://www.lockheedmartin.com/en-us/news.html'
 wd = initialize_chrome_driver()
 wd.get(url_32)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1732,7 +1732,7 @@ except Exception as e:
 #url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
 wd = initialize_chrome_driver()
 wd.get(url_33)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1777,7 +1777,7 @@ except Exception as e:
 #url_34 = 'https://www.rtx.com/news'
 wd = initialize_chrome_driver()
 wd.get(url_34)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1796,7 +1796,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = block.find_parent().find('h3').text.strip()
@@ -1827,7 +1827,7 @@ except Exception as e:
 # url_35 = 'https://news.northropgrumman.com/news/releases'
 wd = initialize_chrome_driver()
 wd.get(url_35)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1873,7 +1873,7 @@ except Exception as e:
 #url_36 = 'https://www.gd.com/news/news-feed?page=0&types=Press Release'
 wd = initialize_chrome_driver()
 wd.get(url_36)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1916,7 +1916,7 @@ except Exception as e:
 #url_37 = 'https://www.baesystems.com/en/newsroom'
 wd = initialize_chrome_driver()
 wd.get(url_37)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -1938,7 +1938,7 @@ try:
         if not article_link: error_message = Error_Message(error_message, "None Link")
         wd = initialize_chrome_driver()
         wd.get(article_link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         title = block.find_parent().find('h3').text.strip()
@@ -1965,7 +1965,7 @@ except Exception as e:
 #url_38 = 'https://www.l3harris.com/ko-kr/newsroom/search?size=n_10_n&sort-field%5Bname%5D=Publish%20Date&sort-field%5Bvalue%5D=created_date&sort-field%5Bdirection%5D=desc&sort-direction='
 wd = initialize_chrome_driver()
 wd.get(url_38)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2043,7 +2043,7 @@ except Exception as e:
 # url_40 = https://www.nasa.gov/news/all-news/
 wd = initialize_chrome_driver()
 wd.get(url_40)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2059,7 +2059,7 @@ try:
         if not link: error_message = Error_Message(error_message, "None link")
         wd = initialize_chrome_driver()
         wd.get(link)
-        time.sleep(5)
+        time.sleep(3)
         article_html = wd.page_source
         article_soup = BeautifulSoup(article_html, 'html.parser')
         date_tag = article_soup.find('span', class_='heading-12 text-uppercase')
@@ -2092,7 +2092,7 @@ except Exception as e:
 #url_41 = 'https://sos.ga.gov/news/division/31?page=0'
 wd = initialize_chrome_driver()
 wd.get(url_41)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2141,7 +2141,7 @@ except Exception as e:
 #url_42 = 'https://gov.georgia.gov/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_42)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2188,7 +2188,7 @@ except Exception as e:
 # url_44 = 'https://www.georgia.org/press-releases' 
 wd = initialize_chrome_driver()
 wd.get(url_44)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2241,7 +2241,7 @@ except Exception as e:
 #url_45 = 'https://www.gachamber.com/all-news/'
 wd = initialize_chrome_driver()
 wd.get(url_45)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2296,7 +2296,7 @@ except Exception as e:
 # url_46 = 'https://www.sos.ca.gov/administration/news-releases-and-advisories/2023-news-releases-and-advisories'
 wd = initialize_chrome_driver()
 wd.get(url_46)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2343,7 +2343,7 @@ except Exception as e:
 # url_48 = 'https://business.ca.gov/newsroom/'
 wd = initialize_chrome_driver()
 wd.get(url_48)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2391,7 +2391,7 @@ except Exception as e:
 # url_49 = 'https://business.ca.gov/calosba-latest-news/'
 wd = initialize_chrome_driver()
 wd.get(url_49)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2438,7 +2438,7 @@ except Exception as e:
 ########################################### <50> ##############################################
 #url_50 = 'https://www.dir.ca.gov/dlse/DLSE_whatsnew2023.htm'
 wd.get(url_50)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2484,7 +2484,7 @@ except Exception as e:
 # url_51 = 'https://www.dir.ca.gov/dosh/DOSH_Archive.html'
 wd = initialize_chrome_driver()
 wd.get(url_51)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2533,7 +2533,7 @@ except Exception as e:
 # url_53 = 'https://news.caloes.ca.gov/'
 wd = initialize_chrome_driver()
 wd.get(url_53)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2577,7 +2577,7 @@ except Exception as e:
 # url_54 = 'https://advocacy.calchamber.com/california-works/calchamber-members-in-the-news/'
 wd = initialize_chrome_driver()
 wd.get(url_54)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2627,7 +2627,7 @@ except Exception as e:
 # url_55 = 'https://gov.texas.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_55)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2675,7 +2675,7 @@ except Exception as e:
 #url_56 = 'https://www.texasattorneygeneral.gov/news/releases'
 wd = initialize_chrome_driver()
 wd.get(url_56)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2713,7 +2713,7 @@ except Exception as e:
 #url_57 = "https://www.txdot.gov/about/newsroom/statewide.html"
 wd = initialize_chrome_driver()
 wd.get(url_57)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2755,7 +2755,7 @@ except Exception as e:
 #url_58 = 'https://www.dps.texas.gov/news/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_58)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2791,7 +2791,7 @@ except Exception as e: # 코드상 에러가 생김
 #url_59 = 'https://www.twc.texas.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_59)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2826,7 +2826,7 @@ except Exception as e:
 #url_61 = 'https://comptroller.texas.gov/about/media-center/news//'
 wd = initialize_chrome_driver()
 wd.get(url_61)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2866,7 +2866,7 @@ except Exception as e:
 #url_62 = 'https://www.tdi.texas.gov/news/2023/index.html' ######################문제발생
 wd = initialize_chrome_driver()
 wd.get(url_62)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2905,7 +2905,7 @@ except Exception as e:
 #url_63 = 'https://www.txbiz.org/chamber-news'
 wd = initialize_chrome_driver()
 wd.get(url_63)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2946,7 +2946,7 @@ except Exception as e:
 #url_64 = 'https://www.txbiz.org/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_64)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -2987,7 +2987,7 @@ except Exception as e:
 #url_65 = 'https://www.governor.ny.gov/news'
 wd = initialize_chrome_driver()
 wd.get(url_65)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3019,7 +3019,7 @@ except Exception as e:
 #url_67 = 'https://www.dot.ny.gov/news/press-releases/2023'
 wd = initialize_chrome_driver()
 wd.get(url_67)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3070,7 +3070,7 @@ except Exception as e:
 #url_68 = 'https://ag.ny.gov/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_68)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3109,7 +3109,7 @@ except Exception as e:
 #url_71 = 'https://chamber.nyc/news'
 wd = initialize_chrome_driver()
 wd.get(url_71)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3155,7 +3155,7 @@ except Exception as e:
 #url_73 = https://www.nyserda.ny.gov/About/Newsroom/2023-Announcements
 wd = initialize_chrome_driver()
 wd.get(url_73)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3195,7 +3195,7 @@ except Exception as e:
 #url_74 = "https://www.njchamber.com/press-releases"
 wd = initialize_chrome_driver()
 wd.get(url_74)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3233,7 +3233,7 @@ except Exception as e:
 #url_78 = 'https://www.commerce.nc.gov/news/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_78)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3277,7 +3277,7 @@ except Exception as e:
 #url_80 = 'https://www.ncdor.gov/news/press-releases'
 wd = initialize_chrome_driver()
 wd.get(url_80)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3310,7 +3310,7 @@ except Exception as e:
 #url_81 = "https://www.iprcenter.gov/news"
 wd = initialize_chrome_driver()
 wd.get(url_81)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3349,7 +3349,7 @@ except Exception as e:
 #url_82 = "https://edpnc.com/news-events/"
 wd = initialize_chrome_driver()
 wd.get(url_82)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3381,7 +3381,7 @@ except Exception as e:
 #url_83 = "https://ncchamber.com/category/chamber-updates/"
 wd = initialize_chrome_driver()
 wd.get(url_83)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3609,7 +3609,7 @@ except Exception as e:
 #url_90 = "https://www.doli.virginia.gov/category/announcements/"
 wd = initialize_chrome_driver()
 wd.get(url_90)
-time.sleep(5)
+time.sleep(3)
 error_message = str()
 try:
       def get_article_list(url, filter_date):
@@ -3794,7 +3794,7 @@ except Exception as e:
 wd = initialize_chrome_driver()
 wd.get(url_94)
 base_url = "https://commerce.maryland.gov"
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
@@ -3821,7 +3821,7 @@ try:
                 if article_date in today_list:
                     wd = initialize_chrome_driver()
                     wd.get(full_link)
-                    time.sleep(5)
+                    time.sleep(3)
                     article_html = wd.page_source
                     article_soup = BeautifulSoup(article_html, 'html.parser')
                     content = ''
@@ -3888,7 +3888,7 @@ except Exception as e:
 url_96 = "https://www.mdchamber.org/news/"
 wd = initialize_chrome_driver()
 wd.get(url_96)
-time.sleep(5)
+time.sleep(3)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
