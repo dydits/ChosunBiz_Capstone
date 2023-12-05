@@ -121,7 +121,6 @@ url_56 = 'https://www.texasattorneygeneral.gov/news/releases'
 url_57 = 'https://www.txdot.gov/about/newsroom/statewide.html'
 url_58 = 'https://www.dps.texas.gov/news/press-releases'
 url_59 = 'https://www.twc.texas.gov/news'
-url_60 = 'https://tpwd.texas.gov/newsmedia/releases/'
 url_61 = 'https://comptroller.texas.gov/about/media-center/news//'
 url_62 = 'https://www.tdi.texas.gov/news/2023/index.html'
 url_63 = 'https://www.txbiz.org/chamber-news'
@@ -2528,7 +2527,53 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <52> ##############################################
-
+#url_52 = 'https://www.dir.ca.gov/mediaroom.html'
+wd = initialize_chrome_driver()
+wd.get(url_52)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    selected_rows = []
+    for tr in soup.find_all('tr'):
+          if tr.find('td', class_='nowrap'):
+              selected_rows.append(tr)
+    if not selected_rows: error_list.append({'Error Link': url_52, 'Error': "Entire Error1"})
+    for item in selected_rows:
+        td_tags = item.find_all('td')
+        if not td_tags: error_list.append({'Error Link': url_52, 'Error': "Entire Error2"})
+        if td_tags:
+            article_date = date_util(td_tags[0].text)
+            if article_date in today_list:
+                a_tag = item.find('a')
+                title = a_tag.attrs.get('aria-label').strip()
+                if not title: error_message = Error_Message(error_message, "None title")
+                link = "https://www.dir.ca.gov" + a_tag.attrs['href']
+                if not link: error_message = Error_Message(error_message, "None link")
+                if '.pdf' in link: content = 'pdf file'
+                else:
+                  article = Article(link, language = 'en') # URL과 언어를 입력
+                  article.download()
+                  article.parse()
+                  content = article.text
+                  if not content: error_message = Error_Message(error_message, "None Contents")
+                if error_message is not str():
+                    error_list.append({
+                    'Error Link': url_52,
+                    'Error': error_message
+                    })
+                else:
+                    articles.append({
+                    'Title': title,
+                    'Link': link,
+                    'Content(RAW)': content
+                    })
+except Exception as e:
+    error_list.append({
+     'Error Link': url_52,
+     'Error': str(e)
+     })
 ########################################### <53> ##############################################
 # url_53 = 'https://news.caloes.ca.gov/'
 wd = initialize_chrome_driver()
@@ -2820,8 +2865,6 @@ except Exception as e:
      'Error Link': url_59,
      'Error': str(e)
      })
-########################################### <60> ##############################################
-
 ########################################### <61> ##############################################
 #url_61 = 'https://comptroller.texas.gov/about/media-center/news//'
 wd = initialize_chrome_driver()
@@ -3150,7 +3193,49 @@ except Exception as e:
       'Error': str(e)
       })
 ########################################### <72> ##############################################
-
+#url_72 = 'https://aging.ny.gov/pressroom'
+wd = initialize_chrome_driver()
+wd.get(url_72)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+news_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  news_blocks = soup.find_all('div', class_='webny-teaser-content-wrapper')
+  if not news_blocks: error_list.append({'Error Link': url_72, 'Error': "None News"})
+  else:
+    for block in news_blocks:
+      date_str = block.find('div', class_='news-listing-date').text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date in today_list:
+        article_link = block.find('a')['href']
+        article_link = f'https://aging.ny.gov{article_link}'
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        article = Article(article_link, language = 'en') # URL과 언어를 입력 
+        article.download() 
+        article.parse() 
+        content = article.text 
+        title = article.title
+        if not title: error_message = Error_Message(error_message, "None Title")
+        if not content: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': url_72,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': content
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_72,
+      'Error': str(e)
+      })
 ########################################### <73> ##############################################
 #url_73 = https://www.nyserda.ny.gov/About/Newsroom/2023-Announcements
 wd = initialize_chrome_driver()
@@ -3226,9 +3311,106 @@ except Exception as e:
      'Error': str(e)
      })
 ########################################### <75> ##############################################
-
+#url_75 = "https://www.nj.gov/health/news/"
+wd = initialize_chrome_driver()
+wd.get(url_75)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+news_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  news_blocks = soup.find_all('li', class_='news_item_wrapper noDesc archive')
+  if not news_blocks: error_list.append({'Error Link': url_75, 'Error': "None News"})
+  else:
+    for block in news_blocks:
+      date_str = block.find('span', class_='news_item_date').text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date in today_list:
+        article_link = block.find('a')['href']
+        article_link = f'https://www.nj.gov{article_link}'
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        article = Article(article_link, language = 'en') # URL과 언어를 입력 
+        article.download() 
+        article.parse() 
+        content = article.text 
+        title = article.title
+        if not title: error_message = Error_Message(error_message, "None Title")
+        if not content: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': url_75,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': content
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_75,
+      'Error': str(e)
+      })
 ########################################### <76> ##############################################
-
+#url_76 = 'https://www.nj.gov/mvc/news/news.htm'
+wd = initialize_chrome_driver()
+wd.get(url_76)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+date_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  news_blocks = soup.find('div', class_='tab-pane active').find_all('hr')
+  if not news_blocks: error_list.append({'Error Link': url_76, 'Error': "None News"})
+  else:
+    for block in news_blocks:
+      block = block.find_next('p')
+      article_link = None
+      if any(date.strftime('%B') in block.text for date in today_list):
+        article_link = block.find('a')['href'].replace('..','')
+        if article_link[0] =='/': article_link = 'https://www.nj.gov/mvc' + article_link
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        wd = initialize_chrome_driver()
+        wd.get(article_link)
+        time.sleep(5)
+        article_html = wd.page_source
+        article_soup = BeautifulSoup(article_html, 'html.parser')
+        finddate = article_soup.find_all('td')
+        for i in range(len(finddate)):
+          if i == 2: date_str = finddate[i].text.strip()
+        article_date = date_util(date_str)
+        title, bodys = None, None
+        if article_date in today_list:
+          article = article_soup.find_all('p')
+          entire = []
+          for p in article: entire.append(p.get_text().strip())  # 텍스트 내용을 출력
+          title = entire[1]
+          if not title: error_message = Error_Message(error_message, "None Title")
+          article = Article(article_link, language = 'en') # URL과 언어를 입력 
+          article.download() 
+          article.parse() 
+          content = article.text 
+          if not content: error_message = Error_Message(error_message, "None Contents")
+          if error_message is not str():
+            error_list.append({
+              'Error Link': url_76,
+              'Error': error_message
+            })
+          else:
+            articles.append({
+              'Title': title,
+              'Link': article_link,
+              'Content(RAW)': content
+            })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_76,
+      'Error': str(e)
+      })
 ########################################### <78> ##############################################
 #url_78 = 'https://www.commerce.nc.gov/news/press-releases'
 wd = initialize_chrome_driver()
@@ -3464,7 +3646,48 @@ except Exception as e:
         'Error': str(e)
     })
 ########################################### <85> ##############################################
-
+#url_85 = 'https://dcchamber.org/posts/'
+wd = initialize_chrome_driver()
+wd.get(url_85)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+news_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  news_blocks = soup.find_all('tr', {'style':'display: table-row;'})
+  if not news_blocks: error_list.append({'Error Link': url_85, 'Error': "None News"})
+  else:
+    for block in news_blocks[1:]:
+      date_str = block.find('td').text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date in today_list:
+        article_link = block.find('a')['href']
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        article = Article(article_link, language = 'en') # URL과 언어를 입력 
+        article.download() 
+        article.parse() 
+        content = article.text 
+        title = article.title
+        if not title: error_message = Error_Message(error_message, "None Title")
+        if not content: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': url_85,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': content
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_85,
+      'Error': str(e)
+      })
 ########################################### <86> ##############################################
 #url_86 = "https://planning.dc.gov/newsroom"
 wd = initialize_chrome_driver()
@@ -3931,3 +4154,9 @@ except Exception as e:
         'Error Link': url_96,
         'Error': str(e)
     })
+
+########################################### <Print> ##############################################
+if articles == []:
+  print("No news for today!")
+(pd.DataFrame(articles)).to_csv('articles' + datetime.now().strftime("_%m%d") + '.csv')
+(pd.DataFrame(error_list)).to_csv('error_list' + datetime.now().strftime("_%m%d") + '.csv')
