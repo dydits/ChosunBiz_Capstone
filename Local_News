@@ -1,1 +1,37 @@
 
+
+# Georgia
+url_local_1 = 'ajc.com'
+url_local_2 = 'valdostadailytimes.com'
+
+# California
+url_local_3 = 'https://www.mercurynews.com/latest-headlines/'
+url_local_4 = 'https://www.bizjournals.com/news/'
+
+# Texas
+url_local_5 = 'https://www.dallasnews.com/news/'
+url_local_6 = 'https://www.expressnews.com/news/'
+
+# New York
+url_local_7 = 'https://buffalonews.com/news/#tracking-source=main-nav'
+url_local_8 = 'syracuse.com'
+
+# New Jersey
+url_local_9 = 'https://www.northjersey.com/news/'
+url_local_10 = 'https://www.nj.com/#section__news'
+
+# North Carolina
+url_local_11 = 'charlotteobserver.com'
+url_local_12 = 'newsobserver.com'
+
+# District of Columbia
+url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
+url_local_14 = 'https://www.washingtontimes.com/news/world/'
+
+# Virginia 
+url_local_15 = 'roanoke.com'
+url_local_16 = 'richmond.com'
+
+# Maryland
+url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
+url_local_18 = 'https://www.savannahnow.com/news/local/'
