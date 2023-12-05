@@ -33,6 +33,7 @@ def initialize_chrome_driver():
 
 # 날짜 통합 함수
 def date_util(article_date):
+  today = datetime.now().date()
   try:
     # Parse the date using dateutil.parser
     article_date = parser.parse(article_date).date()
