@@ -4405,7 +4405,7 @@ Articles_Select1 = (pd.DataFrame(Articles_Select1))
 # spaCy의 NER 모델 로드
 nlp = spacy.load("en_core_web_sm")
 Articles_Select2 = {'Company':[], 'Title':[], 'Link':[], 'Content(RAW)':[]}
-for i in range(len(Articles_Select2)):
+for i in range(len(Articles_Select1)):
     # 분석할 텍스트
     title = Articles_Select1['Title'][i]
     link = Articles_Select1['Link'][i]
@@ -4430,6 +4430,7 @@ for i in range(len(Articles_Select2)):
         Articles_Select2['Link'].append(link)
         Articles_Select2['Content(RAW)'].append(content)
 
+Articles_Select2 = pd.DataFrame(Articles_Select2)
 ########################################### <Select 3 : OpenAI> ##############################################
 # 발급받은 API 키 설정(SNU 빅데이터핀테크 API)
 OPENAI_API_KEY = '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'
@@ -4467,7 +4468,6 @@ for i in range(len(Articles_Select2)):
         Articles_Final['Title'].append(title)
         Articles_Final['Link'].append(link)
         Articles_Final['Content(RAW)'].append(content)
-
 ########################################### <US Government Website News Final DataFrame> ##############################################
 Articles_Final = pd.DataFrame(Articles_Final)
 Articles_Final.to_csv('Final Articles' + datetime.now().strftime("_%m%d") + '.csv')
