@@ -2,6 +2,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 import time
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -11,7 +12,6 @@ import re
 from newspaper import Article
 import requests
 import numpy as np
-from google.colab import drive
 
 def initialize_chrome_driver():
   # Chrome 옵션 설정 : USER_AGENT는 알아서 수정
@@ -32,13 +32,14 @@ def initialize_chrome_driver():
 
 # 날짜 통합 함수
 def date_util(article_date):
+  today = datetime.now().date()
   try:
     # Parse the date using dateutil.parser
     article_date = parser.parse(article_date).date()
   except ValueError:
     # If parsing fails, handle the relative dates
     article_date = article_date.lower()
-    time_keywords = ["h", "hrs", "hr", "m", "s", "hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
+    time_keywords = ["AM", "PM", "h", "hrs", "hr", "m", "s", "hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
     if any(keyword in article_date for keyword in time_keywords):
       article_date = today
     elif "days" in article_date or "day" in article_date:
@@ -62,7 +63,7 @@ today_list = [date_util((datetime.now()- timedelta(days=1)).strftime("%Y-%m-%d")
 
 # urls
 # Georgia
-url_local_1 = 'ajc.com'
+url_local_1 = 'https://www.ajc.com/news/'
 url_local_2 = 'valdostadailytimes.com'
 
 # California
@@ -97,11 +98,53 @@ url_local_16 = 'richmond.com'
 url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 url_local_18 = 'https://www.savannahnow.com/news/local/'
 
-###############################################url_local_1###############################################
+###############################################<url_local_1>###############################################
+#url_local_1 = "https://www.ajc.com/news/"
+wd = initialize_chrome_driver()
+wd.get(url_local_1)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+  news_blocks = soup.find_all('div',class_=['c-homeList', 'home-headline', 'headline', 'c-homeList left-photo','c-homeList no-photo','headline-box'])
+  if not news_blocks: error_list.append({'Error Link': url_local_1, 'Error': "None News"})
+  else:
+    for block in news_blocks:
+        date = block.find('span', class_='isTease article-timestamp')
+        if not date: continue
+        article_date = date_util(date.text.strip())
+        if not article_date: error_message = Error_Message(error_message, "None Date")
+        if article_date in today_list:
+          link = block.find('a')['href']
+          article_link = f'https://www.ajc.com{link}'
+          if not article_link: error_message = Error_Message(error_message, "None Link")
+          article = Article(article_link, language = 'en') # URL과 언어를 입력
+          article.download()
+          article.parse()
+          title = article.title
+          if not title: error_message = Error_Message(error_message, "None Title")
+          content = article.text
+          if not content: error_message = Error_Message(error_message, "None Contents")
+          if error_message is not str():
+            error_list.append({
+              'Error Link': url_local_1,
+              'Error': error_message
+            })
+          else:
+            articles.append({
+              'Title': title,
+              'Link': article_link,
+              'Content(Raw)': content
+            })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_local_1,
+      'Error': str(e)
+      })
+###############################################<url_local_2>###############################################
 
-###############################################url_local_2###############################################
-
-###############################################url_local_3###############################################
+###############################################<url_local_3>###############################################
 # url_local_3 = "https://www.mercurynews.com/latest-headlines/"
 wd = initialize_chrome_driver()
 wd.get(url_local_3)
@@ -136,17 +179,62 @@ for item in news_items:
                         'Link': link,
                         'Content(RAW)': text
                     })
-###############################################url_local_4###############################################
+###############################################<url_local_4>###############################################
 
-###############################################url_local_5###############################################
+###############################################<url_local_5>###############################################
+#url_local_5 = "https://www.dallasnews.com/news/"
+wd = initialize_chrome_driver()
+wd.get(url_local_5)
+time.sleep(5)
+for _ in range(5):
+  button = wd.find_element(By.ID, 'load-more')
+  button.click()
+  time.sleep(1)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+  news_blocks = soup.find_all('div', class_='dmnc_generic-cards-card-module__FcjA3 w-full py-6 flex border-gray-light relative')
+  if not news_blocks: error_list.append({'Error Link': url_local_5, 'Error': "None News"})
+  for item in news_blocks :
+    date_tag = item.find('span', class_='dmnc_generic-article-elements-article-elements-module__l-ds8 secondaryRoman secondaryRoman-10 capitalize text-gray-medium')
+    date_string = date_tag.text.strip()
+    article_date = date_util(date_string)
+    if not article_date : error_message = Error_Message(error_message, "None Date")
+    if article_date in today_list:
+      link = item.find('a')['href']
+      link = f'https://www.dallasnews.com{link}'
+      if not link: error_message = Error_Message(error_message, "None link")
+      article = Article(link, language = 'en') # URL과 언어를 입력
+      article.download()
+      article.parse()
+      title = article.title
+      if not title: error_message = Error_Message(error_message, "None Title")
+      content = article.text
+      if not content: error_message = Error_Message(error_message, "None Contents")
+      if error_message is not str():
+                error_list.append({
+                    'Error Link': url_local_5,
+                    'Error': error_message
+                    })
+      else:
+                articles.append({
+                  'Title': title,
+                  'Link': link,
+                  'Content(RAW)': content
+                  })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_local_5,
+      'Error': str(e)
+  })
+###############################################<url_local_6>###############################################
 
-###############################################url_local_6###############################################
+###############################################<url_local_7>###############################################
 
-###############################################url_local_7###############################################
+###############################################<url_local_8>###############################################
 
-###############################################url_local_8###############################################
-
-###############################################url_local_9###############################################
+###############################################<url_local_9>###############################################
 # url_local_9 = 'https://www.northjersey.com/news/'
 wd = initialize_chrome_driver()
 wd.get(url_local_9)
@@ -183,13 +271,13 @@ for item in news_items:
                         'Link': link,
                         'Content(RAW)': text
                     })
-###############################################url_local_10###############################################
+###############################################<url_local_10>###############################################
 
-###############################################url_local_11###############################################
+###############################################<url_local_11>###############################################
 
-###############################################url_local_12###############################################
+###############################################<url_local_12>###############################################
 
-###############################################url_local_13###############################################
+###############################################<url_local_13>###############################################
 # url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
 wd = initialize_chrome_driver()
 wd.get(url_local_13)
@@ -222,7 +310,7 @@ for item in news_items:
                       'Link': link,
                       'Content(RAW)': text
                       })
-###############################################url_local_14###############################################
+###############################################<url_local_14>###############################################
 # url_local_14 = "https://www.washingtontimes.com/news/world/"
 wd = initialize_chrome_driver()
 wd.get(url_local_14)
@@ -257,11 +345,11 @@ for item in news_items:
                         'Link': link,
                         'Content(RAW)': text
                     })
-###############################################url_local_15###############################################
+###############################################<url_local_15>###############################################
 
-###############################################url_local_16###############################################
+###############################################<url_local_16>###############################################
 
-###############################################url_local_17###############################################
+###############################################<url_local_17>###############################################
 # url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 wd = initialize_chrome_driver()
 wd.get(url_local_17)
@@ -309,4 +397,8 @@ except Exception as e:
         'Error Link': url_local_17,
         'Error': str(e)
     })
-###############################################url_local_18###############################################
+###############################################<url_local_18>###############################################
+
+
+
+
