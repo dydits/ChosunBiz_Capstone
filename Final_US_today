@@ -131,6 +131,7 @@ url_64 = 'https://www.txbiz.org/press-releases'
 url_65 = 'https://www.governor.ny.gov/news'
 url_67 = 'https://www.dot.ny.gov/news/press-releases/2023'
 url_68 = 'https://ag.ny.gov/press-releases'
+url_71 = 'https://chamber.nyc/news'
 url_72 = ‘https://aging.ny.gov/pressroom’ 
 url_73 = ‘https://www.nyserda.ny.gov/About/Newsroom/2023-Announcements’
 
@@ -2815,6 +2816,50 @@ except Exception as e:
 
 ########################################### <68> ##############################################
 
+########################################### <71> ##############################################
+#url_71 = 'https://chamber.nyc/news'
+wd = initialize_chrome_driver()
+wd.get(url_71)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+news_blocks, article_date, article_link, title, bodys = None, None, None, None, None
+try:
+  news_blocks = soup.find_all('div', class_='post-style2 wow fadeIn')
+  if not news_blocks: error_list.append({'Error Link': url_71, 'Error': "None News"})
+  else:
+    for block in news_blocks:
+      date_str = block.find('li').text.strip()
+      article_date = date_util(date_str)
+      article_link, title, bodys = None, None, None
+      if article_date in today_list:
+        article_link = block.find('a')['href']
+        if article_link[0] !='h' : article_link = 'https://chamber.nyc/' + article_link
+        if not article_link: error_message = Error_Message(error_message, "None Link")
+        article = Article(article_link, language = 'en') # URL과 언어를 입력 
+        article.download() 
+        article.parse() 
+        content = article.text 
+        title = content.split('\n')[0]
+        if not title: error_message = Error_Message(error_message, "None Title")
+        if not content: error_message = Error_Message(error_message, "None Contents")
+        if error_message is not str():
+          error_list.append({
+            'Error Link': url_71,
+            'Error': error_message
+          })
+        else:
+          articles.append({
+            'Title': title,
+            'Link': article_link,
+            'Content(RAW)': content
+          })
+except Exception as e:
+  error_list.append({
+      'Error Link': url_71,
+      'Error': str(e)
+      })
 ########################################### <72> ##############################################
 
 ########################################### <73> ##############################################
