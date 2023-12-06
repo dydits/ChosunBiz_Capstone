@@ -2,7 +2,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
 import time
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -12,6 +11,9 @@ import re
 from newspaper import Article
 import requests
 import numpy as np
+from google.colab import drive
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 def initialize_chrome_driver():
   # Chrome 옵션 설정 : USER_AGENT는 알아서 수정
@@ -60,6 +62,7 @@ def Error_Message(message, add_error):
 articles = []
 error_list = []
 today_list = [date_util((datetime.now()- timedelta(days=1)).strftime("%Y-%m-%d")), date_util((datetime.now()).strftime("%Y-%m-%d"))]
+today = date_util(datetime.now().strftime("%Y-%m-%d"))
 
 # urls
 # Georgia
