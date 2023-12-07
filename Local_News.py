@@ -84,23 +84,28 @@ url_local_20 = 'https://www.savannahnow.com/news/local/'
 
 # California
 url_local_3 = 'https://www.mercurynews.com/latest-headlines/'
-url_local_4 = 'https://www.bizjournals.com/news/'
+url_local_4 = 'https://www.latimes.com/california'
 
 # Texas
 url_local_5 = 'https://www.dallasnews.com/news/'
-url_local_6 = 'https://www.expressnews.com/news/'
 
 # New York
-url_local_7 = 'https://buffalonews.com/news/#tracking-source=main-nav'
-url_local_8 = 'syracuse.com'
+url_local_7 = 'https://nypost.com/news/'
 
 # New Jersey
 url_local_9 = 'https://www.northjersey.com/news/'
-url_local_10 = 'https://www.nj.com/#section__news'
+url_local_10 = 'https://www.nj.com/'
+url_local_10_list = ['https://www.nj.com/starledger/', 'https://www.nj.com/atlantic/', 'https://www.nj.com/bergen/',
+                     'https://nj.com/burlington/', 'https://www.nj.com/camden/', 'https://www.nj.com/cape-may-county/',
+                     'https://www.nj.com/cumberland/', 'https://www.nj.com/essex/', 'https://www.nj.com/gloucester-county/',
+                     'https://www.nj.com/hudson/', 'https://www.nj.com/hunterdon/', 'https://www.nj.com/mercer/',
+                     'https://www.nj.com/middlesex/', 'https://www.nj.com/monmouth/', 'https://www.nj.com/morris/',
+                     'https://www.nj.com/ocean/', 'https://www.nj.com/passaic-county/', 'https://www.nj.com/salem/',
+                     'https://www.nj.com/somerset/', 'https://www.nj.com/sussex-county/', 'https://www.nj.com/union/',
+                     'https://www.nj.com/warren/']
 
 # North Carolina
 url_local_11 = 'https://carolinapublicpress.org/recent-news/'
-# url_local_12 = ''
 
 # District of Columbia
 url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
@@ -202,7 +207,7 @@ def scrap_context(url):
       return(context)
     else:
       return()
-###############################################<직접 크롤링 : url_local_1, 3, 5, 9, 13, 14, 17>###############################################
+###############################################<직접 크롤링>###############################################
 ###############################################<url_local_1>###############################################
 #url_local_1 = "https://www.ajc.com/news/"
 wd = initialize_chrome_driver()
@@ -243,7 +248,7 @@ try:
                   'Local Site': local,
                   'Title': title,
                   'Link': article_link,
-                  'Contents': content
+                  'Content(RAW)': content
                 })
 except Exception as e:
   error_list.append({
@@ -285,8 +290,42 @@ for item in news_items:
                     'Local Site': local,
                     'Title': title,
                     'Link': link,
-                    'Contents': text
+                    'Content(RAW)': text
                 })
+###############################################<url_local_4>###############################################
+#url_local_4 = 'https://www.latimes.com/california'
+wd = initialize_chrome_driver()
+wd.get(url_local_4)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+local = '[California] '+url_local_4
+date_items = soup.find_all('p', class_='promo-timestamp')
+for item in date_items:
+    date = date_util(item.text.strip())
+    if date in today_list:
+      link = item.find_parent().find('a')['href']
+      article = Article(link, language='en')
+      article.download()
+      article.parse()
+      title = article.title
+      if not title: error_message = Error_Message(error_message, "None Title")
+      text = article.text
+      if not text: text = scrap_context(link)
+      if error_message != str():
+            error_list.append({
+                'Error Link': link,
+                'Error': error_message
+            })
+      else:
+          if text:
+              articles.append({
+                  'Local Site': local,
+                  'Title': title,
+                  'Link': link,
+                  'Content(RAW)': text
+              })
 ###############################################<url_local_5>###############################################
 #url_local_5 = "https://www.dallasnews.com/news/"
 wd = initialize_chrome_driver()
@@ -330,13 +369,53 @@ try:
                   'Local Site': local,
                   'Title': title,
                   'Link': link,
-                  'Contents': content
+                  'Content(RAW)': content
                   })
 except Exception as e:
   error_list.append({
       'Error Link': url_local_5,
       'Error': str(e)
   })
+###############################################<url_local_7>###############################################
+#url_local_7 = 'https://nypost.com/news/'
+wd = initialize_chrome_driver()
+wd.get(url_local_7)
+time.sleep(5)
+for _ in range(5):
+  button = wd.find_element(By.CLASS_NAME, 'see-more')
+  button.click()
+  time.sleep(1)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+local = '[New York] '+url_local_7
+
+date_items = soup.find_all('span', class_='meta meta--byline')
+
+for item in date_items:
+    date = date_util(item.text.strip())
+    if date in today_list:
+      link = item.find_parent().find('a')['href']
+      article = Article(link, language='en')
+      article.download()
+      article.parse()
+      title = article.title
+      if not title: error_message = Error_Message(error_message, "None Title")
+      text = article.text
+      if not text: text = scrap_context(link)
+      if error_message != str():
+            error_list.append({
+                'Error Link': link,
+                'Error': error_message
+            })
+      else:
+          if text:
+              articles.append({
+                  'Local Site': local,
+                  'Title': title,
+                  'Link': link,
+                  'Content(RAW)': text
+              })
 ###############################################<url_local_9>###############################################
 # url_local_9 = 'https://www.northjersey.com/news/'
 wd = initialize_chrome_driver()
@@ -375,8 +454,47 @@ for item in news_items:
                             'Local Site': local,
                             'Title': title,
                             'Link': link,
-                            'Contents': text
+                            'Content(RAW)': text
                         })
+###############################################<url_local_10>###############################################
+# url_local_10 = 'https://www.nj.com/'
+
+local = '[New Jersey] '+url_local_10
+error_message = str()
+date_items = []
+for url in url_local_10_list:
+  wd = initialize_chrome_driver()
+  wd.get(url)
+  time.sleep(5)
+  html = wd.page_source
+  soup = BeautifulSoup(html, 'html.parser')
+  Newdate_items = soup.find_all('time')
+  date_items += Newdate_items
+
+for item in date_items:
+    date = date_util(item.text.strip())
+    if date in today_list:
+      link = item.find_parent().find_parent().find_parent()['href']
+      article = Article(link, language='en')
+      article.download()
+      article.parse()
+      title = article.title
+      if not title: error_message = Error_Message(error_message, "None Title")
+      text = article.text
+      if not text: text = scrap_context(link)
+      if error_message != str():
+            error_list.append({
+                'Error Link': link,
+                'Error': error_message
+            })
+      else:
+          if text:
+              articles.append({
+                  'Local Site': local,
+                  'Title': title,
+                  'Link': link,
+                  'Content(RAW)': text
+              })
 ###############################################<url_local_11>###############################################
 # url_local_11 = 'https://carolinapublicpress.org/recent-news/'
 wd = initialize_chrome_driver()
@@ -411,20 +529,22 @@ try:
           if not article_date:
             error_message = Error_Message(error_message, "None Date")
           else:
-            text = article.text
-            if not text: error_message = Error_Message(error_message, "None Content")
             if article_date in today_list :
-              if error_message is not str():
-                error_list.append({
-                      'Error Link': url_local_11,
-                      'Error': error_message
-                      })
-              else:
-                  articles.append({
-                      'Title': title,
-                      'Link': link,
-                      'Content(RAW)': text
-                      })
+                text = article.text
+                if not text: content = scrap_context(article_link)
+                if error_message is not str():
+                    error_list.append({
+                          'Error Link': url_local_11,
+                          'Error': error_message
+                          })
+                else:
+                    if text:
+                      articles.append({
+                          'Local Site': local,
+                          'Title': title,
+                          'Link': link,
+                          'Content(RAW)': text
+                          })
 except Exception as e:
     error_list.append({
         'Error Link': url_local_11,
@@ -463,7 +583,7 @@ for item in date_items:
                     'Local Site': local,
                     'Title': title,
                     'Link': link,
-                    'Contents': text
+                    'Content(RAW)': text
                 })
 ###############################################<url_local_14>###############################################
 # url_local_14 = "https://www.washingtontimes.com/news/world/"
@@ -501,7 +621,7 @@ for item in news_items:
                     'Local Site': local,
                     'Title': title,
                     'Link': link,
-                    'Contents': text
+                    'Content(RAW)': text
                 })
 ###############################################<url_local_15>###############################################
 # url_local_15 = 'https://www.vpm.org/vpm-news'
@@ -538,20 +658,22 @@ try:
             if not article_date:
               error_message = Error_Message(error_message, "None Date")
             else:
-              text = article.text
-              if not text: error_message = Error_Message(error_message, "None Content")
               if article_date in today_list :
-                if error_message is not str():
-                  error_list.append({
-                        'Error Link': url_local_15,
-                        'Error': error_message
-                        })
-                else:
-                    articles.append({
-                        'Title': title,
-                        'Link': link,
-                        'Content(RAW)': text
-                        })
+                  text = article.text
+                  if not text: text = scrap_context(link)
+                  if error_message is not str():
+                      error_list.append({
+                            'Error Link': url_local_15,
+                            'Error': error_message
+                            })
+                  else:
+                      if text:
+                        articles.append({
+                            'Local Site': local,
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': text
+                            })
 except Exception as e:
       error_list.append({
           'Error Link': url_local_15,
@@ -593,20 +715,23 @@ try:
             if not article_date:
               error_message = Error_Message(error_message, "None Date")
             else:
-              text = article.text
-              if not text: error_message = Error_Message(error_message, "None Content")
+              
               if article_date in today_list :
-                if error_message is not str():
-                  error_list.append({
+                  text = article.text
+                  if not text: text = scrap_context(link)
+                  if error_message is not str():
+                      error_list.append({
                         'Error Link': url_local_16,
                         'Error': error_message
                         })
-                else:
-                    articles.append({
-                        'Title': title,
-                        'Link': link,
-                        'Content(RAW)': text
-                        })
+                  else:
+                      if text:
+                        articles.append({
+                            'Local Site': local,
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': text
+                            })
 except Exception as e:
       error_list.append({
           'Error Link': url_local_16,
@@ -701,20 +826,22 @@ try:
             article = Article(link, language='en')
             article.download()
             article.parse()
-            text = article.text
-            if not text: error_message = Error_Message(error_message, "None Content")
             if article_date in today_list :
+                text = article.text
+                if not text: text = scrap_context(link)
                 if error_message is not str():
                   error_list.append({
                         'Error Link': url_local_18,
                         'Error': error_message
                         })
                 else:
-                    articles.append({
-                        'Title': title,
-                        'Link': link,
-                        'Content(RAW)': text
-                        })
+                    if text:
+                        articles.append({
+                            'Local Site': local,
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': text
+                            })
 except Exception as e:
       error_list.append({
           'Error Link': url_local_18,
@@ -752,50 +879,41 @@ try:
             relative_link = title_tag['href'] if title_tag else None
             link = base_url + relative_link if relative_link else None
             if not link : error_message = Error_Message(error_message, "None Link")
-            article = Article(link, language='en')
-            article.download()
-            article.parse()
-            title = article.title
-            if not title: error_message = Error_Message(error_message, "None Title")
-            text = article.text
-            if not text: error_message = Error_Message(error_message, "None Content")
             if article_date in today_list :
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                title = article.title
+                if not title: error_message = Error_Message(error_message, "None Title")
+                text = article.text
+                if not text: text = scrap_context(link)
                 if error_message is not str():
                   error_list.append({
                         'Error Link': url_local_19,
                         'Error': error_message
                         })
                 else:
-                    articles.append({
-                        'Title': title,
-                        'Link': link,
-                        'Content(RAW)': text
-                        })
+                    if text:
+                        articles.append({
+                            'Local Site': local,
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': text
+                            })
 except Exception as e:
       error_list.append({
           'Error Link': url_local_19,
           'Error': str(e)
       })
 ###############################################<url_local_20>###############################################
-###############################################<안 되는 사이트 : 빙 search url_local_2, 4, 6, 7, 8, 10, 11, 12, 15, 16, 18>###############################################
-local_news_sites = [url_local_2, url_local_4, url_local_6, url_local_7, url_local_8, url_local_10, 
-                    url_local_11, url_local_12, url_local_15, url_local_16, url_local_18]
+local_news_sites = [url_local_20]
 # search 검색어 & 링크 만들기
 def generate_bing_news_url(site_keyword):
     search_q = f"site%3A{site_keyword}"
     url = f"https://www.bing.com/news/search?q={search_q}&qft=interval%3d%227%22&form=YFNR&setlang=en-US&setmkt=en-US&freshness=Day&sort=Date"
     return url
 # local 변수 만들기
-local_states = {'valdostadailytimes.com' : '[Georgia] valdostadailytimes.com',
-                'https://www.bizjournals.com/news/': '[California] https://www.bizjournals.com/news/',
-                'https://www.expressnews.com/news/': '[Texas] https://www.expressnews.com/news/',
-                'https://buffalonews.com/news/#tracking-source=main-nav': '[New York] https://buffalonews.com/news/#tracking-source=main-nav',
-                'syracuse.com': '[New York] syracuse.com',
-                'https://www.nj.com/#section__news': '[New Jersey] https://www.nj.com/#section__news',
-                'charlotteobserver.com': '[North Carolina] charlotteobserver.com',
-                'newsobserver.com': '[North Carolina] newsobserver.com',
-                'roanoke.com': '[Virginia] roanoke.com',
-                'richmond.com': '[Virginia] richmond.com',
+local_states = {
                 'https://www.savannahnow.com/news/local/': '[Georgia] https://www.savannahnow.com/news/local/'
                 }
 bing_url_list = [] ; local_list = []
@@ -846,7 +964,7 @@ for index, bing_url in enumerate(bing_url_list):
                                     'Local Site': local,
                                     'Title': title,
                                     'Link': link,
-                                    'Contents': text
+                                    'Content(RAW)': text
                                 })
                 
 ########################################### <All Articles Print> ##############################################
