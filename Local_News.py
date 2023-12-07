@@ -67,6 +67,8 @@ def Error_Message(message, add_error):
     message += add_error
     return message
 
+
+
 # 데이터프레임
 articles = []
 error_list = []
@@ -110,6 +112,28 @@ url_local_16 = 'richmond.com'
 url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 url_local_18 = 'https://www.savannahnow.com/news/local/'
 
+###############################################<직접 크롤링 : url_local_1, 3, 5, 9, 13, 14, 17>###############################################
+# 직접 scraping시, 본문이 긁혀지지 않을 때(Article이 사용되지 않을때), context 긁는 함수
+def scrap_context1(url):
+    wd = initialize_chrome_driver()
+    wd.get(url)
+    time.sleep(3)
+    html = wd.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+
+    # 키워드가 포함된 모든 텍스트 블록 찾기
+    context = str()
+    # 대소문자 구분 없이 키워드와 정확히 일치하는 정규 표현식 패턴 생성
+    pattern = re.compile('|'.join(r'(?<!\w)' + re.escape(keyword) + r'(?!\w)' for keyword in Top50_Name_list), re.IGNORECASE)
+    #for element in soup.find_all(string=lambda text: keyword in text):
+    for element in soup.find_all(string=pattern):
+        context += (element.text + '\n')
+
+    # 기업명 앞+뒤 문맥 파악할 수 있는 글이 포함되면, context return
+    if context :
+      return(context)
+    else:
+      return()
 ###############################################<url_local_1>###############################################
 #url_local_1 = "https://www.ajc.com/news/"
 wd = initialize_chrome_driver()
@@ -154,8 +178,6 @@ except Exception as e:
       'Error Link': url_local_1,
       'Error': str(e)
       })
-###############################################<url_local_2>###############################################
-
 ###############################################<url_local_3>###############################################
 # url_local_3 = "https://www.mercurynews.com/latest-headlines/"
 wd = initialize_chrome_driver()
@@ -191,8 +213,6 @@ for item in news_items:
                         'Link': link,
                         'Content(RAW)': text
                     })
-###############################################<url_local_4>###############################################
-
 ###############################################<url_local_5>###############################################
 #url_local_5 = "https://www.dallasnews.com/news/"
 wd = initialize_chrome_driver()
@@ -240,12 +260,6 @@ except Exception as e:
       'Error Link': url_local_5,
       'Error': str(e)
   })
-###############################################<url_local_6>###############################################
-
-###############################################<url_local_7>###############################################
-
-###############################################<url_local_8>###############################################
-
 ###############################################<url_local_9>###############################################
 # url_local_9 = 'https://www.northjersey.com/news/'
 wd = initialize_chrome_driver()
@@ -283,12 +297,6 @@ for item in news_items:
                         'Link': link,
                         'Content(RAW)': text
                     })
-###############################################<url_local_10>###############################################
-
-###############################################<url_local_11>###############################################
-
-###############################################<url_local_12>###############################################
-
 ###############################################<url_local_13>###############################################
 # url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
 wd = initialize_chrome_driver()
@@ -357,10 +365,6 @@ for item in news_items:
                         'Link': link,
                         'Content(RAW)': text
                     })
-###############################################<url_local_15>###############################################
-
-###############################################<url_local_16>###############################################
-
 ###############################################<url_local_17>###############################################
 # url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 wd = initialize_chrome_driver()
@@ -409,4 +413,5 @@ except Exception as e:
         'Error Link': url_local_17,
         'Error': str(e)
     })
-###############################################<url_local_18>###############################################
+
+###############################################<안 되는 사이트 : 빙 search url_local_2, 4, 6, 7, 8, 10, 11, 12, 15, 16, 18>###############################################
