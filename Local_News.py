@@ -23,6 +23,7 @@ import numpy as np
 from google.colab import drive
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 
 def initialize_chrome_driver():
   # Chrome 옵션 설정 : USER_AGENT는 알아서 수정
@@ -110,15 +111,80 @@ url_local_16 = 'richmond.com'
 url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 url_local_18 = 'https://www.savannahnow.com/news/local/'
 
-###############################################<직접 크롤링 : url_local_1, 3, 5, 9, 13, 14, 17>###############################################
-# 직접 scraping시, 본문이 긁혀지지 않을 때(Article이 사용되지 않을때), context 긁는 함수
-def scrap_context1(url):
+Top50_Name_list = ['SKLSI', 'Hana West Properties LLC', 'Samsung Electronics', 'Doosan Enerbility America', 
+'Hyundai Motor', 'SeAH', 'LG Group', 'GOLFZON', 'GS Global USA', 'Doosan Group', 'ASIANA', 'GS Global', 
+'POSCO America Corp', 'Medy-Tox', 'SK life science', 'COUPANG GLOBAL LLC', 'LG Corp', 'SAMSUNG SEMICONDUCTOR', 
+'DSME', 'HYUNDAI', 'HL Mando America Corporation', 'Nongshim', 'Hanwha Corporation', 'LG Elec', 'Doosan Corp', 
+'MANDO', "Samsung Semiconductor's US", 'Posco', 'SK hynix America', 'LG', 'SeAH America', 'SeAH USA', 
+'POSCO International Corp', 'SK Energy', 'KIA MOTORS AMERICA', 'SEAH STEEL', 'LG Energy', 'LG Display', 
+'POSCO AMERICA', 'Doosan Heavy Industries', 'Hanwha Corp', 'SM Entertainment USA', 'Kia Corp', 'LS Group', 
+'SK E&S', 'LG ELECTRONICS USA', 'Mando America', 'HMGMA', 'POSCO America', 'Golfzon', 'MEDY-TOX', 'LG Energy Solution', 
+'SK NETWORKS AMERICA', 'COUPANG GLOBAL', 'Medytox', 'SK Battery', 'Mando America Corp', 'LG Display America', 
+'SK Hynix Semiconductor', 'Coupang Global LLC', 'Zenith Electronics LLC', 'Dsme', 'SK E&S America', 'Kia Motors', 
+'ASIANA AIRLINES', 'SEAH STEEL USA LLC', 'GSG', 'Mando America Corporation', 'HL Mando America', 'Zenith Electronics', 
+'DOOSAN HEAVY INDUSTRIES AMERICA LLC', 'SK Energy Americas', 'SM ENTERTAINMENT', 'POSCO International', 'SeAH Steel', 
+'LG ENERGY SOLUTION', 'LS CABLE', 'Doosan Electro-Materials America', 'SM USA', 'LS Cable Systems', 
+'Doosan Heavy Industries America Holdings', 'Nongshim America', 'Doosan Heavy Industries America', 'NONGSHIM AMERICA', 
+'KOREAN AIR', 'KMMG', 'Doosan', 'LG Energy Solution Tech Center', 'SK E&S Energy', 'HANWHA', 'Samsung Electronics America', 
+'HL Mando', 'Mando Corporation', 'Coupang', 'SK Life Science', 'DOOSAN MATERIAL HANDLING SOLUTION DOOSAN INDUSTRIAL VEHICLE AMERICA CORP', 
+'Golfzon America Official', 'SK USA', 'Hanwha Q cells', 'Hyundais', 'LG Energy Michigan Tech Center', 'LS Cable & System USA', 
+'Kia Georgia Plant', 'HANWHA HOLDINGS', 'DIVAC', 'HANWHA Q CELLS AMERICA', 'DOOSAN ELECTRO-MATERIALS AMERICA', 'MEDYTOX', 
+'POSCO Holdings', 'Daewoo Shipbuilding and Marine Engineering', 'LG Electronics', 'Hanwha Holdings USA', 
+'POSCO AMERICA CORPORATION', 'HANWHA CORP', 'Kia Motors Manufacturing Georgia', 'SM ENTERTAINMENT USA', 'KIA', 'SMtown USA', 
+'SK HYNIX', 'Kias', 'Hanwha Holdings', 'Golfzon America', 'Mando', 'Hana West Properties', 'Samsung Biologics', 
+'Hanwha Q CELLS America', 'SK E&S Co', 'Doosan Heavy Industries America LLC', 'POSCO America Corporation', 'Asiana Airlines', 
+'Doosan Enerbility America Holdings', 'Kia Corporation', 'SK NETWORKS', 'DSME CO', 'Kia Georgia', 'SK HYNIX AMERICA', 
+'Hanwha Group', 'Coupang Global', 'SK', 'Qcells', 'SAMSUNG', 'KIA GEORGIA', 'Hyundai', 'Doosan Material Handling Solutions', 
+'SK Networks America', 'Hanwha Q CELLS', 'Samsung US', 'KIA MOTORS CORP', 'Samsung Semiconductor USA', 'LG ELECTRONICS', 
+'SK Group Companies', 'SK GROUP', 'Samsung', 'SK Networks', 'Doosan Corporation', 'DSEM', 'SK E&S AMERICA', 'Posco America', 
+'LGE', 'SK Hynix America', 'Samsung Electronics North America', 'Hyundai Motors', 'Hanwha USA', 'Kia', 'Samsung Semiconductor', 
+'Doosan Industrial Vehicle', 'POSCO', 'LS Cable Systems America', 'Doosan Enerbility', 'LS CABLE SYSTEMS AMERICA', 
+'LG ENERGY SOLUTION MICHIGAN TECH CENTER', 'SK ENERGY', 'SeAH US', 'Doosan Electronics', 'Kia America', 
+'SAMSUNG ELECTRONICS AMERICA', 'NONGSHIM', 'Hyundai Motor Group', 'SK Hynix', 'GS GLOBAL USA', 'Kia Motors America', 
+'LS CABLE & SYSTEM', 'SK hynix', 'KIA MOTORS', 'LG ELECTRONICS(ZENITH ELECTRONICS LLC)', 'SK ENERGY AMERICAS', 'DHI', 'Asiana', 
+'GOLFZON AMERICA', 'HANWHA WEST PROPERTIES LLC', 'KOREAN AIRLINES', 'LG DISPLAY', 'LG DISPLAY AMERICA', 'SK LIFE SCIENCE', 
+'Korean Air', 'Zenith Electronics Corp', 'Q CELLS', 'Doosan Industrial Vehicle America Corporation', 'Samsung Biologics America', 
+'GSG Corp', 'SAMSUNG BIOLOGICS', 'SK Group', 'SM Entertainment', 'Seah Steel USA LLC', 'Doosan Industrial Vehicle America Corp', 
+'Hanwha', 'HYUNDAI MOTORS', 'Hanwha OCEAN', 'Nongshim USA', 'SeAH Steel USA', 'LS Cable & System', 'SKLSI', 'HanaWestPropertiesLLC', 
+'SamsungElectronics', 'DoosanEnerbilityAmerica', 'HyundaiMotor', 'SeAH', 'LGGroup', 'GOLFZON', 'GSGlobalUSA', 'DoosanGroup', 
+'ASIANA', 'GSGlobal', 'POSCOAmericaCorp', 'Medy-Tox', 'SKlifescience', 'COUPANGGLOBALLLC', 'LGCorp', 'SAMSUNGSEMICONDUCTOR', 
+'DSME', 'HYUNDAI', 'HLMandoAmericaCorporation', 'Nongshim', 'HanwhaCorporation', 'LGElec', 'DoosanCorp', 'MANDO', 
+"SamsungSemiconductor'sUS", 'Posco', 'SKhynixAmerica', 'LG', 'SeAHAmerica', 'SeAHUSA', 'POSCOInternationalCorp', 'SKEnergy', 
+'KIAMOTORSAMERICA', 'SEAHSTEEL', 'LGEnergy', 'LGDisplay', 'POSCOAMERICA', 'DoosanHeavyIndustries', 'HanwhaCorp', 
+'SMEntertainmentUSA', 'KiaCorp', 'LSGroup', 'SKE&S', 'LGELECTRONICSUSA', 'MandoAmerica', 'HMGMA', 'POSCOAmerica', 'Golfzon', 
+'MEDY-TOX', 'LGEnergySolution', 'SKNETWORKSAMERICA', 'COUPANGGLOBAL', 'Medytox', 'SKBattery', 'MandoAmericaCorp', 
+'LGDisplayAmerica', 'SKHynixSemiconductor', 'CoupangGlobalLLC', 'ZenithElectronicsLLC', 'Dsme', 'SKE&SAmerica', 'KiaMotors', 
+'ASIANAAIRLINES', 'SEAHSTEELUSALLC', 'GSG', 'MandoAmericaCorporation', 'HLMandoAmerica', 'ZenithElectronics', 
+'DOOSANHEAVYINDUSTRIESAMERICALLC', 'SKEnergyAmericas', 'SMENTERTAINMENT', 'POSCOInternational', 'SeAHSteel', 'LGENERGYSOLUTION', 
+'LSCABLE', 'DoosanElectro-MaterialsAmerica', 'SMUSA', 'LSCableSystems', 'DoosanHeavyIndustriesAmericaHoldings', 'NongshimAmerica',
+'DoosanHeavyIndustriesAmerica', 'NONGSHIMAMERICA', 'KOREANAIR', 'KMMG', 'Doosan', 'LGEnergySolutionTechCenter', 'SKE&SEnergy', 
+'HANWHA', 'SamsungElectronicsAmerica', 'HLMando', 'MandoCorporation', 'Coupang', 'SKLifeScience', 
+'DOOSANMATERIALHANDLINGSOLUTIONDOOSANINDUSTRIALVEHICLEAMERICACORP', 'GolfzonAmericaOfficial', 'SKUSA', 'HanwhaQcells', 'Hyundais', 
+'LGEnergyMichiganTechCenter', 'LSCable&SystemUSA', 'KiaGeorgiaPlant', 'HANWHAHOLDINGS', 'DIVAC', 'HANWHAQCELLSAMERICA', 
+'DOOSANELECTRO-MATERIALSAMERICA', 'MEDYTOX', 'POSCOHoldings', 'DaewooShipbuildingandMarineEngineering', 'LGElectronics', 
+'HanwhaHoldingsUSA', 'POSCOAMERICACORPORATION', 'HANWHACORP', 'KiaMotorsManufacturingGeorgia', 'SMENTERTAINMENTUSA', 'KIA', 
+'SMtownUSA', 'SKHYNIX', 'Kias', 'HanwhaHoldings', 'GolfzonAmerica', 'Mando', 'HanaWestProperties', 'SamsungBiologics', 
+'HanwhaQCELLSAmerica', 'SKE&SCo', 'DoosanHeavyIndustriesAmericaLLC', 'POSCOAmericaCorporation', 'AsianaAirlines', 
+'DoosanEnerbilityAmericaHoldings', 'KiaCorporation', 'SKNETWORKS', 'DSMECO', 'KiaGeorgia', 'SKHYNIXAMERICA', 'HanwhaGroup', 
+'CoupangGlobal', 'SK', 'Qcells', 'SAMSUNG', 'KIAGEORGIA', 'Hyundai', 'DoosanMaterialHandlingSolutions', 'SKNetworksAmerica', 
+'HanwhaQCELLS', 'SamsungUS', 'KIAMOTORSCORP', 'SamsungSemiconductorUSA', 'LGELECTRONICS', 'SKGroupCompanies', 'SKGROUP', 'Samsung',
+'SKNetworks', 'DoosanCorporation', 'DSEM', 'SKE&SAMERICA', 'PoscoAmerica', 'LGE', 'SKHynixAmerica', 
+'SamsungElectronicsNorthAmerica', 'HyundaiMotors', 'HanwhaUSA', 'Kia', 'SamsungSemiconductor', 'DoosanIndustrialVehicle', 
+'POSCO', 'LSCableSystemsAmerica', 'DoosanEnerbility', 'LSCABLESYSTEMSAMERICA', 'LGENERGYSOLUTIONMICHIGANTECHCENTER', 'SKENERGY', 
+'SeAHUS', 'DoosanElectronics', 'KiaAmerica', 'SAMSUNGELECTRONICSAMERICA', 'NONGSHIM', 'HyundaiMotorGroup', 'SKHynix', 
+'GSGLOBALUSA', 'KiaMotorsAmerica', 'LSCABLE&SYSTEM', 'SKhynix', 'KIAMOTORS', 'LGELECTRONICS(ZENITHELECTRONICSLLC)', 
+'SKENERGYAMERICAS', 'DHI', 'Asiana', 'GOLFZONAMERICA', 'HANWHAWESTPROPERTIESLLC', 'KOREANAIRLINES', 'LGDISPLAY', 
+'LGDISPLAYAMERICA', 'SKLIFESCIENCE', 'KoreanAir', 'ZenithElectronicsCorp', 'QCELLS', 'DoosanIndustrialVehicleAmericaCorporation', 
+'SamsungBiologicsAmerica', 'GSGCorp', 'SAMSUNGBIOLOGICS', 'SKGroup', 'SMEntertainment', 'SeahSteelUSALLC', 
+'DoosanIndustrialVehicleAmericaCorp', 'Hanwha', 'HYUNDAIMOTORS', 'HanwhaOCEAN', 'NongshimUSA', 'SeAHSteelUSA', 'LSCable&System']
+
+# scraping할 때, context 긁는 함수
+def scrap_context(url):
     wd = initialize_chrome_driver()
     wd.get(url)
     time.sleep(3)
     html = wd.page_source
     soup = BeautifulSoup(html, 'html.parser')
-
     # 키워드가 포함된 모든 텍스트 블록 찾기
     context = str()
     # 대소문자 구분 없이 키워드와 정확히 일치하는 정규 표현식 패턴 생성
@@ -126,12 +192,12 @@ def scrap_context1(url):
     #for element in soup.find_all(string=lambda text: keyword in text):
     for element in soup.find_all(string=pattern):
         context += (element.text + '\n')
-
     # 기업명 앞+뒤 문맥 파악할 수 있는 글이 포함되면, context return
     if context :
       return(context)
     else:
       return()
+###############################################<직접 크롤링 : url_local_1, 3, 5, 9, 13, 14, 17>###############################################
 ###############################################<url_local_1>###############################################
 #url_local_1 = "https://www.ajc.com/news/"
 wd = initialize_chrome_driver()
@@ -160,7 +226,7 @@ try:
           title = article.title
           if not title: error_message = Error_Message(error_message, "None Title")
           content = article.text
-          if not content: content = scrap_context1(article_link)
+          if not content: content = scrap_context(article_link)
           if error_message is not str():
                 error_list.append({
                   'Error Link': url_local_1,
@@ -202,7 +268,7 @@ for item in news_items:
           title = article.title
           if not title : error_message = Error_Message(error_message, "None Title")
           text = article.text
-          if not text: text = scrap_context1(link)
+          if not text: text = scrap_context(link)
           if error_message != str():
                     error_list.append({
                         'Error Link': url_local_3,
@@ -247,7 +313,7 @@ try:
       title = article.title
       if not title: error_message = Error_Message(error_message, "None Title")
       content = article.text
-      if not content: content = scrap_context1(link)
+      if not content: content = scrap_context(link)
       if error_message is not str():
                 error_list.append({
                     'Error Link': url_local_5,
@@ -292,7 +358,7 @@ for item in news_items:
                 title = article.title
                 if not title : error_message = Error_Message(error_message, "None Title")
                 text = article.text
-                if not text: text = scrap_context1(link)
+                if not text: text = scrap_context(link)
                 if error_message != str():
                     error_list.append({
                         'Error Link': url_local_9,
@@ -327,7 +393,7 @@ for item in date_items:
         title = article.title
         if not title: error_message = Error_Message(error_message, "None Title")
         text = article.text
-        if not text: text = scrap_context1(link)
+        if not text: text = scrap_context(link)
         if error_message != str():
             error_list.append({
                 'Error Link': url_local_13,
@@ -365,7 +431,7 @@ for item in news_items:
           title = article.title
           if not title : error_message = Error_Message(error_message, "None Title")
           text = article.text
-          if not text: text = scrap_context1(link)
+          if not text: text = scrap_context(link)
       if error_message != str():
                 error_list.append({
                     'Error Link': url_local_14,
@@ -410,7 +476,7 @@ try:
                   title = article.title
                   if not title : error_message = Error_Message(error_message, "None Title")
                   text = article.text
-                  if not text: text = scrap_context1(link)
+                  if not text: text = scrap_context(link)
                   if error_message is not str():
                       error_list.append({
                           'Error Link': url_local_17,
@@ -431,3 +497,74 @@ except Exception as e:
     })
 
 ###############################################<안 되는 사이트 : 빙 search url_local_2, 4, 6, 7, 8, 10, 11, 12, 15, 16, 18>###############################################
+local_news_sites = [url_local_2, url_local_4, url_local_6, url_local_7, url_local_8, url_local_10, 
+                    url_local_11, url_local_12, url_local_15, url_local_16, url_local_18]
+# search 검색어 & 링크 만들기
+def generate_bing_news_url(site_keyword):
+    search_q = f"site%3A{site_keyword}"
+    url = f"https://www.bing.com/news/search?q={search_q}&qft=interval%3d%227%22&form=YFNR&setlang=en-US&setmkt=en-US&freshness=Day&sort=Date"
+    return url
+# local 변수 만들기
+local_states = {'valdostadailytimes.com' : '[Georgia] valdostadailytimes.com',
+                'https://www.bizjournals.com/news/': '[California] https://www.bizjournals.com/news/',
+                'https://www.expressnews.com/news/': '[Texas] https://www.expressnews.com/news/',
+                'https://buffalonews.com/news/#tracking-source=main-nav': '[New York] https://buffalonews.com/news/#tracking-source=main-nav',
+                'syracuse.com': '[New York] syracuse.com',
+                'https://www.nj.com/#section__news': '[New Jersey] https://www.nj.com/#section__news',
+                'charlotteobserver.com': '[North Carolina] charlotteobserver.com',
+                'newsobserver.com': '[North Carolina] newsobserver.com',
+                'roanoke.com': '[Virginia] roanoke.com',
+                'richmond.com': '[Virginia] richmond.com',
+                'https://www.savannahnow.com/news/local/': '[Georgia] https://www.savannahnow.com/news/local/'
+                }
+bing_url_list = [] ; local_list = []
+for local_news_site in local_news_sites:
+    bing_news_url = generate_bing_news_url(local_news_site)
+    bing_url_list.append(bing_news_url)
+    local_list.append(local_states[local_news_site])
+def scroll_down(driver):
+    # Scroll down using the END key to trigger additional content loading
+    driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.END)
+    time.sleep(2)  # Adjust sleep time based on your page loading time
+    # Function to check if the page has reached the end
+def is_end_of_page(driver):
+    try:
+        # Check if there is a button indicating the end of the page
+        driver.find_element(By.XPATH, '//button[text()="No more items to show."]')
+        return True
+    except NoSuchElementException:
+        return False
+        
+# scrapping
+for index, bing_url in enumerate(bing_url_list):
+    wd = initialize_chrome_driver()
+    wd.get(bing_url)
+    time.sleep(3)
+    # Scroll down a few times to load more articles
+    for _ in range(50): # Adjust the number of scrolls based on your needs
+        before_scroll_height = wd.execute_script("return document.body.scrollHeight")
+        scroll_down(wd)
+        time.sleep(2)  # Adjust sleep time based on your page loading time
+        after_scroll_height = wd.execute_script("return document.body.scrollHeight")
+        # Check if new content is being loaded
+        if before_scroll_height == after_scroll_height:
+            break
+    html = wd.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    news_items = soup.find_all('div', class_='caption')
+    for news_item in news_items:
+        title = news_item.select_one('.title').text
+        link = news_item.select_one('.title')['href']
+        date = news_item.find('span', {'tabindex': '0'}).text.strip()
+        article_date = date_util(date)
+        local = local_list[index]
+        if article_date in today_list:
+            text = scrap_context(link)
+            if text:
+                articles.append({
+                                    'Local Site': local,
+                                    'Title': title,
+                                    'Link': link,
+                                    'Content(RAW)': text
+                                })
+
