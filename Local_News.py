@@ -67,8 +67,6 @@ def Error_Message(message, add_error):
     message += add_error
     return message
 
-
-
 # 데이터프레임
 articles = []
 error_list = []
@@ -142,6 +140,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[Georgia] '+url_local_1
 try:
   news_blocks = soup.find_all('div',class_=['c-homeList', 'home-headline', 'headline', 'c-homeList left-photo','c-homeList no-photo','headline-box'])
   if not news_blocks: error_list.append({'Error Link': url_local_1, 'Error': "None News"})
@@ -161,18 +160,20 @@ try:
           title = article.title
           if not title: error_message = Error_Message(error_message, "None Title")
           content = article.text
-          if not content: error_message = Error_Message(error_message, "None Contents")
+          if not content: content = scrap_context1(article_link)
           if error_message is not str():
-            error_list.append({
-              'Error Link': url_local_1,
-              'Error': error_message
-            })
+                error_list.append({
+                  'Error Link': url_local_1,
+                  'Error': error_message
+                })
           else:
-            articles.append({
-              'Title': title,
-              'Link': article_link,
-              'Content(Raw)': content
-            })
+              if content:
+                articles.append({
+                  'Local Site': local,
+                  'Title': title,
+                  'Link': article_link,
+                  'Contents': content
+                })
 except Exception as e:
   error_list.append({
       'Error Link': url_local_1,
@@ -186,7 +187,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
-
+local = '[California] '+url_local_3
 news_items = soup.find_all('a', class_='article-title')
 for item in news_items:
     link = item['href']
@@ -197,22 +198,24 @@ for item in news_items:
     article_date = date_util(str(article.publish_date))
     if not article_date : error_message = Error_Message(error_message, "None Date")
     else:
-      title = article.title
-      if not title : error_message = Error_Message(error_message, "None Title")
-      text = article.text
-      if not text : error_message = Error_Message(error_message, "None Content")
       if article_date in today_list :
-                if error_message != str():
+          title = article.title
+          if not title : error_message = Error_Message(error_message, "None Title")
+          text = article.text
+          if not text: text = scrap_context1(link)
+          if error_message != str():
                     error_list.append({
-                        'Error Link': link,
+                        'Error Link': url_local_3,
                         'Error': error_message
-                    })
-                else:
-                    articles.append({
-                        'Title': title,
-                        'Link': link,
-                        'Content(RAW)': text
-                    })
+                    })               
+          else:
+              if text:
+                articles.append({
+                    'Local Site': local,
+                    'Title': title,
+                    'Link': link,
+                    'Content(RAW)': text
+                })
 ###############################################<url_local_5>###############################################
 #url_local_5 = "https://www.dallasnews.com/news/"
 wd = initialize_chrome_driver()
@@ -225,6 +228,7 @@ for _ in range(5):
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[Texas] '+url_local_5
 try:
   news_blocks = soup.find_all('div', class_='dmnc_generic-cards-card-module__FcjA3 w-full py-6 flex border-gray-light relative')
   if not news_blocks: error_list.append({'Error Link': url_local_5, 'Error': "None News"})
@@ -243,14 +247,16 @@ try:
       title = article.title
       if not title: error_message = Error_Message(error_message, "None Title")
       content = article.text
-      if not content: error_message = Error_Message(error_message, "None Contents")
+      if not content: content = scrap_context1(link)
       if error_message is not str():
                 error_list.append({
                     'Error Link': url_local_5,
                     'Error': error_message
                     })
       else:
+          if content:
                 articles.append({
+                  'Local Site': local,
                   'Title': title,
                   'Link': link,
                   'Content(RAW)': content
@@ -268,6 +274,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[New Jersey] '+url_local_9
 base_url = 'https://www.northjersey.com'
 # 'gnt_x__nft gnt_m_flm_a' 클래스를 제외한 'gnt_m_flm_a' 클래스를 가진 모든 <a> 태그 찾기
 news_items = soup.find_all('a', class_='gnt_m_flm_a')
@@ -281,22 +288,24 @@ for item in news_items:
         article_date = date_util(str(article.publish_date))
         if not article_date : error_message = Error_Message(error_message, "None Date")
         else:
-            title = article.title
-            if not title : error_message = Error_Message(error_message, "None Title")
-            text = article.text
-            if not text : error_message = Error_Message(error_message, "None Content")
             if article_date in today_list :
+                title = article.title
+                if not title : error_message = Error_Message(error_message, "None Title")
+                text = article.text
+                if not text: text = scrap_context1(link)
                 if error_message != str():
                     error_list.append({
-                        'Error Link': link,
+                        'Error Link': url_local_9,
                         'Error': error_message
                     })
                 else:
-                    articles.append({
-                        'Title': title,
-                        'Link': link,
-                        'Content(RAW)': text
-                    })
+                    if text:
+                        articles.append({
+                            'Local Site': local,
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': text
+                        })
 ###############################################<url_local_13>###############################################
 # url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
 wd = initialize_chrome_driver()
@@ -305,31 +314,33 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
-news_items = soup.find_all('h2', class_='wpds-c-iiQaMf wpds-c-iiQaMf-ihElTZa-css')
-for item in news_items:
-    link = item.find('a')['href']
-    print(link)
-    if not link:
-        error_message = Error_Message(error_message, "None Link")
-    article = Article(link, language='en')
-    article.download()
-    article.parse()
-    title = article.title
-    if not title: error_message = Error_Message(error_message, "None Title")
-    text = article.text
-    if not text: error_message = Error_Message(error_message, "None Content")
-
-    if error_message is not str():
-                  error_list.append({
-                      'Error Link': url_local_13,
-                      'Error': error_message
-                      })
-    else:
-                  articles.append({
-                      'Title': title,
-                      'Link': link,
-                      'Content(RAW)': text
-                      })
+local = '[District of Columbia] '+url_local_13
+date_items = soup.find_all('span', class_='timestamp gray-dark')
+for item in date_items:
+    date = date_util(item.text.strip())
+    if date in today_list:
+        link = item.find_parent().find_parent().find('a')['href']
+        if not link: error_message = Error_Message(error_message, "None Link")
+        article = Article(link, language='en')
+        article.download()
+        article.parse()
+        title = article.title
+        if not title: error_message = Error_Message(error_message, "None Title")
+        text = article.text
+        if not text: text = scrap_context1(link)
+        if error_message != str():
+            error_list.append({
+                'Error Link': url_local_13,
+                'Error': error_message
+            })
+        else:
+            if text:
+                articles.append({
+                    'Local Site': local,
+                    'Title': title,
+                    'Link': link,
+                    'Content(RAW)': text
+                })
 ###############################################<url_local_14>###############################################
 # url_local_14 = "https://www.washingtontimes.com/news/world/"
 wd = initialize_chrome_driver()
@@ -338,6 +349,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[District of Columbia] '+url_local_14
 base_url = "https://www.washingtontimes.com"
 news_items = soup.find_all('h2', class_='article-headline')
 for item in news_items:
@@ -349,22 +361,24 @@ for item in news_items:
     article_date = date_util(str(article.publish_date))
     if not article_date : error_message = Error_Message(error_message, "None Date")
     else:
-      title = article.title
-      if not title : error_message = Error_Message(error_message, "None Title")
-      text = article.text
-      if not text : error_message = Error_Message(error_message, "None Content")
       if article_date in today_list :
-        if error_message != str():
-                    error_list.append({
-                        'Error Link': link,
-                        'Error': error_message
-                    })
-        else:
-                    articles.append({
-                        'Title': title,
-                        'Link': link,
-                        'Content(RAW)': text
-                    })
+          title = article.title
+          if not title : error_message = Error_Message(error_message, "None Title")
+          text = article.text
+          if not text: text = scrap_context1(link)
+      if error_message != str():
+                error_list.append({
+                    'Error Link': url_local_14,
+                    'Error': error_message
+                })
+      else:
+            if text:
+                articles.append({
+                    'Local Site': local,
+                    'Title': title,
+                    'Link': link,
+                    'Content(RAW)': text
+                })
 ###############################################<url_local_17>###############################################
 # url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 wd = initialize_chrome_driver()
@@ -373,6 +387,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[Maryland] '+url_local_17
 try:
     # 뉴스 아이템 추출
     news_items = soup.find_all('div', class_='article-info')
@@ -389,25 +404,26 @@ try:
             article.download()
             article.parse()
             article_date = date_util(str(article.publish_date))
-            if not article_date:
-              error_message = Error_Message(error_message, "None Date")
+            if not article_date: error_message = Error_Message(error_message, "None Date")
             else:
-              title = article.title
-              if not title: error_message = Error_Message(error_message, "None Title")
-              text = article.text
-              if not text: error_message = Error_Message(error_message, "None Content")
               if article_date in today_list :
+                  title = article.title
+                  if not title : error_message = Error_Message(error_message, "None Title")
+                  text = article.text
+                  if not text: text = scrap_context1(link)
                 if error_message is not str():
                   error_list.append({
                       'Error Link': url_local_17,
                       'Error': error_message
                       })
                 else:
-                  articles.append({
-                      'Title': title,
-                      'Link': link,
-                      'Content(RAW)': text
-                      })
+                    if text:
+                        articles.append({
+                            'Local Site': local,
+                            'Title': title,
+                            'Link': link,
+                            'Content(RAW)': text
+                        })
 except Exception as e:
     error_list.append({
         'Error Link': url_local_17,
