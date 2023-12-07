@@ -411,13 +411,13 @@ try:
                   if not title : error_message = Error_Message(error_message, "None Title")
                   text = article.text
                   if not text: text = scrap_context1(link)
-                if error_message is not str():
-                  error_list.append({
-                      'Error Link': url_local_17,
-                      'Error': error_message
-                      })
-                else:
-                    if text:
+                  if error_message is not str():
+                      error_list.append({
+                          'Error Link': url_local_17,
+                          'Error': error_message
+                          })
+                  else:
+                      if text:
                         articles.append({
                             'Local Site': local,
                             'Title': title,
