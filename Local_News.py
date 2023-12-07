@@ -80,6 +80,7 @@ today = date_util(datetime.now().strftime("%Y-%m-%d"))
 # Georgia
 url_local_1 = 'https://www.ajc.com/news/'
 url_local_2 = 'valdostadailytimes.com'
+url_local_20 = 'https://www.savannahnow.com/news/local/'
 
 # California
 url_local_3 = 'https://www.mercurynews.com/latest-headlines/'
@@ -98,20 +99,22 @@ url_local_9 = 'https://www.northjersey.com/news/'
 url_local_10 = 'https://www.nj.com/#section__news'
 
 # North Carolina
-url_local_11 = 'charlotteobserver.com'
-url_local_12 = 'newsobserver.com'
+url_local_11 = 'https://carolinapublicpress.org/recent-news/'
+# url_local_12 = ''
 
 # District of Columbia
 url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
 url_local_14 = 'https://www.washingtontimes.com/news/world/'
 
 # Virginia
-url_local_15 = 'roanoke.com'
-url_local_16 = 'richmond.com'
+url_local_15 = 'https://www.vpm.org/vpm-news'
+url_local_16 = 'https://richmondmagazine.com/news/news'
 
 # Maryland
 url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
-url_local_18 = 'https://www.savannahnow.com/news/local/'
+url_local_18 = 'https://www.fox5dc.com/tag/us/md'
+url_local_19 = 'https://foxbaltimore.com/news/local'
+
 
 Top50_Name_list = ['SKLSI', 'Hana West Properties LLC', 'Samsung Electronics', 'Doosan Enerbility America', 
 'Hyundai Motor', 'SeAH', 'LG Group', 'GOLFZON', 'GS Global USA', 'Doosan Group', 'ASIANA', 'GS Global', 
@@ -374,6 +377,58 @@ for item in news_items:
                             'Link': link,
                             'Contents': text
                         })
+###############################################<url_local_11>###############################################
+# url_local_11 = 'https://carolinapublicpress.org/recent-news/'
+wd = initialize_chrome_driver()
+wd.get(url_local_11)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 추출
+    news_items = soup.find_all('div', class_='entry-container')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_local_11,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+          title_tag = item.find('h2', class_='entry-title')
+          if not title_tag: 
+            error_message = Error_Message(error_message, "None Title")
+            continue
+          title = title_tag.get_text().strip() 
+          if not title: error_message = Error_Message(error_message, "None Title")
+          link = title_tag.find('a')['href'] if title_tag and title_tag.find('a') else None
+          if not link : error_message = Error_Message(error_message, "None Link")
+          article = Article(link, language='en')
+          article.download()
+          article.parse()
+          article_date = date_util(str(article.publish_date))
+          if not article_date:
+            error_message = Error_Message(error_message, "None Date")
+          else:
+            text = article.text
+            if not text: error_message = Error_Message(error_message, "None Content")
+            if article_date in today_list :
+              if error_message is not str():
+                error_list.append({
+                      'Error Link': url_local_11,
+                      'Error': error_message
+                      })
+              else:
+                  articles.append({
+                      'Title': title,
+                      'Link': link,
+                      'Content(RAW)': text
+                      })
+except Exception as e:
+    error_list.append({
+        'Error Link': url_local_11,
+        'Error': str(e)
+    })  
 ###############################################<url_local_13>###############################################
 # url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
 wd = initialize_chrome_driver()
@@ -447,6 +502,113 @@ for item in news_items:
                     'Link': link,
                     'Contents': text
                 })
+###############################################<url_local_15>###############################################
+# url_local_15 = 'https://www.vpm.org/vpm-news'
+wd = initialize_chrome_driver()
+wd.get(url_local_15)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 추출
+    news_items = soup.find_all('div', class_='PromoA-content')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_local_15,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            title_tag = item.find('div', class_='PromoA-title').find('a')
+            if not title_tag: 
+                error_message = Error_Message(error_message, "None Title")
+                continue
+            title = title_tag.get_text().strip()
+            if not title: 
+                error_message = Error_Message(error_message, "None Title")
+            link = title_tag['href'] if title_tag else None
+            if not link : error_message = Error_Message(error_message, "None Link")
+            article = Article(link, language='en')
+            article.download()
+            article.parse()
+            article_date = date_util(str(article.publish_date))
+            if not article_date:
+              error_message = Error_Message(error_message, "None Date")
+            else:
+              text = article.text
+              if not text: error_message = Error_Message(error_message, "None Content")
+              if article_date in today_list :
+                if error_message is not str():
+                  error_list.append({
+                        'Error Link': url_local_15,
+                        'Error': error_message
+                        })
+                else:
+                    articles.append({
+                        'Title': title,
+                        'Link': link,
+                        'Content(RAW)': text
+                        })
+except Exception as e:
+      error_list.append({
+          'Error Link': url_local_15,
+          'Error': str(e)
+      })  
+###############################################<url_local_16>###############################################
+# url_local_16 = 'https://richmondmagazine.com/news/news'
+wd = initialize_chrome_driver()
+wd.get(url_local_16)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 추출
+    news_items = soup.find_all('div', class_='mp-item-wrapper')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_local_16,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            title_tag = item.find('h3').find('a')
+            if not title_tag: 
+                error_message = Error_Message(error_message, "None Title")
+                continue
+            title = title_tag.get_text().strip()
+            if not title: 
+                error_message = Error_Message(error_message, "None Title")
+
+            link = title_tag['href'] if title_tag else None
+            if not link : error_message = Error_Message(error_message, "None Link")
+            article = Article(link, language='en')
+            article.download()
+            article.parse()
+            article_date = date_util(str(article.publish_date))
+            if not article_date:
+              error_message = Error_Message(error_message, "None Date")
+            else:
+              text = article.text
+              if not text: error_message = Error_Message(error_message, "None Content")
+              if article_date in today_list :
+                if error_message is not str():
+                  error_list.append({
+                        'Error Link': url_local_16,
+                        'Error': error_message
+                        })
+                else:
+                    articles.append({
+                        'Title': title,
+                        'Link': link,
+                        'Content(RAW)': text
+                        })
+except Exception as e:
+      error_list.append({
+          'Error Link': url_local_16,
+          'Error': str(e)
+      })  
 ###############################################<url_local_17>###############################################
 # url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
 wd = initialize_chrome_driver()
@@ -497,7 +659,119 @@ except Exception as e:
         'Error Link': url_local_17,
         'Error': str(e)
     })
+###############################################<url_local_18>###############################################
+# url_local_18 = 'https://www.fox5dc.com/tag/us/md'
+wd = initialize_chrome_driver()
+wd.get(url_local_18)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+base_url = 'https://www.fox5dc.com'
+try:
+    # 뉴스 아이템 추출
+    news_items = soup.find_all('div', class_='info')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_local_18,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            date_tag = item.find('time', class_='time')
+            date = date_tag['datetime'] if date_tag else None
+            article_date = date_util(str(date))
+            if not article_date:
+                error_message = Error_Message(error_message, "None Date")
 
+            title_tag = item.find('h3', class_='title').find('a')
+            if not title_tag: 
+                error_message = Error_Message(error_message, "None Title")
+                continue
+            title = title_tag.get_text().strip()
+            if not title: 
+                error_message = Error_Message(error_message, "None Title")
+            relative_link = title_tag['href'] if title_tag else None
+            link = base_url + relative_link if relative_link else None
+            if not link : error_message = Error_Message(error_message, "None Link")
+            article = Article(link, language='en')
+            article.download()
+            article.parse()
+            text = article.text
+            if not text: error_message = Error_Message(error_message, "None Content")
+            if article_date in today_list :
+                if error_message is not str():
+                  error_list.append({
+                        'Error Link': url_local_18,
+                        'Error': error_message
+                        })
+                else:
+                    articles.append({
+                        'Title': title,
+                        'Link': link,
+                        'Content(RAW)': text
+                        })
+except Exception as e:
+      error_list.append({
+          'Error Link': url_local_18,
+          'Error': str(e)
+      })  
+###############################################<url_local_19>###############################################
+# url_local_19 = 'https://foxbaltimore.com/news/local'
+wd = initialize_chrome_driver()
+wd.get(url_local_19)
+time.sleep(5)
+html = wd.page_source
+soup = BeautifulSoup(html, 'html.parser')
+error_message = str()
+try:
+    # 뉴스 아이템 추출
+    news_items = soup.find_all('li', class_='teaserItem')
+    if not news_items:
+        error_list.append({
+            'Error Link': url_local_19,
+            'Error': "None News"
+        })
+    else:
+        for item in news_items:
+            date_tag = item.find('span', class_='publishedSince')
+            date = date_tag.get_text() if date_tag else None
+            article_date = date_util(str(date))
+            if not article_date: 
+                error_message = Error_Message(error_message, "None Date")
+            title_tag = item.find('a')
+            if not title_tag: 
+                error_message = Error_Message(error_message, "None Title")
+                continue
+            base_url = 'https://foxbaltimore.com'
+            relative_link = title_tag['href'] if title_tag else None
+            link = base_url + relative_link if relative_link else None
+            if not link : error_message = Error_Message(error_message, "None Link")
+            article = Article(link, language='en')
+            article.download()
+            article.parse()
+            title = article.title
+            if not title: error_message = Error_Message(error_message, "None Title")
+            text = article.text
+            if not text: error_message = Error_Message(error_message, "None Content")
+            if article_date in today_list :
+                if error_message is not str():
+                  error_list.append({
+                        'Error Link': url_local_19,
+                        'Error': error_message
+                        })
+                else:
+                    articles.append({
+                        'Title': title,
+                        'Link': link,
+                        'Content(RAW)': text
+                        })
+except Exception as e:
+      error_list.append({
+          'Error Link': url_local_19,
+          'Error': str(e)
+      })
+###############################################<url_local_20>###############################################
 ###############################################<안 되는 사이트 : 빙 search url_local_2, 4, 6, 7, 8, 10, 11, 12, 15, 16, 18>###############################################
 local_news_sites = [url_local_2, url_local_4, url_local_6, url_local_7, url_local_8, url_local_10, 
                     url_local_11, url_local_12, url_local_15, url_local_16, url_local_18]
