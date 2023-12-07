@@ -385,6 +385,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[North Carolina] ' + url_local_11
 try:
     # 뉴스 아이템 추출
     news_items = soup.find_all('div', class_='entry-container')
@@ -510,6 +511,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[Virginia] ' + url_local_15
 try:
     # 뉴스 아이템 추출
     news_items = soup.find_all('div', class_='PromoA-content')
@@ -563,6 +565,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[Virginia] ' + url_local_16
 try:
     # 뉴스 아이템 추출
     news_items = soup.find_all('div', class_='mp-item-wrapper')
@@ -617,7 +620,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
-local = '[Maryland] '+url_local_17
+local = '[Maryland] ' + url_local_17
 try:
     # 뉴스 아이템 추출
     news_items = soup.find_all('div', class_='article-info')
@@ -667,6 +670,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[Maryland] ' + url_local_18
 base_url = 'https://www.fox5dc.com'
 try:
     # 뉴스 아이템 추출
@@ -724,6 +728,7 @@ time.sleep(5)
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
+local = '[Maryland] ' + url_local_19
 try:
     # 뉴스 아이템 추출
     news_items = soup.find_all('li', class_='teaserItem')
