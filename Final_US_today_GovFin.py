@@ -400,8 +400,9 @@ try:
             # 링크 추출 
             link_tag = item.find('p', class_='title').find('a', href=True)
             link = link_tag['href'] if link_tag else None
-            if not link:
-              error_message = Error_Message(error_message, "None Link")
+            full_link = 'https://www.army.mil' + link if link.startswith('/') else link
+            if not link: error_message = Error_Message(error_message, "None Link")
+            
             # 날짜 추출 
             date_tag = item.find('p', class_='date')
             date = date_tag.text.strip() if date_tag else None
