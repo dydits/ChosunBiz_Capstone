@@ -280,7 +280,7 @@ for item in news_items:
                     'Local Site': local,
                     'Title': title,
                     'Link': link,
-                    'Content(RAW)': text
+                    'Contents': text
                 })
 ###############################################<url_local_5>###############################################
 #url_local_5 = "https://www.dallasnews.com/news/"
@@ -325,7 +325,7 @@ try:
                   'Local Site': local,
                   'Title': title,
                   'Link': link,
-                  'Content(RAW)': content
+                  'Contents': content
                   })
 except Exception as e:
   error_list.append({
@@ -370,7 +370,7 @@ for item in news_items:
                             'Local Site': local,
                             'Title': title,
                             'Link': link,
-                            'Content(RAW)': text
+                            'Contents': text
                         })
 ###############################################<url_local_13>###############################################
 # url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
@@ -405,7 +405,7 @@ for item in date_items:
                     'Local Site': local,
                     'Title': title,
                     'Link': link,
-                    'Content(RAW)': text
+                    'Contents': text
                 })
 ###############################################<url_local_14>###############################################
 # url_local_14 = "https://www.washingtontimes.com/news/world/"
@@ -443,7 +443,7 @@ for item in news_items:
                     'Local Site': local,
                     'Title': title,
                     'Link': link,
-                    'Content(RAW)': text
+                    'Contents': text
                 })
 ###############################################<url_local_17>###############################################
 # url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
@@ -488,7 +488,7 @@ try:
                             'Local Site': local,
                             'Title': title,
                             'Link': link,
-                            'Content(RAW)': text
+                            'Contents': text
                         })
 except Exception as e:
     error_list.append({
@@ -565,6 +565,6 @@ for index, bing_url in enumerate(bing_url_list):
                                     'Local Site': local,
                                     'Title': title,
                                     'Link': link,
-                                    'Content(RAW)': text
+                                    'Contents': text
                                 })
 
