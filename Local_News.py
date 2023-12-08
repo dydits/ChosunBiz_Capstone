@@ -300,7 +300,7 @@ try:
                             'Link': link,
                             'Content(RAW)': text
                         })
-          except Exception as e:
+        except Exception as e:
               error_list.append({
                   'Error Link': link,
                   'Error': str(e)
