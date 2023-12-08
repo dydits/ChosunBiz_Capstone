@@ -346,7 +346,7 @@ try:
                           'Link': link,
                           'Content(RAW)': text
                       })
-            except Exception as e:
+          except Exception as e:
               error_list.append({
                   'Error Link': link,
                   'Error': str(e)
@@ -620,7 +620,7 @@ try:
                               'Link': link,
                               'Content(RAW)': text
                               })
-            except Exception as e:
+          except Exception as e:
                 error_list.append({
                     'Error Link': link,
                     'Error': str(e)
@@ -755,34 +755,32 @@ try:
                 error_message = Error_Message(error_message, "None Title")
             link = title_tag['href'] if title_tag else None
             if not link : error_message = Error_Message(error_message, "None Link")
-            try:
+            try :
                 article = Article(link, language='en')
                 article.download()
                 article.parse()
                 article_date = date_util(str(article.publish_date))
-                if not article_date:
-                  error_message = Error_Message(error_message, "None Date")
-                else:
-                  if article_date in today_list :
-                      text = article.text
-                      if not text: text = scrap_context(link)
-                      if error_message is not str():
-                          error_list.append({
-                                'Error Link': url_local_15,
-                                'Error': error_message
-                                })
-                      else:
-                          if text:
-                            articles.append({
-                                'Local Site': local,
-                                'Title': title,
-                                'Link': link,
-                                'Content(RAW)': text
-                                })
-              except Exception as e:
-                  error_list.append({
-                      'Error Link': link,
-                      'Error': str(e)
+                if not article_date: error_message = Error_Message(error_message, "None Date")
+                if article_date in today_list :
+                    text = article.text
+                    if not text: text = scrap_context(link)
+                    if error_message != str():
+                        error_list.append({
+                              'Error Link': url_local_15,
+                              'Error': error_message
+                              })
+                    else:
+                        if text:
+                          articles.append({
+                              'Local Site': local,
+                              'Title': title,
+                              'Link': link,
+                              'Content(RAW)': text
+                              })
+            except Exception as e:
+                error_list.append({
+                    'Error Link': link,
+                    'Error': str(e)
                   })  
 except Exception as e:
       error_list.append({
@@ -1105,6 +1103,9 @@ if articles == []:
   print("No news for today!")
 
 articles = pd.DataFrame(articles)
+articles = articles.drop_duplicates(subset=['Link'])
+articles = articles.drop_duplicates(subset=['Title'])
+articles.reset_index(drop=True, inplace=True)
 error_list = pd.DataFrame(error_list)
 articles.to_csv('Local articles' + datetime.now().strftime("_%m%d") + '.csv')
 error_list.to_csv('error_list' + datetime.now().strftime("_%m%d") + '.csv')
@@ -1158,7 +1159,7 @@ Articles_Select2 = pd.DataFrame(Articles_Select2)
 
 ########################################### <Select 3 : OpenAI> ##############################################
 # 발급받은 API 키 설정(SNU 빅데이터핀테크 API)
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = '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'
 # openai API 키 인증
 openai.api_key = OPENAI_API_KEY
 # ChatGPT - 3.5 turbo updated
@@ -1171,7 +1172,7 @@ def get_completion(prompt, model="gpt-3.5-turbo-1106"):
     )
     return response.choices[0].message["content"]
 
-Articles_Final = {'Company':[],'Local Site':[], 'Title':[],'Link':[],'Contents':[]}
+Articles_Final = {'Company':[],'Local Site':[], 'Title':[],'Link':[],'Content(RAW)':[]}
 for i in range(len(Articles_Select2)):
     title = Articles_Select2['Title'][i]
     local = Articles_Select2['Local Site'][i]
