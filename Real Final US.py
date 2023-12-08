@@ -3995,6 +3995,7 @@ except Exception as e:
     All_error_list.append({
         'Error Link': url_68,
         'Error': str(e)
+    })
 ########################################### <71> ##############################################
 #url_71 = 'https://chamber.nyc/news'
 wd = initialize_chrome_driver()
