@@ -1,0 +1,292 @@
+# 라이브러리 import
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
+from bs4 import BeautifulSoup
+import numpy as np
+import pandas as pd
+import time
+from datetime import datetime, timedelta
+from dateutil import parser
+import re
+from newspaper import Article
+import requests
+import feedparser
+import spacy
+import openai
+
+def initialize_chrome_driver():
+  # Chrome 옵션 설정 : USER_AGENT는 알아서 수정
+  #USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.105 Safari/537.36"
+  # 태준컴
+  USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5.2 Safari/605.1.15'
+  chrome_options = Options()
+  chrome_options.page_load_strategy = 'normal'  # 'none', 'eager', 'normal'
+  chrome_options.add_argument('--headless')
+  chrome_options.add_argument('--no-sandbox')
+  chrome_options.add_argument('--disable-dev-shm-usage')
+  chrome_options.add_argument('--disable-gpu')
+  chrome_options.add_argument(f'user-agent={USER_AGENT}')
+  # Chrome 드라이버 설정
+  service = Service()
+  wd = webdriver.Chrome(service=service, options=chrome_options)
+  return wd
+
+# 날짜 통합 함수
+def date_util(article_date):
+  today = datetime.now().date()
+  try:
+    # Parse the date using dateutil.parser
+    article_date = parser.parse(article_date).date()
+  except ValueError:
+    # If parsing fails, handle the relative dates
+    article_date = article_date.lower()
+    time_keywords = ["AM", "PM", "h", "hrs", "hr", "m", "s", "hours","hour", "minutes", "minute", "mins", "min", "seconds", "second", "secs", "sec"]
+    if any(keyword in article_date for keyword in time_keywords):
+      article_date = today
+    elif "days" in article_date or "day" in article_date:
+      # Find the number of days and subtract from today
+      number_of_days = int(''.join(filter(str.isdigit, article_date)))
+      article_date = today - timedelta(days=number_of_days)
+    else:
+      return None
+  return article_date
+
+# 에러 메시지 작성 함수
+def Error_Message(message, add_error):
+    if message is not str() : message += '/'
+    message += add_error
+    return message
+
+# scraping할 때, context 긁는 함수
+def scrap_context(url):
+    wd = initialize_chrome_driver()
+    wd.get(url)
+    time.sleep(3)
+    html = wd.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    # 키워드가 포함된 모든 텍스트 블록 찾기
+    context = str()
+    # 대소문자 구분 없이 키워드와 정확히 일치하는 정규 표현식 패턴 생성
+    pattern = re.compile('|'.join(r'(?<!\w)' + re.escape(keyword) + r'(?!\w)' for keyword in Top50_Name_list), re.IGNORECASE)
+    #for element in soup.find_all(string=lambda text: keyword in text):
+    for element in soup.find_all(string=pattern):
+        context += (element.text + '\n')
+    # 기업명 앞+뒤 문맥 파악할 수 있는 글이 포함되면, context return
+    if context :
+      return(context)
+    else:
+      return()
+
+# 찾는 기업명 리스트(50개)
+Top50_Name_list = ['SKLSI', 'Hana West Properties LLC', 'Samsung Electronics', 'Doosan Enerbility America', 
+'Hyundai Motor', 'SeAH', 'LG Group', 'GOLFZON', 'GS Global USA', 'Doosan Group', 'ASIANA', 'GS Global', 
+'POSCO America Corp', 'Medy-Tox', 'SK life science', 'COUPANG GLOBAL LLC', 'LG Corp', 'SAMSUNG SEMICONDUCTOR', 
+'DSME', 'HYUNDAI', 'HL Mando America Corporation', 'Nongshim', 'Hanwha Corporation', 'LG Elec', 'Doosan Corp', 
+'MANDO', "Samsung Semiconductor's US", 'Posco', 'SK hynix America', 'LG', 'SeAH America', 'SeAH USA', 
+'POSCO International Corp', 'SK Energy', 'KIA MOTORS AMERICA', 'SEAH STEEL', 'LG Energy', 'LG Display', 
+'POSCO AMERICA', 'Doosan Heavy Industries', 'Hanwha Corp', 'SM Entertainment USA', 'Kia Corp', 'LS Group', 
+'SK E&S', 'LG ELECTRONICS USA', 'Mando America', 'HMGMA', 'POSCO America', 'Golfzon', 'MEDY-TOX', 'LG Energy Solution', 
+'SK NETWORKS AMERICA', 'COUPANG GLOBAL', 'Medytox', 'SK Battery', 'Mando America Corp', 'LG Display America', 
+'SK Hynix Semiconductor', 'Coupang Global LLC', 'Zenith Electronics LLC', 'Dsme', 'SK E&S America', 'Kia Motors', 
+'ASIANA AIRLINES', 'SEAH STEEL USA LLC', 'GSG', 'Mando America Corporation', 'HL Mando America', 'Zenith Electronics', 
+'DOOSAN HEAVY INDUSTRIES AMERICA LLC', 'SK Energy Americas', 'SM ENTERTAINMENT', 'POSCO International', 'SeAH Steel', 
+'LG ENERGY SOLUTION', 'LS CABLE', 'Doosan Electro-Materials America', 'SM USA', 'LS Cable Systems', 
+'Doosan Heavy Industries America Holdings', 'Nongshim America', 'Doosan Heavy Industries America', 'NONGSHIM AMERICA', 
+'KOREAN AIR', 'KMMG', 'Doosan', 'LG Energy Solution Tech Center', 'SK E&S Energy', 'HANWHA', 'Samsung Electronics America', 
+'HL Mando', 'Mando Corporation', 'Coupang', 'SK Life Science', 'DOOSAN MATERIAL HANDLING SOLUTION DOOSAN INDUSTRIAL VEHICLE AMERICA CORP', 
+'Golfzon America Official', 'SK USA', 'Hanwha Q cells', 'Hyundais', 'LG Energy Michigan Tech Center', 'LS Cable & System USA', 
+'Kia Georgia Plant', 'HANWHA HOLDINGS', 'DIVAC', 'HANWHA Q CELLS AMERICA', 'DOOSAN ELECTRO-MATERIALS AMERICA', 'MEDYTOX', 
+'POSCO Holdings', 'Daewoo Shipbuilding and Marine Engineering', 'LG Electronics', 'Hanwha Holdings USA', 
+'POSCO AMERICA CORPORATION', 'HANWHA CORP', 'Kia Motors Manufacturing Georgia', 'SM ENTERTAINMENT USA', 'KIA', 'SMtown USA', 
+'SK HYNIX', 'Kias', 'Hanwha Holdings', 'Golfzon America', 'Mando', 'Hana West Properties', 'Samsung Biologics', 
+'Hanwha Q CELLS America', 'SK E&S Co', 'Doosan Heavy Industries America LLC', 'POSCO America Corporation', 'Asiana Airlines', 
+'Doosan Enerbility America Holdings', 'Kia Corporation', 'SK NETWORKS', 'DSME CO', 'Kia Georgia', 'SK HYNIX AMERICA', 
+'Hanwha Group', 'Coupang Global', 'SK', 'Qcells', 'SAMSUNG', 'KIA GEORGIA', 'Hyundai', 'Doosan Material Handling Solutions', 
+'SK Networks America', 'Hanwha Q CELLS', 'Samsung US', 'KIA MOTORS CORP', 'Samsung Semiconductor USA', 'LG ELECTRONICS', 
+'SK Group Companies', 'SK GROUP', 'Samsung', 'SK Networks', 'Doosan Corporation', 'DSEM', 'SK E&S AMERICA', 'Posco America', 
+'LGE', 'SK Hynix America', 'Samsung Electronics North America', 'Hyundai Motors', 'Hanwha USA', 'Kia', 'Samsung Semiconductor', 
+'Doosan Industrial Vehicle', 'POSCO', 'LS Cable Systems America', 'Doosan Enerbility', 'LS CABLE SYSTEMS AMERICA', 
+'LG ENERGY SOLUTION MICHIGAN TECH CENTER', 'SK ENERGY', 'SeAH US', 'Doosan Electronics', 'Kia America', 
+'SAMSUNG ELECTRONICS AMERICA', 'NONGSHIM', 'Hyundai Motor Group', 'SK Hynix', 'GS GLOBAL USA', 'Kia Motors America', 
+'LS CABLE & SYSTEM', 'SK hynix', 'KIA MOTORS', 'LG ELECTRONICS(ZENITH ELECTRONICS LLC)', 'SK ENERGY AMERICAS', 'DHI', 'Asiana', 
+'GOLFZON AMERICA', 'HANWHA WEST PROPERTIES LLC', 'KOREAN AIRLINES', 'LG DISPLAY', 'LG DISPLAY AMERICA', 'SK LIFE SCIENCE', 
+'Korean Air', 'Zenith Electronics Corp', 'Q CELLS', 'Doosan Industrial Vehicle America Corporation', 'Samsung Biologics America', 
+'GSG Corp', 'SAMSUNG BIOLOGICS', 'SK Group', 'SM Entertainment', 'Seah Steel USA LLC', 'Doosan Industrial Vehicle America Corp', 
+'Hanwha', 'HYUNDAI MOTORS', 'Hanwha OCEAN', 'Nongshim USA', 'SeAH Steel USA', 'LS Cable & System', 'SKLSI', 'HanaWestPropertiesLLC', 
+'SamsungElectronics', 'DoosanEnerbilityAmerica', 'HyundaiMotor', 'SeAH', 'LGGroup', 'GOLFZON', 'GSGlobalUSA', 'DoosanGroup', 
+'ASIANA', 'GSGlobal', 'POSCOAmericaCorp', 'Medy-Tox', 'SKlifescience', 'COUPANGGLOBALLLC', 'LGCorp', 'SAMSUNGSEMICONDUCTOR', 
+'DSME', 'HYUNDAI', 'HLMandoAmericaCorporation', 'Nongshim', 'HanwhaCorporation', 'LGElec', 'DoosanCorp', 'MANDO', 
+"SamsungSemiconductor'sUS", 'Posco', 'SKhynixAmerica', 'LG', 'SeAHAmerica', 'SeAHUSA', 'POSCOInternationalCorp', 'SKEnergy', 
+'KIAMOTORSAMERICA', 'SEAHSTEEL', 'LGEnergy', 'LGDisplay', 'POSCOAMERICA', 'DoosanHeavyIndustries', 'HanwhaCorp', 
+'SMEntertainmentUSA', 'KiaCorp', 'LSGroup', 'SKE&S', 'LGELECTRONICSUSA', 'MandoAmerica', 'HMGMA', 'POSCOAmerica', 'Golfzon', 
+'MEDY-TOX', 'LGEnergySolution', 'SKNETWORKSAMERICA', 'COUPANGGLOBAL', 'Medytox', 'SKBattery', 'MandoAmericaCorp', 
+'LGDisplayAmerica', 'SKHynixSemiconductor', 'CoupangGlobalLLC', 'ZenithElectronicsLLC', 'Dsme', 'SKE&SAmerica', 'KiaMotors', 
+'ASIANAAIRLINES', 'SEAHSTEELUSALLC', 'GSG', 'MandoAmericaCorporation', 'HLMandoAmerica', 'ZenithElectronics', 
+'DOOSANHEAVYINDUSTRIESAMERICALLC', 'SKEnergyAmericas', 'SMENTERTAINMENT', 'POSCOInternational', 'SeAHSteel', 'LGENERGYSOLUTION', 
+'LSCABLE', 'DoosanElectro-MaterialsAmerica', 'SMUSA', 'LSCableSystems', 'DoosanHeavyIndustriesAmericaHoldings', 'NongshimAmerica',
+'DoosanHeavyIndustriesAmerica', 'NONGSHIMAMERICA', 'KOREANAIR', 'KMMG', 'Doosan', 'LGEnergySolutionTechCenter', 'SKE&SEnergy', 
+'HANWHA', 'SamsungElectronicsAmerica', 'HLMando', 'MandoCorporation', 'Coupang', 'SKLifeScience', 
+'DOOSANMATERIALHANDLINGSOLUTIONDOOSANINDUSTRIALVEHICLEAMERICACORP', 'GolfzonAmericaOfficial', 'SKUSA', 'HanwhaQcells', 'Hyundais', 
+'LGEnergyMichiganTechCenter', 'LSCable&SystemUSA', 'KiaGeorgiaPlant', 'HANWHAHOLDINGS', 'DIVAC', 'HANWHAQCELLSAMERICA', 
+'DOOSANELECTRO-MATERIALSAMERICA', 'MEDYTOX', 'POSCOHoldings', 'DaewooShipbuildingandMarineEngineering', 'LGElectronics', 
+'HanwhaHoldingsUSA', 'POSCOAMERICACORPORATION', 'HANWHACORP', 'KiaMotorsManufacturingGeorgia', 'SMENTERTAINMENTUSA', 'KIA', 
+'SMtownUSA', 'SKHYNIX', 'Kias', 'HanwhaHoldings', 'GolfzonAmerica', 'Mando', 'HanaWestProperties', 'SamsungBiologics', 
+'HanwhaQCELLSAmerica', 'SKE&SCo', 'DoosanHeavyIndustriesAmericaLLC', 'POSCOAmericaCorporation', 'AsianaAirlines', 
+'DoosanEnerbilityAmericaHoldings', 'KiaCorporation', 'SKNETWORKS', 'DSMECO', 'KiaGeorgia', 'SKHYNIXAMERICA', 'HanwhaGroup', 
+'CoupangGlobal', 'SK', 'Qcells', 'SAMSUNG', 'KIAGEORGIA', 'Hyundai', 'DoosanMaterialHandlingSolutions', 'SKNetworksAmerica', 
+'HanwhaQCELLS', 'SamsungUS', 'KIAMOTORSCORP', 'SamsungSemiconductorUSA', 'LGELECTRONICS', 'SKGroupCompanies', 'SKGROUP', 'Samsung',
+'SKNetworks', 'DoosanCorporation', 'DSEM', 'SKE&SAMERICA', 'PoscoAmerica', 'LGE', 'SKHynixAmerica', 
+'SamsungElectronicsNorthAmerica', 'HyundaiMotors', 'HanwhaUSA', 'Kia', 'SamsungSemiconductor', 'DoosanIndustrialVehicle', 
+'POSCO', 'LSCableSystemsAmerica', 'DoosanEnerbility', 'LSCABLESYSTEMSAMERICA', 'LGENERGYSOLUTIONMICHIGANTECHCENTER', 'SKENERGY', 
+'SeAHUS', 'DoosanElectronics', 'KiaAmerica', 'SAMSUNGELECTRONICSAMERICA', 'NONGSHIM', 'HyundaiMotorGroup', 'SKHynix', 
+'GSGLOBALUSA', 'KiaMotorsAmerica', 'LSCABLE&SYSTEM', 'SKhynix', 'KIAMOTORS', 'LGELECTRONICS(ZENITHELECTRONICSLLC)', 
+'SKENERGYAMERICAS', 'DHI', 'Asiana', 'GOLFZONAMERICA', 'HANWHAWESTPROPERTIESLLC', 'KOREANAIRLINES', 'LGDISPLAY', 
+'LGDISPLAYAMERICA', 'SKLIFESCIENCE', 'KoreanAir', 'ZenithElectronicsCorp', 'QCELLS', 'DoosanIndustrialVehicleAmericaCorporation', 
+'SamsungBiologicsAmerica', 'GSGCorp', 'SAMSUNGBIOLOGICS', 'SKGroup', 'SMEntertainment', 'SeahSteelUSALLC', 
+'DoosanIndustrialVehicleAmericaCorp', 'Hanwha', 'HYUNDAIMOTORS', 'HanwhaOCEAN', 'NongshimUSA', 'SeAHSteelUSA', 'LSCable&System']
+
+# 정부 사이트(연방정부 + 주정부)
+url_1 = 'https://www.state.gov/press-releases/'
+url_2 = 'https://www.state.gov/department-press-briefings/'
+url_3 = 'https://home.treasury.gov/news/press-releases' 
+url_4 = 'https://www.defense.gov/News/'
+url_5 = 'https://www.army.mil/news'
+url_6 = 'https://www.navy.mil/Press-Office/'
+url_7 = 'https://www.af.mil/News/Category/22750/'
+url_8 = 'https://www.nsa.gov/Press-Room/Press-Releases-Statements/'
+url_9 = 'https://www.justice.gov/news'
+url_10 = 'https://www.fbi.gov/news/press-releases'
+url_11 = 'https://www.doi.gov/news'
+url_12 = 'https://www.usda.gov/media/press-releases'
+url_13 = 'https://www.ars.usda.gov/news-events/news-archive/'
+url_14 = 'https://www.fs.usda.gov/news/releases'
+url_15 = 'https://www.fas.usda.gov/newsroom/search'
+url_16 = 'https://www.commerce.gov/news'
+url_17 = 'https://www.dol.gov/newsroom/releases?agency=All&state=All&topic=All&year=all&page=0'
+url_18 = 'https://www.hhs.gov/about/news/index.html'
+url_19 = 'https://www.fda.gov/news-events/fda-newsroom/press-announcements'
+url_20 = 'https://www.fda.gov/news-events/speeches-fda-officials'
+url_21 = 'https://www.transportation.gov/newsroom/press-releases'
+url_22 = 'https://www.transportation.gov/newsroom/speeches'
+url_23 = 'https://www.energy.gov/newsroom'
+url_24 = 'https://www.ed.gov/news/press-releases'
+url_25 = 'https://www.ed.gov/news/speeches'
+url_26 = 'https://news.va.gov/news/'
+url_27 = 'https://www.dhs.gov/news-releases/press-releases'
+url_28 = 'https://www.dhs.gov/news-releases/speeches'
+url_29 = 'https://www.fema.gov/about/news-multimedia/press-releases'
+url_30 = 'https://www.secretservice.gov/newsroom'
+url_31 = 'https://www.epa.gov/newsreleases/search'
+## Georgia
+url_41 = 'https://sos.ga.gov/news/division/31?page=0'
+url_42 = 'https://gov.georgia.gov/press-releases'
+url_44 = 'https://www.georgia.org/press-releases'
+url_45 = 'https://www.gachamber.com/all-news/'
+## California
+url_46 = 'https://www.sos.ca.gov/administration/news-releases-and-advisories/2023-news-releases-and-advisories'
+url_48 = 'https://business.ca.gov/newsroom/'
+url_49 = 'https://business.ca.gov/calosba-latest-news/'
+url_50 = 'https://www.dir.ca.gov/dlse/DLSE_whatsnew2023.htm' ## 년도 바뀔 때마다 새로운 링크 찾아줘야함(https://www.dir.ca.gov/dlse/DLSE_whatsnew.htm)
+url_51 = 'https://www.dir.ca.gov/dosh/DOSH_Archive.html'
+url_52 = 'https://www.dir.ca.gov/mediaroom.html'
+url_53 = 'https://news.caloes.ca.gov/'
+url_54 = 'https://advocacy.calchamber.com/california-works/calchamber-members-in-the-news/'
+## Texas
+url_55 = 'https://gov.texas.gov/news'
+url_56 = 'https://www.texasattorneygeneral.gov/news/releases'
+url_57 = 'https://www.txdot.gov/about/newsroom/statewide.html'
+url_58 = 'https://www.dps.texas.gov/news/press-releases'
+url_59 = 'https://www.twc.texas.gov/news'
+url_61 = 'https://comptroller.texas.gov/about/media-center/news//'
+url_62 = 'https://www.tdi.texas.gov/news/2023/index.html'
+url_63 = 'https://www.txbiz.org/chamber-news'
+url_64 = 'https://www.txbiz.org/press-releases'
+## New York
+url_65 = 'https://www.governor.ny.gov/news'
+url_67 = 'https://www.dot.ny.gov/news/press-releases/2023'
+url_68 = 'https://ag.ny.gov/press-releases'
+url_71 = 'https://chamber.nyc/news'
+url_73 = 'https://www.nyserda.ny.gov/About/Newsroom/2023-Announcements'
+## New Jersey
+url_74 = 'https://www.njchamber.com/press-releases'
+url_75 = 'https://www.nj.gov/health/news/'
+url_76 = 'https://www.nj.gov/mvc/news/news.htm'
+## North Carolina
+url_78 = 'https://www.commerce.nc.gov/news/press-releases'
+url_80 = 'https://www.ncdor.gov/news/press-releases'
+url_81 = 'https://www.iprcenter.gov/news'
+url_82 = 'https://edpnc.com/news-events/'
+url_83 = 'https://ncchamber.com/category/chamber-updates/'
+## Washington D.C.
+url_84 = 'https://dc.gov/newsroom'
+url_85 = 'https://dcchamber.org/posts/'
+url_86 = 'https://planning.dc.gov/newsroom'
+url_87 = 'https://dpw.dc.gov/newsroom'
+## Virginia
+url_88 = 'https://www.governor.virginia.gov/newsroom/news-releases/'
+url_89 = 'https://www.vedp.org/press-releases'
+url_90 = 'https://www.doli.virginia.gov/category/announcements/'
+url_91 = 'https://vachamber.com/category/press-releases/'
+## Maryland
+url_92 = 'https://governor.maryland.gov/news/press/Pages/default.aspx?page=1'
+url_93 = 'https://news.maryland.gov/mde/category/press-release/'
+url_94 = 'https://commerce.maryland.gov/media/press-room'
+url_95 = 'https://www.dllr.state.md.us/whatsnews/'
+url_96 = 'https://www.mdchamber.org/news/'
+
+# 방산업체 + NASA
+url_32 = 'https://www.lockheedmartin.com/en-us/news.html'
+url_33 = 'https://boeing.mediaroom.com/news-releases-statements'
+url_34 = 'https://www.rtx.com/rss-feeds/news'   ### rss feed
+url_35 = 'https://news.northropgrumman.com/news/releases'
+url_36 = 'https://www.gd.com/news/news-feed?page=0&types=Press Release'
+url_37 = 'https://www.baesystems.com/en/newsroom'
+url_38 = 'https://www.l3harris.com/ko-kr/newsroom/search?size=n_10_n&sort-field%5Bname%5D=Publish%20Date&sort-field%5Bvalue%5D=created_date&sort-field%5Bdirection%5D=desc&sort-direction='
+url_39 = 'https://investor.textron.com/rss/pressrelease.aspx'   ### rss feed
+url_40 = 'https://www.nasa.gov/news/all-news/'
+
+# 지역언론
+## Georgia
+url_local_1 = 'https://www.ajc.com/news/'
+url_local_2 = 'valdostadailytimes.com'
+url_local_20 = 'https://www.savannahnow.com/news/local/'
+## California
+url_local_3 = 'https://www.mercurynews.com/latest-headlines/'
+url_local_4 = 'https://www.latimes.com/california'
+## Texas
+url_local_5 = 'https://www.dallasnews.com/news/'
+## New York
+url_local_7 = 'https://nypost.com/news/'
+## New Jersey
+url_local_9 = 'https://www.northjersey.com/news/'
+url_local_10 = 'https://www.nj.com/'
+url_local_10_list = ['https://www.nj.com/starledger/', 'https://www.nj.com/atlantic/', 'https://www.nj.com/bergen/',
+                     'https://nj.com/burlington/', 'https://www.nj.com/camden/', 'https://www.nj.com/cape-may-county/',
+                     'https://www.nj.com/cumberland/', 'https://www.nj.com/essex/', 'https://www.nj.com/gloucester-county/',
+                     'https://www.nj.com/hudson/', 'https://www.nj.com/hunterdon/', 'https://www.nj.com/mercer/',
+                     'https://www.nj.com/middlesex/', 'https://www.nj.com/monmouth/', 'https://www.nj.com/morris/',
+                     'https://www.nj.com/ocean/', 'https://www.nj.com/passaic-county/', 'https://www.nj.com/salem/',
+                     'https://www.nj.com/somerset/', 'https://www.nj.com/sussex-county/', 'https://www.nj.com/union/',
+                     'https://www.nj.com/warren/']
+## North Carolina
+url_local_11 = 'https://carolinapublicpress.org/recent-news/'
+## District of Columbia
+url_local_13 = 'https://www.washingtonpost.com/latest-headlines/'
+url_local_14 = 'https://www.washingtontimes.com/news/world/'
+## Virginia
+url_local_15 = 'https://www.vpm.org/vpm-news'
+url_local_16 = 'https://richmondmagazine.com/news/news'
+## Maryland
+url_local_17 = 'https://www.baltimoresun.com/latest-headlines/'
+url_local_18 = 'https://www.fox5dc.com/tag/us/md'
+url_local_19 = 'https://foxbaltimore.com/news/local'
+
+# 데이터프레임
+articles = []
+error_list = []
+today_list = [date_util((datetime.now()- timedelta(days=1)).strftime("%Y-%m-%d")), date_util((datetime.now()).strftime("%Y-%m-%d"))]
+today = date_util(datetime.now().strftime("%Y-%m-%d"))
