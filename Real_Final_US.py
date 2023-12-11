@@ -4387,7 +4387,8 @@ try:
 except Exception as e:
     All_error_list.append({
         'Error Link': url_80,
-        'Error': str(e)})
+        'Error': str(e)
+    })
 ########################################### <81> ##############################################
 #url_81 = "https://www.iprcenter.gov/news"
 wd = initialize_chrome_driver()
