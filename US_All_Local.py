@@ -187,7 +187,9 @@ url_local_19 = 'https://foxbaltimore.com/news/local'
 
 # 데이터프레임
 All_articles = pd.read_csv('US_All Articles' + datetime.now().strftime("_%y%m%d") + '.csv')
+All_articles = All_articles.to_dict(orient='records')
 All_error_list = pd.read_csv('US_ All Error List' + datetime.now().strftime("_%y%m%d") + '.csv')
+All_error_list = All_error_list.to_dict(orient='records')
 Local_articles = []
 today_list = [date_util((datetime.now()- timedelta(days=1)).strftime("%Y-%m-%d")), date_util((datetime.now()).strftime("%Y-%m-%d"))]
 today = date_util(datetime.now().strftime("%Y-%m-%d"))
@@ -361,10 +363,17 @@ except Exception as e:
 wd = initialize_chrome_driver()
 wd.get(url_local_5)
 time.sleep(5)
-for _ in range(5):
-  button = wd.find_element(By.ID, 'load-more')
-  button.click()
-  time.sleep(1)
+try:
+    for _ in range(5):
+      button = wd.find_element(By.ID, 'load-more')
+      button.click()
+      time.sleep(1)
+except Exception as e:
+  All_error_list.append({
+      'Error Link': url_local_5,
+      'Error': str(e)
+  })
+  
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
 error_message = str()
