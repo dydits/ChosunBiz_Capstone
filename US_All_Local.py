@@ -365,14 +365,18 @@ wd.get(url_local_5)
 time.sleep(5)
 try:
     for _ in range(5):
-      button = wd.find_element(By.ID, 'load-more')
-      button.click()
-      time.sleep(1)
+        try:
+            button = wd.find_element(By.ID, 'load-more')
+            button.click()
+            time.sleep(1)
+        except ElementClickInterceptedException:
+            # ElementClickInterceptedException 발생 시 무시하고 계속 진행
+            pass
 except Exception as e:
-  All_error_list.append({
-      'Error Link': url_local_5,
-      'Error': str(e)
-  })
+    All_error_list.append({
+        'Error Link': url_local_5,
+        'Error': str(e)
+    })
   
 html = wd.page_source
 soup = BeautifulSoup(html, 'html.parser')
