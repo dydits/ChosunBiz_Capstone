@@ -162,7 +162,9 @@ url_40 = 'https://www.nasa.gov/news/all-news/'
 
 # 데이터프레임
 All_articles = pd.read_csv('US_All Articles' + datetime.now().strftime("_%y%m%d") + '.csv')
+All_articles = All_articles.to_dict(orient='records')
 All_error_list = pd.read_csv('US_ All Error List' + datetime.now().strftime("_%y%m%d") + '.csv')
+All_error_list = All_error_list.to_dict(orient='records')
 DefenseIndustry_articles = []
 today_list = [date_util((datetime.now()- timedelta(days=1)).strftime("%Y-%m-%d")), date_util((datetime.now()).strftime("%Y-%m-%d"))]
 today = date_util(datetime.now().strftime("%Y-%m-%d"))
