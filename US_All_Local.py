@@ -255,53 +255,59 @@ except Exception as e:
       })
 ###############################################<url_local_3>###############################################
 # url_local_3 = "https://www.mercurynews.com/latest-headlines/"
-wd = initialize_chrome_driver()
-wd.get(url_local_3)
-time.sleep(5)
-html = wd.page_source
-soup = BeautifulSoup(html, 'html.parser')
-error_message = str()
-local = '[California] '+url_local_3
 try:
-    news_items = soup.find_all('a', class_='article-title')
-    for item in news_items:
-        link = item['href']
-        if not link: error_message = Error_Message(error_message, "None Link")
-        try:
-            article = Article(link, language='en')
-            article.download()
-            article.parse()
-            article_date = date_util(str(article.publish_date))
-            if not article_date : error_message = Error_Message(error_message, "None Date")
-            else:
-              if article_date in today_list :
-                  title = article.title
-                  if not title : error_message = Error_Message(error_message, "None Title")
-                  text = article.text
-                  if not text: text = scrap_context(link)
-                  if error_message != str():
-                            All_error_list.append({
-                                'Error Link': url_local_3,
-                                'Error': error_message
-                            })               
-                  else:
-                      if text:
-                        All_articles.append({
-                            'Title': title,
-                            'Link': link,
-                            'Content(RAW)': text
-                        })
-                        Local_articles.append({
-                            'Local Site': local,
-                            'Title': title,
-                            'Link': link,
-                            'Content(RAW)': text
-                        })
-        except Exception as e:
-              All_error_list.append({
-                  'Error Link': link,
-                  'Error': str(e)
-                  })
+    wd = initialize_chrome_driver()
+    wd.get(url_local_3)
+    time.sleep(5)
+    html = wd.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    error_message = str()
+    local = '[California] '+url_local_3
+    try:
+        news_items = soup.find_all('a', class_='article-title')
+        for item in news_items:
+            link = item['href']
+            if not link: error_message = Error_Message(error_message, "None Link")
+            try:
+                article = Article(link, language='en')
+                article.download()
+                article.parse()
+                article_date = date_util(str(article.publish_date))
+                if not article_date : error_message = Error_Message(error_message, "None Date")
+                else:
+                  if article_date in today_list :
+                      title = article.title
+                      if not title : error_message = Error_Message(error_message, "None Title")
+                      text = article.text
+                      if not text: text = scrap_context(link)
+                      if error_message != str():
+                                All_error_list.append({
+                                    'Error Link': url_local_3,
+                                    'Error': error_message
+                                })               
+                      else:
+                          if text:
+                            All_articles.append({
+                                'Title': title,
+                                'Link': link,
+                                'Content(RAW)': text
+                            })
+                            Local_articles.append({
+                                'Local Site': local,
+                                'Title': title,
+                                'Link': link,
+                                'Content(RAW)': text
+                            })
+            except Exception as e:
+                  All_error_list.append({
+                      'Error Link': link,
+                      'Error': str(e)
+                      })
+    except Exception as e:
+      All_error_list.append({
+          'Error Link': url_local_3,
+          'Error': str(e)
+          })
 except Exception as e:
   All_error_list.append({
       'Error Link': url_local_3,
