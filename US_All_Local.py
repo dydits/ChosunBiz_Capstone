@@ -360,6 +360,7 @@ except Exception as e:
       })
 ###############################################<url_local_5>###############################################
 #url_local_5 = "https://www.dallasnews.com/news/"
+'''
 wd = initialize_chrome_driver()
 wd.get(url_local_5)
 time.sleep(5)
@@ -430,6 +431,7 @@ except Exception as e:
       'Error Link': url_local_5,
       'Error': str(e)
   })
+  '''
 ###############################################<url_local_7>###############################################
 #url_local_7 = 'https://nypost.com/news/'
 wd = initialize_chrome_driver()
